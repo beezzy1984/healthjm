@@ -24,7 +24,7 @@ from .health_jamaica import *
 
 def register():
     Pool.register(
-        PartyJHIN,
+        PartyUPC,
 	AlternativePersonID,
 	DomiciliaryUnit,
 	Newborn,

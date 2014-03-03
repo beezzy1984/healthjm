@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    GNU Health: The Free Health and Hospital Information System
-#    Copyright (C) 2008-2014  GNU SOLIDARIO <health@gnusolidario.org
+#    Copyright (C) 2008-2014  GNU SOLIDARIO <health@gnusolidario.org>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -19,11 +19,7 @@
 #
 ##############################################################################
 #
-# Demo module to show the mechanism of creating a module
-#
-# The module creates a default random string of STRSIZE
-# for the Jamaican " Health Identification Number" - HIN
-# for demo purposes.
+# Localization module for Jamaica Ministry of Health
 #
 # The documentation of the module goes in the "doc" directory.
 
@@ -32,22 +28,22 @@ import random
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal
 from trytond.model import ModelView, ModelSQL, fields
 
-__all__ = ['PartyJHIN','AlternativePersonID','DomiciliaryUnit','Newborn','PartyPatient','Insurance']
+__all__ = ['PartyUPC','AlternativePersonID','DomiciliaryUnit','Newborn','PartyPatient','Insurance']
 
 
-class PartyJHIN (ModelSQL, ModelView):
+class PartyUPC (ModelSQL, ModelView):
     __name__ = 'party.party'
 
     ref = fields.Char(
-        'PIC',
-        help='Patient Identification Code',
+        'UPC',
+        help='Universal Patient Code',
         states={'invisible': Not(Bool(Eval('is_person')))})
 
     @staticmethod
     def default_ref():
         # Add a default random string in the ref field.
         # The STRSIZE constant provides the length of the HIN
-        # The format of the HIN is XXXNNNXXX
+        # The format of the UPC is XXXNNNXXX
         STRSIZE = 9
         hin = ''
         for x in range(STRSIZE): 
