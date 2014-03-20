@@ -82,7 +82,19 @@ class PartyPatient (ModelSQL, ModelView):
         ('x', 'Separated'),
         ('v', 'Visiting'),
         ], 'Marital Status', sort=False)
-        
+    
+    sex = fields.Selection([
+		(None,''),
+		('m', 'Male'),
+		('f', 'Female'),
+		('u', 'Unknown')
+		], 'Sex',states={'required':Bool(Eval('is_person'))},help="Gender of Patient")
+
+    is_person = fields.Boolean(
+		'Person',
+		on_change_with=['is_person','is_patient','is_healthprof'],
+		help = "Check if the party is a person.")
+		
 class AlternativePersonID (ModelSQL, ModelView):
    'Alternative person ID'
    __name__ ='gnuhealth.person_alternative_identification' 
