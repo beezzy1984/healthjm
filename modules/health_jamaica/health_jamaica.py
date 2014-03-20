@@ -59,6 +59,19 @@ class PartyPatient (ModelSQL, ModelView):
     'Party'
     __name__ = 'party.party'
     
+    alias = fields.Char('Pet Name', help="Common name that the Patient is referred to as")
+    middlename = fields.Char('Middle Name', help="Middle name of Patient")
+    mother_maiden_name = fields.Char('Mother Maiden Name', help="Mother's Maiden Name")
+    father_name = fields.Char('Father Name', help="Father's Name")
+    
+    suffix = fields.Selection([
+		(None,''),
+		('jr', 'JR. - Junior'),
+		('sr', 'SR. - Senior'),
+		('II', 'II - The Second'),
+		('III', 'III - The Third'),
+		], 'Suffix')
+		
     marital_status = fields.Selection([
         (None, ''),
         ('s', 'Single'),

@@ -1,6 +1,15 @@
 <?xml version="1.0"?>
 
 <data>
+	
+	<!-- PartyPatient -->
+
+   <record model="ir.ui.view" id="view_party_form">
+       <field name="model">party.party</field>
+       <field name="inherit" ref="party.party_view_form"/>
+       <field name="name">party_form</field>
+   </record>
+        
    <record model="ir.ui.view" id="gnuhealth_alternative_identification_form">
        <field name="model">gnuhealth.person_alternative_identification</field>
        <field name="type">form</field>       
