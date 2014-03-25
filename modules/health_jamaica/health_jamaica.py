@@ -28,7 +28,7 @@ import random
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal
 from trytond.model import ModelView, ModelSQL, fields
 
-__all__ = ['PartyUPC','AlternativePersonID','DomiciliaryUnit','Newborn','PartyPatient','Insurance']
+__all__ = ['PartyUPC','PartyPatient','AlternativePersonID','DomiciliaryUnit','Newborn','Insurance']
 
 
 class PartyUPC (ModelSQL, ModelView):
