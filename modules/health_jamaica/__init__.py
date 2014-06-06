@@ -24,10 +24,9 @@ from .health_jamaica import *
 
 def register():
     Pool.register(
-        PartyUPC,
-	AlternativePersonID,
-	DomiciliaryUnit,
-	Newborn,
-	PartyPatient,
-	Insurance,
+        PartyPatient,
+        AlternativePersonID,
+        DomiciliaryUnit,
+        Newborn,
+        Insurance,
         module='health_jamaica', type_='model')

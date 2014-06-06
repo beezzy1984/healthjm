@@ -28,16 +28,54 @@ import random
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal
 from trytond.model import ModelView, ModelSQL, fields
 
-__all__ = ['PartyUPC','PartyPatient','AlternativePersonID','DomiciliaryUnit','Newborn','Insurance']
+__all__ = ['PartyPatient','AlternativePersonID','DomiciliaryUnit','Newborn',
+    'Insurance']
 
 
-class PartyUPC (ModelSQL, ModelView):
+class PartyPatient (ModelSQL, ModelView):
+    'Party'
     __name__ = 'party.party'
-
+    
     ref = fields.Char(
         'UPC',
         help='Universal Patient Code',
         states={'invisible': Not(Bool(Eval('is_person')))})
+    alias = fields.Char('Pet Name', help="Common name that the Patient is referred to as")
+    middlename = fields.Char('Middle Name', help="Middle name of Patient")
+    mother_maiden_name = fields.Char('Mother Maiden Name', help="Mother's Maiden Name")
+    father_name = fields.Char('Father Name', help="Father's Name")
+    
+    suffix = fields.Selection([
+        (None,''),
+        ('jr', 'JR. - Junior'),
+        ('sr', 'SR. - Senior'),
+        ('II', 'II - The Second'),
+        ('III', 'III - The Third'),
+        ], 'Suffix')
+
+    marital_status = fields.Selection([
+        (None, ''),
+        ('s', 'Single'),
+        ('m', 'Married'),
+        ('c', 'Concubinage'),
+        ('w', 'Widowed'),
+        ('d', 'Divorced'),
+        ('x', 'Separated'),
+        ('v', 'Visiting'),
+        ], 'Marital Status', sort=False)
+
+    sex = fields.Selection([
+        (None,''),
+        ('m', 'Male'),
+        ('f', 'Female'),
+        ('u', 'Unknown')
+        ], 'Sex', states={'required':Bool(Eval('is_person'))},
+        help="Gender of Patient")
+
+    is_person = fields.Boolean(
+        'Person',
+        on_change_with=['is_person','is_patient','is_healthprof'],
+        help = "Check if the party is a person.")
 
     @staticmethod
     def default_ref():
@@ -54,47 +92,6 @@ class PartyUPC (ModelSQL, ModelView):
         return hin
 
 
-
-class PartyPatient (ModelSQL, ModelView):
-    'Party'
-    __name__ = 'party.party'
-    
-    alias = fields.Char('Pet Name', help="Common name that the Patient is referred to as")
-    middlename = fields.Char('Middle Name', help="Middle name of Patient")
-    mother_maiden_name = fields.Char('Mother Maiden Name', help="Mother's Maiden Name")
-    father_name = fields.Char('Father Name', help="Father's Name")
-    
-    suffix = fields.Selection([
-		(None,''),
-		('jr', 'JR. - Junior'),
-		('sr', 'SR. - Senior'),
-		('II', 'II - The Second'),
-		('III', 'III - The Third'),
-		], 'Suffix')
-		
-    marital_status = fields.Selection([
-        (None, ''),
-        ('s', 'Single'),
-        ('m', 'Married'),
-        ('c', 'Concubinage'),
-        ('w', 'Widowed'),
-        ('d', 'Divorced'),
-        ('x', 'Separated'),
-        ('v', 'Visiting'),
-        ], 'Marital Status', sort=False)
-    
-    sex = fields.Selection([
-		(None,''),
-		('m', 'Male'),
-		('f', 'Female'),
-		('u', 'Unknown')
-		], 'Sex',states={'required':Bool(Eval('is_person'))},help="Gender of Patient")
-
-    is_person = fields.Boolean(
-		'Person',
-		on_change_with=['is_person','is_patient','is_healthprof'],
-		help = "Check if the party is a person.")
-		
 class AlternativePersonID (ModelSQL, ModelView):
    'Alternative person ID'
    __name__ ='gnuhealth.person_alternative_identification' 
@@ -115,6 +112,7 @@ class AlternativePersonID (ModelSQL, ModelView):
             ('crh','CRH'),            
         ], 'Issued By', required=False, sort=True,)
 
+
 class DomiciliaryUnit(ModelSQL, ModelView):
     'Domiciliary Unit'
     __name__ = 'gnuhealth.du'
@@ -123,7 +121,8 @@ class DomiciliaryUnit(ModelSQL, ModelView):
         'country.subdivision', 'Parish',
         domain=[('country', '=', Eval('address_country'))],
         depends=['address_country'], help="Enter Parish or State or County or Borrow")
-       
+
+
 class Newborn (ModelSQL, ModelView):
     'Newborn Information'
     __name__ = 'gnuhealth.newborn'
