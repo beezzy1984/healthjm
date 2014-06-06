@@ -93,24 +93,28 @@ class PartyPatient (ModelSQL, ModelView):
 
 
 class AlternativePersonID (ModelSQL, ModelView):
-   'Alternative person ID'
-   __name__ ='gnuhealth.person_alternative_identification' 
+    'Alternative person ID'
+    __name__ ='gnuhealth.person_alternative_identification' 
    
-   name = fields.Many2One('party.party', 'Party', readonly=True)
-   alternative_id_type = fields.Selection(
-        [
-            ('trn','TRN'),
-            ('pathID','PATH ID'),
-            ('gojID','GOJ ID'),
-            ('medical recordsID','Medical Records ID'),
-        ], 'ID type', required=True, sort=False,)
-        
-   issuedby = fields.Selection(
+    name = fields.Many2One('party.party', 'Party', readonly=True)
+    issuedby = fields.Selection(
         [
             ('kph','KPH'),
             ('vjh','VJH'),
             ('crh','CRH'),            
         ], 'Issued By', required=False, sort=True,)
+
+    @classmethod
+    def __setup__(cls):
+        super(AlternativePersonID, cls).__setup__()
+        selections = [
+                ('trn','TRN'),
+                ('pathID','PATH ID'),
+                ('gojID','GOJ ID'),
+            ]
+        for selection in selections:
+            if selection not in cls.alternative_id_type.selection:
+                cls.alternative_id_type.selection.append(selection)
 
 
 class DomiciliaryUnit(ModelSQL, ModelView):
