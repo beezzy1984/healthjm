@@ -6,20 +6,12 @@
 	<xpath expr="/form/label[@name='lastname']" position="replace" />
 	
 	<xpath expr="/form/label[@name='name']" position="before">
+		<label name="suffix"/>
+		<field name="suffix"/>
 		<label name="lastname"/>
 		<field name="lastname"/> 
 	</xpath>
-	
-	<xpath expr="/form/field[@name='name']" position="after">
-		<label name="middlename"/>
-		<field name="middlename"/> 
-	</xpath>
-	
-	<xpath expr="/form/label[@name='code']" position="before">
-		<label name="suffix"/>
-		<field name="suffix"/>
-    </xpath>
-    
+        
     <xpath expr="/form/field[@name='suffix']" position="after">
 		<label name="mother_maiden_name"/>
 		<field name="mother_maiden_name" />
