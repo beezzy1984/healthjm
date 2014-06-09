@@ -59,7 +59,7 @@
         <field name="drugs"/>
     </group>
     <newline/>
-    <separator colspan="4" string="Details"/>
+    <separator id="sep_details" colspan="4" string="Details"/>
     <newline/>
     <field colspan="4" name="injury_details"/>
     
