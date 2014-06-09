@@ -45,7 +45,7 @@ class PartyPatient (ModelSQL, ModelView):
         'UPC',
         help='Universal Patient Code',
         states=_STATES, depends=_DEPENDS, readonly=True)
-    alias = fields.Char('Pet Name', states=_STATES, depends=_DEPENDS,
+    alias = fields.Char('Alias', states=_STATES, depends=_DEPENDS,
         help="Common name that the Patient is referred to as")
     middlename = fields.Char('Middle Name', states=_STATES, depends=_DEPENDS,
         help="Middle name of Patient")
@@ -73,6 +73,11 @@ class PartyPatient (ModelSQL, ModelView):
         ('v', 'Visiting'),
         ], 'Marital Status', sort=False)
 
+    """
+    # To Be discussed : In GNU HEalthAmbiguous genitalia is used at birth as 
+    # a finding.
+    # Check legislation for Jamaica
+    
     sex = fields.Selection([
         (None,''),
         ('m', 'Male'),
@@ -81,10 +86,7 @@ class PartyPatient (ModelSQL, ModelView):
         ], 'Sex', states={'required':Bool(Eval('is_person'))},
         help="Gender of Patient")
 
-    is_person = fields.Boolean(
-        'Person',
-        on_change_with=['is_person', 'is_patient', 'is_healthprof'],
-        help = "Check if the party is a person.")
+    """
 
     party_warning_ack = fields.Boolean('Party verified', 
         states={
