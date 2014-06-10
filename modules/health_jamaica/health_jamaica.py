@@ -139,7 +139,8 @@ class PartyPatient (ModelSQL, ModelView):
     def create(cls, vlist):
         vlist = [x.copy() for x in vlist]
         for values in vlist:
-            values['ref'] = cls.generate_upc()
+            if not 'ref' in values:
+                values['ref'] = cls.generate_upc()
             if 'unidentified' in values and values['unidentified']:
                 values['ref'] = 'NN-' + values.get('ref')
             if 'is_person' in values and not values['is_person']:
