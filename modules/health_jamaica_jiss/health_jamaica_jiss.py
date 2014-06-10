@@ -57,8 +57,7 @@ class Jiss (ModelSQL, ModelView):
             'latitude', 'longitude'],
         help="Maps the Accident / Injury location on Open Street Map")
 
-    healthcenter = fields.Many2One('party.party','Institution',
-        domain=[('is_institution', '=', True)])
+    healthcenter = fields.Many2One('gnuhealth.institution','Institution')
 
     patient = fields.Function(
         fields.Char('Patient'),

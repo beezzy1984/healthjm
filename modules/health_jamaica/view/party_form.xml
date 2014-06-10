@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <data>
-    
+<!--    
     <xpath expr="/form/field[@name='lastname']" position="replace"/>
     
     <xpath expr="/form/label[@name='lastname']" position="replace" />
@@ -26,7 +26,7 @@
         <label name="middlename" />
         <field name="middlename" />
     </xpath>
-
+-->
     <xpath expr="/form/notebook/page[@id='party_gnuhealth']/group[@id='party_footer']/field[@name='unidentified']" position="after">
         <label name="party_warning_ack" />
         <field name="party_warning_ack" />

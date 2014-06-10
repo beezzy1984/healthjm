@@ -164,6 +164,7 @@ class AlternativePersonID (ModelSQL, ModelView):
     name = fields.Many2One('party.party', 'Party', readonly=True)
     issuedby = fields.Selection(
         [
+            (None,''),
             ('kph','KPH'),
             ('vjh','VJH'),
             ('crh','CRH'),            
