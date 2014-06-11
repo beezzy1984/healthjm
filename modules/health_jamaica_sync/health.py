@@ -3,12 +3,13 @@ from tryton_synchronisation import SyncMixin, SyncUUIDMixin
 from trytond.model import ModelSQL
 from trytond.pool import PoolMeta
 
-__all__ = ['Party', 'Country', 'Subdivision', 'Appointment', 
-    'DiagnosticHypothesis', 'DomiciliaryUnit', 'HealthProfessional', 
-    'HospitalUnit', 'HospitalWard', 'HealthProfessionalSpecialties', 
-    'OperationalArea', 'OperationalSector', 'Pathology', 'PathologyCategory', 
-    'PathologyGroup', 'PatientData', 'PatientDiseaseInfo', 'PatientEvaluation', 
-    'PatientVaccination', 'SecondaryCondition', 'SignsAndSymptoms']
+#__all__ = ['Party', 'Country', 'Subdivision', 'Appointment', 
+#    'DiagnosticHypothesis', 'DomiciliaryUnit', 'HealthProfessional', 
+#    'HospitalUnit', 'HospitalWard', 'HealthProfessionalSpecialties', 
+#    'OperationalArea', 'OperationalSector', 'Pathology', 'PathologyCategory', 
+#    'PathologyGroup', 'PatientData', 'PatientDiseaseInfo', 'PatientEvaluation', 
+#    'PatientVaccination', 'SecondaryCondition', 'SignsAndSymptoms']
+__all__ = ['Party', 'PatientData']
 
 
 class Party(SyncMixin):
