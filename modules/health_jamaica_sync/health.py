@@ -98,9 +98,10 @@ class PathologyGroup(SyncMixin):
     unique_id_column = 'code'
 
 
-class PatientData(SyncUUIDMixin):
+class PatientData(SyncMixin):
     __name__ = 'gnuhealth.patient'
     __metaclass__ = PoolMeta
+    unique_id_column = 'puid'
 
 
 class PatientDiseaseInfo(SyncUUIDMixin):
