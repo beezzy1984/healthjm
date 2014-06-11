@@ -7,7 +7,7 @@ def register():
     Pool.register(
         Sync,
         Party,
-        PartyAddress,
+        #PartyAddress,
         Country,
         Subdivision,
         Appointment, 
