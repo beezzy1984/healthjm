@@ -82,9 +82,15 @@ class OperationalSector(SyncMixin):
     unique_id_column = 'name'
 
 
-class Pathology(SyncUUIDMixin):
+class Pathology(SyncMixin):
+    # The pathology list (ICD-10) is installed at the 
+    # central instance only, and then replicated to the
+    # satellite instances
+    # The module health_icd10 will be installed at the central instance only
+    
     __name__ = 'gnuhealth.pathology'
     __metaclass__ = PoolMeta
+    unique_id_column = 'code'
 
 
 class PathologyCategory(SyncUUIDMixin):
