@@ -10,7 +10,7 @@ from trytond.pool import PoolMeta
 #    'PathologyGroup', 'PatientData', 'PatientDiseaseInfo', 'PatientEvaluation', 
 #    'PatientVaccination', 'SecondaryCondition', 'SignsAndSymptoms']
 
-__all__ = ['Party', 'PatientData', 'Pathology', 'PathologyCategory',
+__all__ = ['Party', 'PatientData', 'Pathology',
     'PathologyGroup']
 
 
@@ -96,6 +96,7 @@ class Pathology(SyncMixin):
 
 
 class PathologyCategory(SyncUUIDMixin):
+    # TODO: Check error on init -- violation of unique constraint
     __name__ = 'gnuhealth.pathology.category'
     __metaclass__ = PoolMeta
 

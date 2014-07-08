@@ -20,7 +20,7 @@ def register():
         #OperationalArea, 
         #OperationalSector,
         Pathology, 
-        PathologyCategory, 
+        #PathologyCategory, 
         PathologyGroup, 
         PatientData, 
         #PatientDiseaseInfo, 
