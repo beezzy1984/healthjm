@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <data>
-   <xpath expr="/form/label[@name='alternative_id_type']" position="after">
+   <xpath expr="/tree/field[@name='alternative_id_type']" position="after">
        <field name="issuedby" expand="1"/>
    </xpath>
 </data>

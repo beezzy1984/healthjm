@@ -17,19 +17,19 @@
        <field name="name">party_form</field>
     </record>
         
-   <record model="ir.ui.view" id="gnuhealth_alternative_identification_form">
+    <record model="ir.ui.view" id="gnuhealth_alternative_identification_form">
        <field name="model">gnuhealth.person_alternative_identification</field>
-       <field name="type">form</field>       
+       <field name="inherit" ref="health.gnuhealth_alternative_identification_form"/>
        <field name="name">alternativeID_form</field>
-   </record>
-   
-   <record model="ir.ui.view" id="gnuhealth_alternative_identification_tree">
+    </record>
+
+    <record model="ir.ui.view" id="gnuhealth_alternative_identification_tree">
        <field name="model">gnuhealth.person_alternative_identification</field>
-       <field name="type">tree</field>
+       <field name="inherit" ref="health.gnuhealth_alternative_identification_tree"/>
        <field name="name">alternativeID_tree</field>
-   </record>
-   
-   <record model="ir.ui.view" id="gnuhealth_newborn_view">
+    </record>
+
+    <record model="ir.ui.view" id="gnuhealth_newborn_view">
        <field name="model">gnuhealth.newborn</field>
        <field name="type">form</field>
        <field name="name">newborn_form</field>
