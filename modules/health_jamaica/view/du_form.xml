@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<data>
+
+    <xpath expr="/form/group[@id='du_header']/group[@id='du_address']/field[@name='address_zip']" position="after">
+        <label name="address_post_office"/>
+        <field name="address_post_office" widget="selection"/>
+        <label name="address_district_community"/>
+        <field name="address_district_community" widget="selection"/>
+    </xpath>
+
+</data>

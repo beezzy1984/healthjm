@@ -27,9 +27,11 @@ import string
 import random
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal
 from trytond.model import ModelView, ModelSQL, fields
+from trytond.pool import PoolMeta
 
-__all__ = ['PartyPatient','AlternativePersonID','DomiciliaryUnit','Newborn',
-    'Insurance']
+__all__ = ['PartyPatient', 'AlternativePersonID', 'PostOffice',
+    'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance']
+__metaclass__ = PoolMeta
 
 _STATES = {
     'invisible': Not(Bool(Eval('is_person'))),
@@ -162,7 +164,6 @@ class AlternativePersonID (ModelSQL, ModelView):
     'Alternative person ID'
     __name__ ='gnuhealth.person_alternative_identification' 
    
-    name = fields.Many2One('party.party', 'Party', readonly=True)
     issuedby = fields.Selection(
         [
             (None,''),
@@ -184,6 +185,39 @@ class AlternativePersonID (ModelSQL, ModelView):
                 cls.alternative_id_type.selection.append(selection)
 
 
+class PostOffice(ModelSQL, ModelView):
+    'Country Post Office'
+    __name__ = 'country.post_office'
+    
+    name = fields.Char('Post Office', required=True, help="Post Offices")
+
+    @classmethod
+    def __setup__(cls):
+        super(PostOffice, cls).__setup__()
+        cls._sql_constraints = [
+            ('name_uniq', 'UNIQUE(name)',
+                'The Post Office must be unique !'),
+        ]
+
+
+class DistrictCommunity(ModelSQL, ModelView):
+    'Country District Community'
+    __name__ = 'country.district_community'
+    
+    name = fields.Char('District Community', required=True,
+        help="District Communities")
+    post_office = fields.Many2One('country.post_office', 'Post Office', 
+        required=True)
+
+    @classmethod
+    def __setup__(cls):
+        super(DistrictCommunity, cls).__setup__()
+        cls._sql_constraints = [
+            ('name_uniq', 'UNIQUE(name)',
+                'The District Community must be unique !'),
+        ]
+
+
 class DomiciliaryUnit(ModelSQL, ModelView):
     'Domiciliary Unit'
     __name__ = 'gnuhealth.du'
@@ -192,6 +226,12 @@ class DomiciliaryUnit(ModelSQL, ModelView):
         'country.subdivision', 'Parish',
         domain=[('country', '=', Eval('address_country'))],
         depends=['address_country'], help="Enter Parish or State or County or Borrow")
+    address_post_office = fields.Many2One(
+        'country.post_office', 'Post Office', help="Enter Post Office")
+    address_district_community = fields.Many2One(
+        'country.district_community', 'District Community',
+        domain=[('post_office', '=', Eval('address_post_office'))],
+        depends=['address_post_office'], help="Enter District Community")
 
 
 class Newborn (ModelSQL, ModelView):
@@ -216,4 +256,3 @@ class Insurance(ModelSQL, ModelView):
 
     def get_rec_name(self, name):
         return (self.company.name + ' : ' + self.number)
-

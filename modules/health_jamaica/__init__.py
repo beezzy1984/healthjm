@@ -26,6 +26,8 @@ def register():
     Pool.register(
         PartyPatient,
         AlternativePersonID,
+        PostOffice,
+        DistrictCommunity,
         DomiciliaryUnit,
         Newborn,
         Insurance,
