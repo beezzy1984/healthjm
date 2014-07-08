@@ -9,7 +9,9 @@ from trytond.pool import PoolMeta
 #    'OperationalArea', 'OperationalSector', 'Pathology', 'PathologyCategory', 
 #    'PathologyGroup', 'PatientData', 'PatientDiseaseInfo', 'PatientEvaluation', 
 #    'PatientVaccination', 'SecondaryCondition', 'SignsAndSymptoms']
-__all__ = ['Party', 'PatientData']
+
+__all__ = ['Party', 'PatientData', 'Pathology', 'PathologyCategory',
+    'PathologyGroup']
 
 
 class Party(SyncMixin):
