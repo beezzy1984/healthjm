@@ -10,8 +10,11 @@ from trytond.pool import PoolMeta
 #    'PathologyGroup', 'PatientData', 'PatientDiseaseInfo', 'PatientEvaluation', 
 #    'PatientVaccination', 'SecondaryCondition', 'SignsAndSymptoms']
 
-__all__ = ['Party', 'PatientData', 'Pathology',
-    'PathologyGroup']
+__all__ = ['Party', 'PartyAddress', 'Country', 'Subdivision',
+    'OperationalArea','OperationalSector', 'DomiciliaryUnit',
+    'HealthInstitution', 'HealthInstitutionSpecialties',
+    'HealthInstitutionOperationalSector', 'Pathology', 'PathologyGroup',
+    'PatientData']
 
 
 class Party(SyncMixin):
@@ -37,6 +40,43 @@ class Subdivision(SyncMixin):
     unique_id_column = 'code'
 
 
+class OperationalArea(SyncMixin):
+    __name__ = 'gnuhealth.operational_area'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'name'
+
+
+class OperationalSector(SyncMixin):
+    __name__ = 'gnuhealth.operational_sector'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'name'
+
+
+class DomiciliaryUnit(SyncMixin):
+    __name__ = 'gnuhealth.du'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'code'
+
+
+class HealthInstitution(SyncMixin):
+    __name__ = 'gnuhealth.institution'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'code'
+
+class HealthInstitutionSpecialties(SyncUUIDMixin):
+    __name__ = 'gnuhealth.institution.specialties'
+    __metaclass__ = PoolMeta
+
+class HealthInstitutionOperationalSector(SyncUUIDMixin):
+    __name__ = 'gnuhealth.institution.operationalsector'
+    __metaclass__ = PoolMeta
+
+class HealthProfessional(SyncMixin):
+    __name__ = 'gnuhealth.healthprofessional'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'puid'
+
+
 class Appointment(SyncUUIDMixin):
     __name__ = 'gnuhealth.appointment'
     __metaclass__ = PoolMeta
@@ -44,16 +84,6 @@ class Appointment(SyncUUIDMixin):
 
 class DiagnosticHypothesis(SyncUUIDMixin):
     __name__ = 'gnuhealth.diagnostic_hypothesis'
-    __metaclass__ = PoolMeta
-
-
-class DomiciliaryUnit(SyncUUIDMixin):
-    __name__ = 'gnuhealth.du'
-    __metaclass__ = PoolMeta
-
-
-class HealthProfessional(SyncUUIDMixin):
-    __name__ = 'gnuhealth.healthprofessional'
     __metaclass__ = PoolMeta
 
 
@@ -70,18 +100,6 @@ class HospitalWard(SyncUUIDMixin):
 class HealthProfessionalSpecialties(SyncUUIDMixin):
     __name__ = 'gnuhealth.hp_specialty'
     __metaclass__ = PoolMeta
-
-
-class OperationalArea(SyncMixin):
-    __name__ = 'gnuhealth.operational_area'
-    __metaclass__ = PoolMeta
-    unique_id_column = 'name'
-
-
-class OperationalSector(SyncMixin):
-    __name__ = 'gnuhealth.operational_sector'
-    __metaclass__ = PoolMeta
-    unique_id_column = 'name'
 
 
 class Pathology(SyncMixin):
