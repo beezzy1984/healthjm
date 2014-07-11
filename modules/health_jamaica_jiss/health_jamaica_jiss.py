@@ -221,6 +221,17 @@ class Jiss (ModelSQL, ModelView):
         ('unknown', 'Unknown'),
         ], 'Place', help="Place of occurrance",sort=False,
             states={'required': Not(Equal(Eval('injury_type'), 'motor_vehicle'))})
+
+    disposition = fields.Selection([
+        (None, ''),
+        ('treated_sent', 'Treated and Sent Home'),
+        ('admitted', 'Admitted to Ward'),
+        ('observation', 'Admitted to Observation'),
+        ('died', 'Died'),
+        ('daa', 'Discharge Against Advise'),
+        ('transferred', 'Transferred'),
+        ('doa', 'Dead on Arrival'),
+        ], 'Disposition', help="Place of occurrance",sort=False, required=True)
     
     def get_patient(self, name):
         return self.name.patient.name.name +' ' + self.name.patient.name.lastname

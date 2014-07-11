@@ -76,5 +76,8 @@
     <separator id="sep_details" colspan="4" string="Details"/>
     <newline/>
     <field colspan="4" name="injury_details"/>
-    
+    <newline/>
+    <group colspan="4" id="jiss_disposition" string="Disposition">
+        <field name="disposition"/>
+    </group>
 </form>
