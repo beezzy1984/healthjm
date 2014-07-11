@@ -77,7 +77,7 @@ class Jiss (ModelSQL, ModelView):
 
     injury_type = fields.Selection([
         (None, ''),
-        ('accidental', 'Accidental'),
+        ('accidental', 'Accidental / Unintentional'),
         ('violence', 'Violence'),
         ('attempt_suicide', 'Suicide Attempt'),
         ('motor_vehicle', 'Motor Vehicle'),
