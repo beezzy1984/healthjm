@@ -59,7 +59,12 @@
     </group>
 
     <newline/>
-    <group id="jiss_deatils" string="Alcohol and other Drugs context">
+    <group id="jiss_place" string="Place of occurrance" states="{'invisible': Equal(Eval('injury_type'), 'motor_vehicle')}">
+        <label name="place_occurrance"/>
+        <field name="place_occurrance"/>
+    </group>
+    <newline/>
+    <group id="jiss_drug_alcohol" string="Alcohol and other Drugs context">
         <label name="alcohol"/>
         <field name="alcohol"/>
         <label name="drugs"/>

@@ -187,9 +187,27 @@ class Jiss (ModelSQL, ModelView):
         ('gang', 'Gang Activity'),
         ('other_crime', 'Committing a crime (other)'),
         ('other', 'Other'),
+        ('unknown', 'Unknown'),
         ], 'Context', help="Precipitating Factor",sort=False,
             states={'required': Equal(Eval('injury_type'), 'violence')})
 
+
+    # Place of occurrance . Not used in motor vehicle accidents
+    
+    place_occurrance = fields.Selection([
+        (None, ''),
+        ('home', 'Home'),
+        ('street', 'Street'),
+        ('institution', 'Institution'),
+        ('school', 'School'),
+        ('commerce', 'Commercial Area'),
+        ('publicbuilding', 'Public Building'),
+        ('recreational', 'Recreational Area'),
+        ('transportation', 'Public transportation'),
+        ('sports', 'Sports event'),
+        ('unknown', 'Unknown'),
+        ], 'Place', help="Place of occurrance",sort=False,
+            states={'required': Not(Equal(Eval('injury_type'), 'motor_vehicle'))})
     
     def get_patient(self, name):
         return self.name.patient.name.name +' ' + self.name.patient.name.lastname
