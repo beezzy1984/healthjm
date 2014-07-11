@@ -163,6 +163,21 @@ class Jiss (ModelSQL, ModelView):
 
     injury_details = fields.Text('Details')
     
+    # Add victim-perpretator relationship for violence-related injuries
+    victim_perpetrator = fields.Selection([
+        (None, ''),
+        ('parent', 'Parent'),
+        ('spouse', 'Wife / Husband'),
+        ('girlboyfriend', 'Girl / Boyfriend'),
+        ('relative', 'Other relative'),
+        ('aquaintance', 'Aquaitance / Friend'),
+        ('official', 'Official / Legal'),
+        ('stranger', 'Stranger'),
+        ('other', 'other'),
+        ], 'Relationship', help="Victim - Perpetrator relationship",sort=False,
+            states={'required': Equal(Eval('injury_type'), 'violence')})
+
+    
     def get_patient(self, name):
         return self.name.patient.name.name +' ' + self.name.patient.name.lastname
 

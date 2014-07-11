@@ -51,6 +51,11 @@
         <label name="safety_gear"/>
         <field name="safety_gear"/>
     </group>
+    <group colspan="4" col="8" id="violent_injury" string="Violence" states="{'invisible': Not(Equal(Eval('injury_type'), 'violence'))}">
+        <label name="victim_perpetrator"/>
+        <field name="victim_perpetrator"/>
+    </group>
+
     <newline/>
     <group id="jiss_deatils" string="Alcohol and other Drugs context">
         <label name="alcohol"/>
