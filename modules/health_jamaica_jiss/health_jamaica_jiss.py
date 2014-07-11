@@ -191,6 +191,19 @@ class Jiss (ModelSQL, ModelView):
         ], 'Context', help="Precipitating Factor",sort=False,
             states={'required': Equal(Eval('injury_type'), 'violence')})
 
+    injury_method = fields.Selection([
+        (None, ''),
+        ('blunt', 'Blunt object'),
+        ('push', 'Push/bodily force'),
+        ('sharp', 'Sharp objects'),
+        ('gun', 'Gun shot'),
+        ('sexual', 'Sexual Assault'),
+        ('choking', 'Choking/strangulation'),
+        ('other', 'Other'),
+        ('unknown', 'Unknown'),
+        ], 'Method', help="Method of Injury",sort=False,
+            states={'required': Equal(Eval('injury_type'), 'violence')})
+
 
     # Place of occurrance . Not used in motor vehicle accidents
     

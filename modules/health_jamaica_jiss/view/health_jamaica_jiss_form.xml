@@ -56,6 +56,8 @@
         <field name="victim_perpetrator"/>
         <label name="violence_circumstances"/>
         <field name="violence_circumstances"/>
+        <label name="injury_method"/>
+        <field name="injury_method"/>
     </group>
 
     <newline/>
