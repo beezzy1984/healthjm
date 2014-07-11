@@ -148,7 +148,8 @@ class Jiss (ModelSQL, ModelView):
         ('suspected','Suspected'),
         ('unknown', 'Unknown'),
         ], 'Alcohol', required=True,
-            help="Use of Safety Gear - Helmet, safety belt...",sort=False)
+            help="Is there evidence of alcohol use by the injurd person"
+                " in the 6 hours before the accident ?",sort=False)
 
     drugs = fields.Selection([
         (None, ''),
@@ -157,7 +158,8 @@ class Jiss (ModelSQL, ModelView):
         ('suspected','Suspected'),
         ('unknown', 'Unknown'),
         ], 'Other Drugs', required=True,
-            help="Use of Safety Gear - Helmet, safety belt...",sort=False)
+            help="Is there evidence of drug use by the injurd person"
+                " in the 6 hours before the accident ?",sort=False)
 
     injury_details = fields.Text('Details')
     
