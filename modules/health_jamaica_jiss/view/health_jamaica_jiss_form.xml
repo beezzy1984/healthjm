@@ -54,6 +54,8 @@
     <group colspan="4" col="8" id="violent_injury" string="Violence" states="{'invisible': Not(Equal(Eval('injury_type'), 'violence'))}">
         <label name="victim_perpetrator"/>
         <field name="victim_perpetrator"/>
+        <label name="violence_circumstances"/>
+        <field name="violence_circumstances"/>
     </group>
 
     <newline/>

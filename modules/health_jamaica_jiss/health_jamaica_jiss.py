@@ -177,6 +177,19 @@ class Jiss (ModelSQL, ModelView):
         ], 'Relationship', help="Victim - Perpetrator relationship",sort=False,
             states={'required': Equal(Eval('injury_type'), 'violence')})
 
+
+    violence_circumstances = fields.Selection([
+        (None, ''),
+        ('fight', 'Fight'),
+        ('robbery', 'Robbery'),
+        ('drug', 'Drug Related'),
+        ('sexual', 'Sexual Assault'),
+        ('gang', 'Gang Activity'),
+        ('other_crime', 'Committing a crime (other)'),
+        ('other', 'Other'),
+        ], 'Context', help="Precipitating Factor",sort=False,
+            states={'required': Equal(Eval('injury_type'), 'violence')})
+
     
     def get_patient(self, name):
         return self.name.patient.name.name +' ' + self.name.patient.name.lastname
