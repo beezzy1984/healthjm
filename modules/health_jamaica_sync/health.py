@@ -52,10 +52,9 @@ class OperationalSector(SyncMixin):
     unique_id_column = 'name'
 
 
-class DomiciliaryUnit(SyncMixin):
+class DomiciliaryUnit(SyncUUIDMixin):
     __name__ = 'gnuhealth.du'
     __metaclass__ = PoolMeta
-    unique_id_column = 'name'
 
 
 class HealthInstitution(SyncMixin):
