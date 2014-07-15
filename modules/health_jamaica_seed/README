@@ -1,0 +1,20 @@
+#    Copyright (C) 2014  Ministry of Health, Jamaica
+
+# health_jamaica_seed Module
+
+A Simple module that contains only data to be imported.  
+
+This module should always be installed last - after health_jamaica_profile has
+had a chance to complete and, if a sync-master instance, ICD10 has been
+installed as well.
+
+Some goals of this module are:
+
+  * to be designed so it is usable on all Jamaica instances
+  * to only contain data, and import/export utilities - only for local data
+  * currently only contains access_rights.xml - Groups + Permissions
+  * Need to include : 
+    * The simple stuff - parishes, regions, sectors, areas
+    * Institutions - Hospitals and Health Centers
+    * Specialties - for both types of institutions
+    * Main-Specialty mapping for Hospitals.
