@@ -53,8 +53,7 @@ class Jiss (ModelSQL, ModelView):
     longitude = fields.Numeric('Longitude', digits=(4, 14))
 
     urladdr = fields.Char(
-        'OSM Map', on_change_with=[
-            'latitude', 'longitude'],
+        'OSM Map',
         help="Maps the Accident / Injury location on Open Street Map")
 
     healthcenter = fields.Many2One('gnuhealth.institution','Institution')
@@ -245,6 +244,7 @@ class Jiss (ModelSQL, ModelView):
     def get_patient_complaint(self, name):
         return self.name.chief_complaint
 
+    @fields.depends('latitude', 'longitude')
     def on_change_with_urladdr(self):
         # Generates the URL to be used in OpenStreetMap
         # The address will be mapped to the URL in the following way
