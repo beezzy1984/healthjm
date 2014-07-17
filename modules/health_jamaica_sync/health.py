@@ -13,8 +13,7 @@ from trytond.pool import PoolMeta
 __all__ = ['Party', 'PartyAddress', 'Country', 'Subdivision',
     'OperationalArea','OperationalSector', 'DomiciliaryUnit',
     'HealthInstitution', 'HealthInstitutionSpecialties',
-    'HealthInstitutionOperationalSector', 'Pathology', 'PathologyGroup',
-    'PatientData']
+    'HealthInstitutionOperationalSector', 'PatientData']
 
 
 class Party(SyncMixin):
@@ -26,18 +25,6 @@ class Party(SyncMixin):
 class PartyAddress(SyncUUIDMixin):
     __name__ = 'party.address'
     __metaclass__ = PoolMeta
-
-
-class Country(SyncMixin):
-    __name__ = 'country.country'
-    __metaclass__ = PoolMeta
-    unique_id_column = 'code'
-
-
-class Subdivision(SyncMixin):
-    __name__ = 'country.subdivision'
-    __metaclass__ = PoolMeta
-    unique_id_column = 'code'
 
 
 class OperationalArea(SyncMixin):
@@ -99,29 +86,6 @@ class HospitalWard(SyncUUIDMixin):
 class HealthProfessionalSpecialties(SyncUUIDMixin):
     __name__ = 'gnuhealth.hp_specialty'
     __metaclass__ = PoolMeta
-
-
-class Pathology(SyncMixin):
-    # The pathology list (ICD-10) is installed at the 
-    # central instance only, and then replicated to the
-    # satellite instances
-    # The module health_icd10 will be installed at the central instance only
-    
-    __name__ = 'gnuhealth.pathology'
-    __metaclass__ = PoolMeta
-    unique_id_column = 'code'
-
-
-class PathologyCategory(SyncUUIDMixin):
-    # TODO: Check error on init -- violation of unique constraint
-    __name__ = 'gnuhealth.pathology.category'
-    __metaclass__ = PoolMeta
-
-
-class PathologyGroup(SyncMixin):
-    __name__ = 'gnuhealth.pathology.group'
-    __metaclass__ = PoolMeta
-    unique_id_column = 'code'
 
 
 class PatientData(SyncMixin):
