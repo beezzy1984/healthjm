@@ -10,8 +10,8 @@ from trytond.pool import PoolMeta
 #    'PathologyGroup', 'PatientData', 'PatientDiseaseInfo', 'PatientEvaluation', 
 #    'PatientVaccination', 'SecondaryCondition', 'SignsAndSymptoms']
 
-__all__ = ['Party', 'PartyAddress', 'Country', 'Subdivision',
-    'OperationalArea','OperationalSector', 'DomiciliaryUnit',
+__all__ = ['Party', 'PartyAddress', 'OperationalArea',
+    'OperationalSector', 'DomiciliaryUnit',
     'HealthInstitution', 'HealthInstitutionSpecialties',
     'HealthInstitutionOperationalSector', 'PatientData']
 
