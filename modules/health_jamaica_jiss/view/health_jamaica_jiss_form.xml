@@ -51,8 +51,22 @@
         <label name="safety_gear"/>
         <field name="safety_gear"/>
     </group>
+    <group colspan="4" col="8" id="violent_injury" string="Violence" states="{'invisible': Not(Equal(Eval('injury_type'), 'violence'))}">
+        <label name="victim_perpetrator"/>
+        <field name="victim_perpetrator"/>
+        <label name="violence_circumstances"/>
+        <field name="violence_circumstances"/>
+        <label name="injury_method"/>
+        <field name="injury_method"/>
+    </group>
+
     <newline/>
-    <group id="jiss_deatils" string="Alcohol and other Drugs context">
+    <group id="jiss_place" string="Place of occurrance" states="{'invisible': Equal(Eval('injury_type'), 'motor_vehicle')}">
+        <label name="place_occurrance"/>
+        <field name="place_occurrance"/>
+    </group>
+    <newline/>
+    <group id="jiss_drug_alcohol" string="Alcohol and other Drugs context">
         <label name="alcohol"/>
         <field name="alcohol"/>
         <label name="drugs"/>
@@ -62,5 +76,8 @@
     <separator id="sep_details" colspan="4" string="Details"/>
     <newline/>
     <field colspan="4" name="injury_details"/>
-    
+    <newline/>
+    <group colspan="4" id="jiss_disposition" string="Disposition">
+        <field name="disposition"/>
+    </group>
 </form>

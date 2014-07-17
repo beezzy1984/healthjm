@@ -53,8 +53,7 @@ class Jiss (ModelSQL, ModelView):
     longitude = fields.Numeric('Longitude', digits=(4, 14))
 
     urladdr = fields.Char(
-        'OSM Map', on_change_with=[
-            'latitude', 'longitude'],
+        'OSM Map',
         help="Maps the Accident / Injury location on Open Street Map")
 
     healthcenter = fields.Many2One('gnuhealth.institution','Institution')
@@ -77,7 +76,7 @@ class Jiss (ModelSQL, ModelView):
 
     injury_type = fields.Selection([
         (None, ''),
-        ('accidental', 'Accidental'),
+        ('accidental', 'Accidental / Unintentional'),
         ('violence', 'Violence'),
         ('attempt_suicide', 'Suicide Attempt'),
         ('motor_vehicle', 'Motor Vehicle'),
@@ -148,7 +147,8 @@ class Jiss (ModelSQL, ModelView):
         ('suspected','Suspected'),
         ('unknown', 'Unknown'),
         ], 'Alcohol', required=True,
-            help="Use of Safety Gear - Helmet, safety belt...",sort=False)
+            help="Is there evidence of alcohol use by the injured person"
+                " in the 6 hours before the accident ?",sort=False)
 
     drugs = fields.Selection([
         (None, ''),
@@ -157,9 +157,80 @@ class Jiss (ModelSQL, ModelView):
         ('suspected','Suspected'),
         ('unknown', 'Unknown'),
         ], 'Other Drugs', required=True,
-            help="Use of Safety Gear - Helmet, safety belt...",sort=False)
+            help="Is there evidence of drug use by the injured person"
+                " in the 6 hours before the accident ?",sort=False)
 
     injury_details = fields.Text('Details')
+    
+    # Add victim-perpretator relationship for violence-related injuries
+    victim_perpetrator = fields.Selection([
+        (None, ''),
+        ('parent', 'Parent'),
+        ('spouse', 'Wife / Husband'),
+        ('girlboyfriend', 'Girl / Boyfriend'),
+        ('relative', 'Other relative'),
+        ('aquaintance', 'Aquaitance / Friend'),
+        ('official', 'Official / Legal'),
+        ('stranger', 'Stranger'),
+        ('other', 'other'),
+        ], 'Relationship', help="Victim - Perpetrator relationship",sort=False,
+            states={'required': Equal(Eval('injury_type'), 'violence')})
+
+
+    violence_circumstances = fields.Selection([
+        (None, ''),
+        ('fight', 'Fight'),
+        ('robbery', 'Robbery'),
+        ('drug', 'Drug Related'),
+        ('sexual', 'Sexual Assault'),
+        ('gang', 'Gang Activity'),
+        ('other_crime', 'Committing a crime (other)'),
+        ('other', 'Other'),
+        ('unknown', 'Unknown'),
+        ], 'Context', help="Precipitating Factor",sort=False,
+            states={'required': Equal(Eval('injury_type'), 'violence')})
+
+    injury_method = fields.Selection([
+        (None, ''),
+        ('blunt', 'Blunt object'),
+        ('push', 'Push/bodily force'),
+        ('sharp', 'Sharp objects'),
+        ('gun', 'Gun shot'),
+        ('sexual', 'Sexual Assault'),
+        ('choking', 'Choking/strangulation'),
+        ('other', 'Other'),
+        ('unknown', 'Unknown'),
+        ], 'Method', help="Method of Injury",sort=False,
+            states={'required': Equal(Eval('injury_type'), 'violence')})
+
+
+    # Place of occurrance . Not used in motor vehicle accidents
+    
+    place_occurrance = fields.Selection([
+        (None, ''),
+        ('home', 'Home'),
+        ('street', 'Street'),
+        ('institution', 'Institution'),
+        ('school', 'School'),
+        ('commerce', 'Commercial Area'),
+        ('publicbuilding', 'Public Building'),
+        ('recreational', 'Recreational Area'),
+        ('transportation', 'Public transportation'),
+        ('sports', 'Sports event'),
+        ('unknown', 'Unknown'),
+        ], 'Place', help="Place of occurrance",sort=False,
+            states={'required': Not(Equal(Eval('injury_type'), 'motor_vehicle'))})
+
+    disposition = fields.Selection([
+        (None, ''),
+        ('treated_sent', 'Treated and Sent Home'),
+        ('admitted', 'Admitted to Ward'),
+        ('observation', 'Admitted to Observation'),
+        ('died', 'Died'),
+        ('daa', 'Discharge Against Advise'),
+        ('transferred', 'Transferred'),
+        ('doa', 'Dead on Arrival'),
+        ], 'Disposition', help="Place of occurrance",sort=False, required=True)
     
     def get_patient(self, name):
         return self.name.patient.name.name +' ' + self.name.patient.name.lastname
@@ -173,6 +244,7 @@ class Jiss (ModelSQL, ModelView):
     def get_patient_complaint(self, name):
         return self.name.chief_complaint
 
+    @fields.depends('latitude', 'longitude')
     def on_change_with_urladdr(self):
         # Generates the URL to be used in OpenStreetMap
         # The address will be mapped to the URL in the following way
