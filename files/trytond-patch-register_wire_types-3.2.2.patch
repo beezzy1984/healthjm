@@ -1,0 +1,253 @@
+diff -r bb4fd0501932 trytond/model/fields/dict.py
+--- a/trytond/model/fields/dict.py	Thu Aug 07 11:48:12 2014 -0300
++++ b/trytond/model/fields/dict.py	Thu Aug 07 12:12:59 2014 -0300
+@@ -7,7 +7,7 @@
+ from sql import Query, Expression
+ 
+ from .field import Field, SQLType
+-from ...protocols.jsonrpc import object_hook, JSONEncoder
++from ...protocols.jsonrpc import JSONDecoder, JSONEncoder
+ 
+ 
+ class Dict(Field):
+@@ -28,7 +28,7 @@
+         for value in values or []:
+             if value[name]:
+                 dicts[value['id']] = json.loads(value[name],
+-                    object_hook=object_hook)
++                    object_hook=JSONDecoder())
+         return dicts
+ 
+     @staticmethod
+diff -r bb4fd0501932 trytond/protocols/jsonrpc.py
+--- a/trytond/protocols/jsonrpc.py	Thu Aug 07 11:48:12 2014 -0300
++++ b/trytond/protocols/jsonrpc.py	Thu Aug 07 12:12:59 2014 -0300
+@@ -33,63 +33,88 @@
+     from StringIO import StringIO
+ 
+ 
+-def object_hook(dct):
+-    if '__class__' in dct:
+-        if dct['__class__'] == 'datetime':
+-            return datetime.datetime(dct['year'], dct['month'], dct['day'],
+-                dct['hour'], dct['minute'], dct['second'], dct['microsecond'])
+-        elif dct['__class__'] == 'date':
+-            return datetime.date(dct['year'], dct['month'], dct['day'])
+-        elif dct['__class__'] == 'time':
+-            return datetime.time(dct['hour'], dct['minute'], dct['second'],
+-                dct['microsecond'])
+-        elif dct['__class__'] == 'buffer':
+-            return buffer(base64.decodestring(dct['base64']))
+-        elif dct['__class__'] == 'Decimal':
+-            return Decimal(dct['decimal'])
+-    return dct
++class JSONDecoder(object):
++
++    decoders = {}
++
++    @classmethod
++    def register(cls, klass, decoder):
++        assert klass not in cls.decoders
++        cls.decoders[klass] = decoder
++
++    def __call__(self, dct):
++        if dct.get('__class__') in self.decoders:
++            return self.decoders[dct['__class__']](dct)
++        return dct
++
++JSONDecoder.register('datetime',
++    lambda dct: datetime.datetime(dct['year'], dct['month'], dct['day'],
++        dct['hour'], dct['minute'], dct['second'], dct['microsecond']))
++JSONDecoder.register('date',
++    lambda dct: datetime.date(dct['year'], dct['month'], dct['day']))
++JSONDecoder.register('time',
++    lambda dct: datetime.time(dct['hour'], dct['minute'], dct['second'],
++        dct['microsecond']))
++JSONDecoder.register('buffer', lambda dct:
++    buffer(base64.decodestring(dct['base64'])))
++JSONDecoder.register('Decimal', lambda dct: Decimal(dct['decimal']))
+ 
+ 
+ class JSONEncoder(json.JSONEncoder):
+ 
++    serializers = {}
++
+     def __init__(self, *args, **kwargs):
+         super(JSONEncoder, self).__init__(*args, **kwargs)
+         # Force to use our custom decimal with simplejson
+         self.use_decimal = False
+ 
++    @classmethod
++    def register(cls, klass, encoder):
++        assert klass not in cls.serializers
++        cls.serializers[klass] = encoder
++
+     def default(self, obj):
+-        if isinstance(obj, datetime.date):
+-            if isinstance(obj, datetime.datetime):
+-                return {'__class__': 'datetime',
+-                        'year': obj.year,
+-                        'month': obj.month,
+-                        'day': obj.day,
+-                        'hour': obj.hour,
+-                        'minute': obj.minute,
+-                        'second': obj.second,
+-                        'microsecond': obj.microsecond,
+-                        }
+-            return {'__class__': 'date',
+-                    'year': obj.year,
+-                    'month': obj.month,
+-                    'day': obj.day,
+-                    }
+-        elif isinstance(obj, datetime.time):
+-            return {'__class__': 'time',
+-                'hour': obj.hour,
+-                'minute': obj.minute,
+-                'second': obj.second,
+-                'microsecond': obj.microsecond,
+-                }
+-        elif isinstance(obj, buffer):
+-            return {'__class__': 'buffer',
+-                'base64': base64.encodestring(obj),
+-                }
+-        elif isinstance(obj, Decimal):
+-            return {'__class__': 'Decimal',
+-                'decimal': str(obj),
+-                }
+-        return super(JSONEncoder, self).default(obj)
++        marshaller = self.serializers.get(type(obj),
++            super(JSONEncoder, self).default)
++        return marshaller(obj)
++
++JSONEncoder.register(datetime.datetime,
++    lambda o: {
++        '__class__': 'datetime',
++        'year': o.year,
++        'month': o.month,
++        'day': o.day,
++        'hour': o.hour,
++        'minute': o.minute,
++        'second': o.second,
++        'microsecond': o.microsecond,
++        })
++JSONEncoder.register(datetime.date,
++    lambda o: {
++        '__class__': 'date',
++        'year': o.year,
++        'month': o.month,
++        'day': o.day,
++        })
++JSONEncoder.register(datetime.time,
++    lambda o: {
++        '__class__': 'time',
++        'hour': o.hour,
++        'minute': o.minute,
++        'second': o.second,
++        'microsecond': o.microsecond,
++        })
++JSONEncoder.register(buffer,
++    lambda o: {
++        '__class__': 'buffer',
++        'base64': base64.encodestring(o),
++        })
++JSONEncoder.register(Decimal,
++    lambda o: {
++        '__class__': 'Decimal',
++        'decimal': str(o),
++        })
+ 
+ 
+ class SimpleJSONRPCDispatcher(SimpleXMLRPCServer.SimpleXMLRPCDispatcher):
+@@ -111,7 +136,7 @@
+         existing method through subclassing is the prefered means
+         of changing method dispatch behavior.
+         """
+-        rawreq = json.loads(data, object_hook=object_hook)
++        rawreq = json.loads(data, object_hook=JSONDecoder())
+ 
+         req_id = rawreq.get('id', 0)
+         method = rawreq['method']
+diff -r bb4fd0501932 trytond/protocols/xmlrpc.py
+--- a/trytond/protocols/xmlrpc.py	Thu Aug 07 11:48:12 2014 -0300
++++ b/trytond/protocols/xmlrpc.py	Thu Aug 07 12:12:59 2014 -0300
+@@ -74,6 +74,28 @@
+ xmlrpclib.Marshaller.dispatch[DictType] = dump_struct
+ 
+ 
++class XMLRPCDecoder(object):
++
++    decoders = {}
++
++    @classmethod
++    def register(cls, klass, decoder):
++        assert klass not in cls.decoders
++        cls.decoders[klass] = decoder
++
++    def __call__(self, dct):
++        if dct.get('__class__') in self.decoders:
++            return self.decoders[dct['__class__']](dct)
++        return dct
++
++XMLRPCDecoder.register('date',
++    lambda dct: datetime.date(dct['year'], dct['month'], dct['day']))
++XMLRPCDecoder.register('time',
++    lambda dct: datetime.time(dct['hour'], dct['minute'], dct['second'],
++        dct['microsecond']))
++XMLRPCDecoder.register('Decimal', lambda dct: Decimal(dct['decimal']))
++
++
+ def end_struct(self, data):
+     mark = self._marks.pop()
+     # map structs to Python dictionaries
+@@ -81,14 +103,7 @@
+     items = self._stack[mark:]
+     for i in range(0, len(items), 2):
+         dct[xmlrpclib._stringify(items[i])] = items[i + 1]
+-    if '__class__' in dct:
+-        if dct['__class__'] == 'date':
+-            dct = datetime.date(dct['year'], dct['month'], dct['day'])
+-        elif dct['__class__'] == 'time':
+-            dct = datetime.time(dct['hour'], dct['minute'], dct['second'],
+-                dct['microsecond'])
+-        elif dct['__class__'] == 'Decimal':
+-            dct = Decimal(dct['decimal'])
++    dct = XMLRPCDecoder()(dct)
+     self._stack[mark:] = [dct]
+     self._value = 0
+ 
+@@ -103,6 +118,14 @@
+ xmlrpclib.Unmarshaller.dispatch["dateTime.iso8601"] = _end_dateTime
+ 
+ 
++def _end_base64(self, data):
++    value = xmlrpclib.Binary()
++    value.decode(data)
++    self.append(buffer(value.data))
++    self._value = 0
++xmlrpclib.Unmarshaller.dispatch['base64'] = _end_base64
++
++
+ class GenericXMLRPCRequestHandler:
+ 
+     def _dispatch(self, method, params):
+diff -r bb4fd0501932 trytond/wizard/wizard.py
+--- a/trytond/wizard/wizard.py	Thu Aug 07 11:48:12 2014 -0300
++++ b/trytond/wizard/wizard.py	Thu Aug 07 12:12:59 2014 -0300
+@@ -13,7 +13,7 @@
+ from trytond.transaction import Transaction
+ from trytond.error import WarningErrorMixin
+ from trytond.url import URLMixin
+-from trytond.protocols.jsonrpc import object_hook, JSONEncoder
++from trytond.protocols.jsonrpc import JSONDecoder, JSONEncoder
+ from trytond.model.fields import states_validate
+ from trytond.pyson import PYSONEncoder
+ from trytond.rpc import RPC
+@@ -265,7 +265,7 @@
+         self._session_id = session_id
+         session = Session(session_id)
+         data = json.loads(session.data.encode('utf-8'),
+-            object_hook=object_hook)
++            object_hook=JSONDecoder())
+         for state_name, state in self.states.iteritems():
+             if isinstance(state, StateView):
+                 Target = pool.get(state.model_name)
