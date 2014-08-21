@@ -140,6 +140,9 @@ class PartyPatient (ModelSQL, ModelView):
 
     @classmethod
     def create(cls, vlist):
+        Sequence = Pool().get('ir.sequence')
+        Configuration = Pool().get('party.configuration')
+
         vlist = [x.copy() for x in vlist]
         for values in vlist:
             if not 'ref' in values:
@@ -148,25 +151,6 @@ class PartyPatient (ModelSQL, ModelView):
                 values['ref'] = 'NN-' + values.get('ref')
             if 'is_person' in values and not values['is_person']:
                 values['ref'] = 'NP-' + values['ref']
-        return super(PartyPatient, cls).create(vlist)
-
-    @classmethod
-    def validate(cls, parties):
-        super(PartyPatient, cls).validate(parties)
-        for party in parties:
-            party.check_party_warning()
-
-    def check_party_warning(self):
-        if not self.party_warning_ack:
-            self.raise_user_error('unidentified_party_warning')
-
-    @classmethod
-    def create(cls, vlist):
-        Sequence = Pool().get('ir.sequence')
-        Configuration = Pool().get('party.configuration')
-
-        vlist = [x.copy() for x in vlist]
-        for values in vlist:
             if not values.get('code'):
                 config = Configuration(1)
                 # Use the company name . Initially, use the name
@@ -180,6 +164,15 @@ class PartyPatient (ModelSQL, ModelView):
             values.setdefault('addresses', None)
         return super(PartyPatient, cls).create(vlist)
 
+    @classmethod
+    def validate(cls, parties):
+        super(PartyPatient, cls).validate(parties)
+        for party in parties:
+            party.check_party_warning()
+
+    def check_party_warning(self):
+        if not self.party_warning_ack:
+            self.raise_user_error('unidentified_party_warning')
 
 
 class AlternativePersonID (ModelSQL, ModelView):
