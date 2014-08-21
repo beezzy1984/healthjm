@@ -27,7 +27,8 @@ import string
 import random
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal
 from trytond.model import ModelView, ModelSQL, fields
-from trytond.pool import PoolMeta
+from trytond.pool import Pool, PoolMeta
+from trytond.transaction import Transaction
 
 __all__ = ['PartyPatient', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance']
@@ -158,6 +159,27 @@ class PartyPatient (ModelSQL, ModelView):
     def check_party_warning(self):
         if not self.party_warning_ack:
             self.raise_user_error('unidentified_party_warning')
+
+    @classmethod
+    def create(cls, vlist):
+        Sequence = Pool().get('ir.sequence')
+        Configuration = Pool().get('party.configuration')
+
+        vlist = [x.copy() for x in vlist]
+        for values in vlist:
+            if not values.get('code'):
+                config = Configuration(1)
+                # Use the company name . Initially, use the name
+                # since the company hasn't been created yet.
+                prefix = Transaction().context.get('company.rec_name') \
+                    or values['name']
+                values['code'] = str(prefix) + '-' + \
+                    Sequence.get_id(config.party_sequence.id)
+
+            values['code_length'] = len(values['code'])
+            values.setdefault('addresses', None)
+        return super(PartyPatient, cls).create(vlist)
+
 
 
 class AlternativePersonID (ModelSQL, ModelView):
