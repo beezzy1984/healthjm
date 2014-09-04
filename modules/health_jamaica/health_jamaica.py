@@ -48,19 +48,27 @@ class PartyPatient (ModelSQL, ModelView):
         'UPC',
         help='Universal Patient Code',
         states=_STATES, depends=_DEPENDS, readonly=True)
+    name = fields.Char('Name', required=True, 
+        states={'readonly':Bool(Eval('is_person'))},
+        )
     alias = fields.Char('Alias', states=_STATES, depends=_DEPENDS,
-        help="Common name that the Patient is referred to as")
+        help="Nickname, pet-name or other name by which the patient is called")
+    firstname = fields.Char('First name', states=_STATES, depends=_DEPENDS,
+        select=True)
     middlename = fields.Char('Middle Name', states=_STATES, depends=_DEPENDS,
-        help="Middle name of Patient")
-    mother_maiden_name = fields.Char('Mother Maiden Name', states=_STATES, 
+        help="Middle name or names of Patient")
+    mother_maiden_name = fields.Char("Mother's Maiden Name", states=_STATES, 
         depends=_DEPENDS, help="Mother's Maiden Name")
-    father_name = fields.Char('Father Name', states=_STATES, depends=_DEPENDS,
+    father_name = fields.Char("Father's Name", states=_STATES, depends=_DEPENDS,
         help="Father's Name")
+    lastname = fields.Char('Last Name', help='Last Name',
+        states={'invisible': Not(Bool(Eval('is_person')))},
+        select=True)
 
     suffix = fields.Selection([
         (None,''),
-        ('jr', 'JR. - Junior'),
-        ('sr', 'SR. - Senior'),
+        ('jr', 'Jr. - Junior'),
+        ('sr', 'Sr. - Senior'),
         ('II', 'II - The Second'),
         ('III', 'III - The Third'),
         ], 'Suffix', states=_STATES, depends=_DEPENDS)
@@ -97,6 +105,12 @@ class PartyPatient (ModelSQL, ModelView):
             'readonly': Bool(Eval('ref'))
             })
 
+    occupation = fields.Many2One('gnuhealth.occupation', 'Occupational Group')
+
+    def get_rec_name(self, name):
+        # simplified since we generate the person name and all others are okay
+        return self.name
+
     @classmethod
     def __setup__(cls):
         super(PartyPatient, cls).__setup__()
@@ -123,6 +137,18 @@ class PartyPatient (ModelSQL, ModelView):
         return {
             'party_warning_ack': party_warning_ack,
         }
+
+    @fields.depends('lastname', 'firstname', 'middlename')
+    def on_change_with_name(self, *arg, **kwarg):
+        print('calling prints from onchanewith_name')
+        print repr(arg)
+        print repr(kwarg)
+        namelist = [self.lastname]
+        if self.firstname:
+            namelist.extend([',', self.firstname])
+        if self.middlename:
+            namelist.append(self.middlename)
+        return ' '.join(namelist)
 
     @classmethod
     def generate_upc(cls):

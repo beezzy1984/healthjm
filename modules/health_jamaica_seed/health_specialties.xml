@@ -1,71 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tryton>
 	<data>
-		<record id="74" model="gnuhealth.specialty">
+		<record id="jm_specialty_74" model="gnuhealth.specialty">
 			<field name="name">HIV</field>
 			<field name="code">HIV</field>
 		</record>
-		<record id="75" model="gnuhealth.specialty">
+		<record id="jm_specialty_75" model="gnuhealth.specialty">
 			<field name="name">Physiotherapy</field>
 			<field name="code">PHYSIOT</field>
 		</record>
-		<record id="76" model="gnuhealth.specialty">
+		<record id="jm_specialty_76" model="gnuhealth.specialty">
 			<field name="name">Rehabilitation</field>
 			<field name="code">REHAB</field>
 		</record>
-		<record id="77" model="gnuhealth.specialty">
+		<record id="jm_specialty_77" model="gnuhealth.specialty">
 			<field name="name">Dietetics</field>
 			<field name="code">DIETETICS</field>
 		</record>
-		<record id="78" model="gnuhealth.specialty">
+		<record id="jm_specialty_78" model="gnuhealth.specialty">
 			<field name="name">Child Guidance</field>
 			<field name="code">CHILDGUIDE</field>
 		</record>
-		<record id="79" model="gnuhealth.specialty">
+		<record id="jm_specialty_79" model="gnuhealth.specialty">
 			<field name="name">Facio-Maxillary</field>
 			<field name="code">FACIOMAX</field>
 		</record>
-		<record id="80" model="gnuhealth.specialty">
+		<record id="jm_specialty_80" model="gnuhealth.specialty">
 			<field name="name">Orthopaedics</field>
 			<field name="code">ORTHOPEDICS</field>
 		</record>
-		<record id="81" model="gnuhealth.specialty">
+		<record id="jm_specialty_81" model="gnuhealth.specialty">
 			<field name="name">Postnatal</field>
 			<field name="code">POSTNATO</field>
 		</record>
-		<record id="82" model="gnuhealth.specialty">
+		<record id="jm_specialty_82" model="gnuhealth.specialty">
 			<field name="name">Oral Rehydration</field>
 			<field name="code">ORALREHY</field>
 		</record>
-		<record id="83" model="gnuhealth.specialty">
+		<record id="jm_specialty_83" model="gnuhealth.specialty">
 			<field name="name">Community Mental Health</field>
 			<field name="code">COMMENTAL</field>
 		</record>
-		<record id="84" model="gnuhealth.specialty">
+		<record id="jm_specialty_84" model="gnuhealth.specialty">
 			<field name="name">Screening</field>
 			<field name="code">SCREENING</field>
 		</record>
-		<record id="85" model="gnuhealth.specialty">
+		<record id="jm_specialty_85" model="gnuhealth.specialty">
 			<field name="name">Curative</field>
 			<field name="code">CURATIVE</field>
 		</record>
-		<record id="86" model="gnuhealth.specialty">
+		<record id="jm_specialty_86" model="gnuhealth.specialty">
 			<field name="name">Home Visit</field>
 			<field name="code">HOMEVISIT</field>
 		</record>
-		<record id="87" model="gnuhealth.specialty">
+		<record id="jm_specialty_87" model="gnuhealth.specialty">
 			<field name="name">Child Health</field>
 			<field name="code">CHILDHEALTH</field>
 		</record>
-		<record id="88" model="gnuhealth.specialty">
+		<record id="jm_specialty_88" model="gnuhealth.specialty">
 			<field name="name">HIV/AIDS/STI</field>
 			<field name="code">HIVSTI</field>
 		</record>
-		<record id="89" model="gnuhealth.specialty">
+		<record id="jm_specialty_89" model="gnuhealth.specialty">
 			<field name="name">Family Planning</field>
 			<field name="code">FAMILYPLAN</field>
 		</record>
-		<record id="90" model="gnuhealth.specialty">
+		<record id="jm_specialty_90" model="gnuhealth.specialty">
 			<field name="name">Antenatal</field>
 			<field name="code">ANTENATO</field>
 		</record>

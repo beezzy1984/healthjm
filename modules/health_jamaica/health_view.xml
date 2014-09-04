@@ -16,6 +16,12 @@
        <field name="inherit" ref="party.party_view_form"/>
        <field name="name">party_form</field>
     </record>
+
+    <record model="ir.ui.view" id="party_view_tree">
+        <field name="model">party.party</field>
+        <field name="inherit" ref="party.party_view_tree"/>
+        <field name="name">party_tree</field>
+    </record>    
         
     <record model="ir.ui.view" id="gnuhealth_alternative_identification_form">
        <field name="model">gnuhealth.person_alternative_identification</field>
@@ -56,6 +62,7 @@
        <field name="name">district_community_tree</field>
     </record>
 
+
     <record model="ir.action.act_window" id="gnuhealth_action_district_community">
         <field name="name">District Communities</field>
         <field name="res_model">country.district_community</field>
@@ -65,4 +72,9 @@
         parent="health.gnuhealth_demographics_menu"
         icon="gnuhealth-list" sequence="120"/>
 
+    <record model="ir.ui.view" id="healthjm_patient_tree">
+        <field name="model">gnuhealth.patient</field>
+        <field name="inherit" ref="health.gnuhealth_patient_tree"/>
+        <field name="name">patient_tree</field>
+    </record>
 </data>
