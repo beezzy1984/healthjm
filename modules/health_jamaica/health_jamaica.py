@@ -77,27 +77,24 @@ class PartyPatient (ModelSQL, ModelView):
         (None, ''),
         ('s', 'Single'),
         ('m', 'Married'),
-        ('c', 'Concubinage'),
+        ('c', 'Living with partner'),
+        ('v', 'Visiting'),
         ('w', 'Widowed'),
         ('d', 'Divorced'),
         ('x', 'Separated'),
-        ('v', 'Visiting'),
+        ('n', 'Not Applicable'),
+        ('u', 'Unknown'),
         ], 'Marital Status', sort=False)
 
-    """
-    # To Be discussed : In GNU HEalthAmbiguous genitalia is used at birth as 
-    # a finding.
-    # Check legislation for Jamaica
-    
+    # gender vs sex: According to the AMA Manual of Style :
+    # Gender refers to the psychological/societal aspects of being male or female,
+    # sex refers specifically to the physical aspects. Do not interchange
     sex = fields.Selection([
         (None,''),
         ('m', 'Male'),
         ('f', 'Female'),
         ('u', 'Unknown')
-        ], 'Sex', states={'required':Bool(Eval('is_person'))},
-        help="Gender of Patient")
-
-    """
+        ], 'Sex', states={'required':Bool(Eval('is_person'))})
 
     party_warning_ack = fields.Boolean('Party verified', 
         states={
@@ -263,16 +260,23 @@ class DomiciliaryUnit(ModelSQL, ModelView):
     'Domiciliary Unit'
     __name__ = 'gnuhealth.du'
 
+    name = fields.Char('Code', readonly=True)
     address_subdivision = fields.Many2One(
         'country.subdivision', 'Parish',
         domain=[('country', '=', Eval('address_country'))],
-        depends=['address_country'], help="Enter Parish or State or County or Borrow")
+        depends=['address_country'], help="Enter Parish, State or Province")
     address_post_office = fields.Many2One(
-        'country.post_office', 'Post Office', help="Enter Post Office")
+        'country.post_office', 'Post Office', help="Select Post Office")
     address_district_community = fields.Many2One(
-        'country.district_community', 'District Community',
+        'country.district_community', 'District/Community',
         domain=[('post_office', '=', Eval('address_post_office'))],
         depends=['address_post_office'], help="Enter District Community")
+    desc = fields.Char('Additional Description')
+    # address_street_number = fields.Char('Number', size=8)
+
+    @classmethod
+    def default_country(cls):
+        return 89
 
 
 class Newborn (ModelSQL, ModelView):

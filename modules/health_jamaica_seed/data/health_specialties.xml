@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tryton>
-	<data>
+	<data noupdate="1" skiptest="1">
 		<record id="jm_specialty_74" model="gnuhealth.specialty">
 			<field name="name">HIV</field>
 			<field name="code">HIV</field>
