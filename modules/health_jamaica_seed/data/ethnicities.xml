@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<tryton>
+	<data noupdate="0" skiptest="1">
+        <record model="gnuhealth.ethnicity" id="health.eth1">
+            <field name="name">Black</field>
+            <field name="code">BLACK</field>
+        </record>
+        <record model="gnuhealth.ethnicity" id="health.eth2">
+            <field name="name">Chinese</field>
+            <field name="code">ASIAN</field>
+        </record>
+        <record model="gnuhealth.ethnicity" id="health.eth3">
+            <field name="name">White</field>
+            <field name="code">WHITE</field>
+        </record>
+        <record model="gnuhealth.ethnicity" id="health.eth4">
+            <field name="name">East Indian</field>
+            <field name="code">INDIAN</field>
+        </record>
+        <record model="gnuhealth.ethnicity" id="health.eth5">
+            <field name="name">Arab</field>
+            <field name="code">ARAB</field>
+        </record>
+        <record model="gnuhealth.ethnicity" id="health.eth6">
+            <field name="name">Mixed</field>
+            <field name="code">MIXED</field>
+        </record>
+        <record model="gnuhealth.ethnicity" id="health.eth7">
+            <field name="name">Unknown</field>
+            <field name="code">UNKNOWN</field>
+        </record>
+    </data>
+</tryton>
