@@ -2,36 +2,35 @@
 <data>
     <xpath expr="/form/group[@id='du_header']/group[@id='du_address']" position="replace">
         <group col="6" id="du_address_jm">
-            <label name="name"/>
-            <field name="name"/>
             <label name="address_country"/>
             <field name="address_country"/>
             <label name="address_subdivision"/>
             <field name="address_subdivision"/>
+            <label name="name"/>
+            <field name="name"/>
             <newline/>
-            <label name="address_street_number"/>
-            <field name="address_street_number"/>
+            <label name="address_post_office" />
+            <field name="address_post_office" widget="selection" />
+            <label name="address_district_community" />
+            <field name="address_district_community" widget="selection" />
+            <label name="address_city"/>
+            <field name="address_city"/>
+            <newline/>
+            <label name="address_street_num"/>
+            <field name="address_street_num"/>
             <label name="address_street"/>
             <field name="address_street"/>            
             <label name="address_street_bis"/>
             <field name="address_street_bis"/>
             <newline/>
-            <label name="address_post_office" states="{'invisible':Not(Equal(Eval('address_country.code'), 'JM'))}" />
-            <field name="address_post_office"  states="{'invisible':Not(Equal(Eval('address_country.code'), 'JM'))}" />
-            <label name="address_district_community"  states="{'invisible':Not(Equal(Eval('address_country.code'), 'JM'))}"/>
-            <field name="address_district_community"  states="{'invisible':Not(Equal(Eval('address_country.code'), 'JM'))}"/>
 
-
-            <label name="address_district" states="{'invisible':Equal(Eval('address_country.code'), 'JM')}" />
-            <field name="address_district"  states="{'invisible':Equal(Eval('address_country.code'), 'JM')}" />
-            <label name="address_municipality" states="{'invisible':Equal(Eval('address_country.code'), 'JM')}" />
-            <field name="address_municipality"  states="{'invisible':Equal(Eval('address_country.code'), 'JM')}" />            
-
-            <label name="address_city"/>
-            <field name="address_city"/>
-
+            <label name="address_district" />
+            <field name="address_district"  />
+            <label name="address_municipality" />
+            <field name="address_municipality"  />
             <label name="address_zip"/>
             <field name="address_zip"/>
+
             <label name="desc"/>
             <field colspan="3" name="desc"/>
         </group>

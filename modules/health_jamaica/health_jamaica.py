@@ -25,6 +25,7 @@
 
 import string
 import random
+import hashlib
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
@@ -45,8 +46,8 @@ class PartyPatient (ModelSQL, ModelView):
     __name__ = 'party.party'
     
     ref = fields.Char(
-        'UPC',
-        help='Universal Patient Code',
+        'UPI',
+        help='Universal Person Indentifier',
         states=_STATES, depends=_DEPENDS, readonly=True)
     name = fields.Char('Name', required=True, 
         states={'readonly':Bool(Eval('is_person'))},
@@ -137,9 +138,6 @@ class PartyPatient (ModelSQL, ModelView):
 
     @fields.depends('lastname', 'firstname', 'middlename')
     def on_change_with_name(self, *arg, **kwarg):
-        print('calling prints from onchanewith_name')
-        print repr(arg)
-        print repr(kwarg)
         namelist = [self.lastname]
         if self.firstname:
             namelist.extend([',', self.firstname])
@@ -214,9 +212,14 @@ class AlternativePersonID (ModelSQL, ModelView):
     def __setup__(cls):
         super(AlternativePersonID, cls).__setup__()
         selections = [
-                ('trn','TRN'),
+                ('trn','TRN (Taxpayer Registration Number)'),
+                ('medrecno', 'Medical Record Number'),
                 ('pathID','PATH ID'),
-                ('gojID','GOJ ID'),
+                ('gojhcard','GOJ Health Card'),
+                ('votersid','GOJ Voter\'s ID'),
+                ('birthreg', 'Birth Registration ID'),
+                ('ninnum', 'NIN #'),
+                ('passport', 'Passport Number')
             ]
         for selection in selections:
             if selection not in cls.alternative_id_type.selection:
@@ -227,14 +230,18 @@ class PostOffice(ModelSQL, ModelView):
     'Country Post Office'
     __name__ = 'country.post_office'
     
+    code = fields.Char('Code', required=True, size=10)
     name = fields.Char('Post Office', required=True, help="Post Offices")
+    subdivision = fields.Many2One('country.subdivision', 'Parish/Province',
+        help="Enter Parish, State or Province")
+    inspectorate = fields.Char('Inspectorate', help="Postal Area that governs this office or agency")
 
     @classmethod
     def __setup__(cls):
         super(PostOffice, cls).__setup__()
         cls._sql_constraints = [
-            ('name_uniq', 'UNIQUE(name)',
-                'The Post Office must be unique !'),
+            ('code_uniq', 'UNIQUE(code)',
+                'The Post Office code be unique !'),
         ]
 
 
@@ -251,8 +258,8 @@ class DistrictCommunity(ModelSQL, ModelView):
     def __setup__(cls):
         super(DistrictCommunity, cls).__setup__()
         cls._sql_constraints = [
-            ('name_uniq', 'UNIQUE(name)',
-                'The District Community must be unique !'),
+            ('name_per_po_uniq', 'UNIQUE(name, post_office)',
+                'The District Community must be unique for each post office!'),
         ]
 
 
@@ -261,22 +268,88 @@ class DomiciliaryUnit(ModelSQL, ModelView):
     __name__ = 'gnuhealth.du'
 
     name = fields.Char('Code', readonly=True)
-    address_subdivision = fields.Many2One(
-        'country.subdivision', 'Parish',
-        domain=[('country', '=', Eval('address_country'))],
-        depends=['address_country'], help="Enter Parish, State or Province")
+    address_street_num = fields.Char('Street Number', size=8)
     address_post_office = fields.Many2One(
-        'country.post_office', 'Post Office', help="Select Post Office")
+        'country.post_office', 'Post Office (JM)', help="Closest Post Office, Jamaica only",
+        domain=[('subdivision', '=', Eval('address_subdivision'))],
+        depends=['address_subdivision'])
+    address_subdivision = fields.Many2One(
+        'country.subdivision', 'Parish/Province',
+        domain=[('country', '=', Eval('address_country'))],
+        depends=['address_country'], help="Select Parish, State or Province")
     address_district_community = fields.Many2One(
-        'country.district_community', 'District/Community',
+        'country.district_community', 'District (JM)',
         domain=[('post_office', '=', Eval('address_post_office'))],
-        depends=['address_post_office'], help="Enter District Community")
+        depends=['address_post_office'], help="Select District/Community, Jamaica only")
     desc = fields.Char('Additional Description')
-    # address_street_number = fields.Char('Number', size=8)
 
     @classmethod
     def default_country(cls):
-        return 89
+        Pool().get('country.country')(89)
+
+    # @fields.depends('address_subdivision')
+    # def on_change_with_name(self, *arg, **kwarg):
+    #     ''' generates domunit code as follows :
+    #     PARISHCODE-{RANDOM_HEX_DIGITSx8}.
+    #     The parish code is taken directly from the parish when selected or 
+    #     when a post office is selected. The RANDOM_HEX_DIGITSx8 is the
+    #     first 8 chars from the SHA1 hash of [self.desc, self.post_office.code,
+    #                 self.address_district_community.name,
+    #                 self.address_street, self.address_street_num,
+    #                 self.address_street_bis]) #, str(time.time())])
+    #     separated by semi-colon (;)
+    #     '''
+    #     codelist = []
+    #     if self.address_subdivision:
+    #         codelist.append(self.address_subdivision.code)
+    #     else :
+    #         return ''
+
+    #     hashlist = filter(None, [self.desc, 
+    #                 self.address_post_office and self.address_post_office.code or '',
+    #                 self.address_district_community and self.address_district_community.name or '',
+    #                 self.address_street, self.address_street_num,
+    #                 self.address_street_bis]) #, str(time.time())])
+
+    #     codelist.append(hashlib.sha1(';'.join(hashlist)).hexdigest()[:8])
+
+    #     return '-'.join(codelist)
+
+    @classmethod
+    def generate_du_code(cls, prefix, *args):
+        ''' generates domunit code as follows :
+        PARISHCODE-{RANDOM_HEX_DIGITSx8}.
+        The parish code is taken directly from the parish when selected or 
+        when a post office is selected. The RANDOM_HEX_DIGITSx8 is the
+        first 8 chars from the SHA1 hash of [self.desc, self.post_office.code,
+                    self.address_district_community.name,
+                    self.address_street, self.address_street_num,
+                    self.address_street_bis]) #, str(time.time())])
+        separated by semi-colon (;)
+        '''
+        codelist = [prefix]
+
+        hashlist = map(lambda x: str(x), filter(None, args))
+        codelist.append(hashlib.sha1(';'.join(hashlist)).hexdigest()[:8])
+
+        return '-'.join(codelist)
+
+    @classmethod
+    def create(cls, vlist):
+        
+        vlist = [x.copy() for x in vlist]
+        for values in vlist:
+            if not 'name' in values:
+                state_code = values.get('address_subdivision')
+                if state_code:
+                    state_code = (Pool().get('country.subdivision')(state_code)).code
+                values['name'] = cls.generate_du_code(state_code,
+                    *[values.get(r) for r in ('desc','address_post_office',
+                                              'address_district_community',
+                                              'address_street',
+                                              'address_street_num',
+                                              'address_street_bis')])
+        return super(DomiciliaryUnit, cls).create(vlist)
 
 
 class Newborn (ModelSQL, ModelView):

@@ -25,20 +25,20 @@
                 <newline />
                 <label name="lastname"/>
                 <field name="lastname"/>
-                <label name="suffix"/>
-                <field name="suffix"/>
                 <label name="firstname"/>
                 <field name="firstname"/>
                 <label name="middlename"/>
                 <field name="middlename"/>
+                <label name="suffix"/>
+                <field name="suffix"/>
                 <label name="alias"/>
                 <field name="alias"/>
-<!--                 <newline /><separator colspan="4" id="sep1289" /><newline />
+                <newline /><separator colspan="4" id="sep1289" /><newline />
                 <label name="mother_maiden_name" />
                 <field name="mother_maiden_name" />
                 <label name="father_name" />
                 <field name="father_name" />
-                 -->
+                
             </group>
             <newline />
             <group yfill="0" id="person_demographics" string="Demographics">
@@ -68,6 +68,10 @@
 
     <xpath expr="/form/notebook/page[@id=&quot;party_gnuhealth&quot;]/group[@id=&quot;person_details&quot;]/newline[last()]" position="after">
         <field colspan="4" name="alternative_ids"/>
+    </xpath>
+
+    <xpath expr="/form/notebook/page[@id=&quot;general&quot;]" position="replace_attributes">
+        <page string="Contact" id="general" />
     </xpath>
 
 </data>
