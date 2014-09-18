@@ -1,4 +1,4 @@
-BEGIN jm_custom_001
+-- BEGIN jm_custom_001;
 
 ALTER TABLE country_district_community
 	DROP CONSTRAINT country_district_community_name_uniq;
@@ -75,10 +75,11 @@ ALTER TABLE country_post_office
 	ADD CONSTRAINT country_post_office_code_uniq UNIQUE (code);
 
 ALTER TABLE country_post_office
-	ADD CONSTRAINT country_post_office_subdivision_fkey FOREIGN KEY (subdivision) REFERENCES country_subdivision(id) ON DELETE SET NULL;
+	ADD CONSTRAINT country_post_office_subdivision_fkey FOREIGN KEY (subdivision) REFERENCES country_subdivision(id) ON DELETE SET NULL,
+	DROP CONSTRAINT country_post_office_name_uniq;
 
 CREATE INDEX party_party_firstname_index ON party_party USING btree (firstname);
 
 CREATE INDEX party_party_lastname_index ON party_party USING btree (lastname);
 
-commit jm_custom_001;
+-- commit jm_custom_001;
