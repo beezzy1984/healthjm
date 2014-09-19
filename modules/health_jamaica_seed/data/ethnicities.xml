@@ -29,7 +29,7 @@
             <field name="name">Hispanic</field>
             <field name="code">HISPANIC</field>
         </record>
-        <record model="gnuhealth.ethnicity" id="health.eth8">
+        <record model="gnuhealth.ethnicity" id="eth8">
             <field name="name">Unknown</field>
             <field name="code">UNKNOWN</field>
         </record>
