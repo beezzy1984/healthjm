@@ -26,6 +26,10 @@
             <field name="code">MIXED</field>
         </record>
         <record model="gnuhealth.ethnicity" id="health.eth7">
+            <field name="name">Hispanic</field>
+            <field name="code">HISPANIC</field>
+        </record>
+        <record model="gnuhealth.ethnicity" id="health.eth8">
             <field name="name">Unknown</field>
             <field name="code">UNKNOWN</field>
         </record>
