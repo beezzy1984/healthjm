@@ -67,7 +67,8 @@
     </xpath>
 
     <xpath expr="/form/notebook/page[@id=&quot;party_gnuhealth&quot;]/group[@id=&quot;person_details&quot;]/newline[last()]" position="after">
-        <field colspan="4" name="alternative_ids"/>
+        <field colspan="4" name="alternative_ids" />
+        <!-- ToDo: Figure out how to make this list taller. At least 3 rows -->
     </xpath>
 
     <xpath expr="/form/notebook/page[@id=&quot;general&quot;]" position="replace_attributes">

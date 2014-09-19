@@ -200,31 +200,36 @@ class AlternativePersonID (ModelSQL, ModelView):
     'Alternative person ID'
     __name__ ='gnuhealth.person_alternative_identification' 
    
-    issuedby = fields.Selection(
-        [
-            (None,''),
-            ('kph','KPH'),
-            ('vjh','VJH'),
-            ('crh','CRH'),            
-        ], 'Issued By', required=False, sort=True,)
+    issuing_institution = fields.Many2One('gnuhealth.institution', 'Issued By',
+        help='Institution that assigned the medical record number',
+        states={'required':Eval('alternative_id_type') == 'medical_record'})
+    expiry_date = fields.Date('Expiry Date',
+        states={'required':Eval('alternative_id_type') == 'passport'})
 
     @classmethod
     def __setup__(cls):
         super(AlternativePersonID, cls).__setup__()
         selections = [
                 ('trn','TRN (Taxpayer Registration Number)'),
-                ('medrecno', 'Medical Record Number'),
+                ('medical_record', 'Medical Record Number'),
                 ('pathID','PATH ID'),
                 ('gojhcard','GOJ Health Card'),
                 ('votersid','GOJ Voter\'s ID'),
                 ('birthreg', 'Birth Registration ID'),
                 ('ninnum', 'NIN #'),
-                ('passport', 'Passport Number')
+                ('passport', 'Passport Number'),
+                ('other', 'Other')
             ]
-        for selection in selections:
-            if selection not in cls.alternative_id_type.selection:
-                cls.alternative_id_type.selection.append(selection)
+        cls.alternative_id_type.selection = selections[:]
+        # for selection in selections:
+        #     if selection not in cls.alternative_id_type.selection:
+        #         cls.alternative_id_type.selection.append(selection)
 
+    @fields.depends('alternative_id_type')
+    def on_change_with_issuedby(self, *arg, **kwarg):
+        print(('*'*20) + " on_change_with_issuedby " + ('*'*20) )
+        print(repr(self.alternative_id_type))
+        return ''
 
 class PostOffice(ModelSQL, ModelView):
     'Country Post Office'
@@ -374,3 +379,5 @@ class Insurance(ModelSQL, ModelView):
 
     def get_rec_name(self, name):
         return (self.company.name + ' : ' + self.number)
+
+

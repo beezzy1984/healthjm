@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <data>
-   <xpath expr="/tree/field[@name='alternative_id_type']" position="after">
-       <field name="issuedby" expand="1"/>
+   <xpath expr="/tree/field[@name='alternative_id_type']" position="replace">
+       <field name="issuing_institution" widget="selection" expand="1"/>
+       <field name="expiry_date" expand="1"/>
+   </xpath>
+   <xpath expr="/tree/field[@name='code']" position="before">
+       <field name="alternative_id_type" expand="1"/>
    </xpath>
 </data>

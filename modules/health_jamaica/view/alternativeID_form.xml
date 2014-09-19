@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <data>
    <xpath expr="/form/field[@name='alternative_id_type']" position="after">
-      <label name="issuedby"/>
-      <field name="issuedby"/>
+      <label name="issuing_institution"/>
+      <field name="issuing_institution"/>
+      <label name="expiry_date" />
+      <field name="expiry_date" />
    </xpath>
 </data>
