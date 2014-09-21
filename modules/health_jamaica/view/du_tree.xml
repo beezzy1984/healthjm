@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<data>
+    <xpath expr="/tree/field[@name='desc']" position="replace" />
+    <xpath expr="/tree/field[@name='address_city']" position="replace">
+        <field name="address_district_community" expand="1" />
+        <field name="city_town" expand="1" />
+        <field name="address_subdivision" expand="1" />
+    </xpath>
+</data>

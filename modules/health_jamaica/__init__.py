@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    GNU Health: The Free Health and Hospital Information System
-#    Copyright (C) 2008-2013  Luis Falcon <falcon@gnu.org>
+#    Health-Jamaica: The Jamaica Electronic Patient Administration System
+#    Copyright 2014  Ministry of Health (NHIN), Jamaica <admin@mohnhin.info>
+#
+#    Based on GNU Health
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -25,6 +27,7 @@ from .health_jamaica import *
 def register():
     Pool.register(
         PartyPatient,
+        PatientData,
         AlternativePersonID,
         PostOffice,
         DistrictCommunity,

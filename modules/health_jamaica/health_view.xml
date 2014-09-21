@@ -46,6 +46,11 @@
        <field name="inherit" ref="health.gnuhealth_du_view"/>
        <field name="name">du_form</field>
     </record>
+    <record model="ir.ui.view" id="gnuhealth_du_tree">
+       <field name="model">gnuhealth.du</field>
+       <field name="inherit" ref="health.gnuhealth_du_tree"/>
+       <field name="name">du_tree</field>
+    </record>
 
     <record model="ir.action.act_window" id="gnuhealth_action_post_office">
         <field name="name">Post Offices</field>

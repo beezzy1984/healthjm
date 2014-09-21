@@ -18,20 +18,20 @@
             <field name="code">INDIAN</field>
         </record>
         <record model="gnuhealth.ethnicity" id="health.eth5">
-            <field name="name">Arab</field>
-            <field name="code">ARAB</field>
+            <field name="name">Hispanic</field>
+            <field name="code">HISPANIC</field>
         </record>
         <record model="gnuhealth.ethnicity" id="health.eth6">
             <field name="name">Mixed</field>
             <field name="code">MIXED</field>
         </record>
         <record model="gnuhealth.ethnicity" id="health.eth7">
-            <field name="name">Hispanic</field>
-            <field name="code">HISPANIC</field>
-        </record>
-        <record model="gnuhealth.ethnicity" id="eth8">
             <field name="name">Unknown</field>
             <field name="code">UNKNOWN</field>
+        </record>
+        <record model="gnuhealth.ethnicity" id="eth8">
+            <field name="name">Arab</field>
+            <field name="code">ARAB</field>
         </record>
     </data>
 </tryton>

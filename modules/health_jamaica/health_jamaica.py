@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    GNU Health: The Free Health and Hospital Information System
-#    Copyright (C) 2008-2014  GNU SOLIDARIO <health@gnusolidario.org>
+#    Health-Jamaica: The Jamaica Electronic Patient Administration System
+#    Copyright 2014  Ministry of Health (NHIN), Jamaica <admin@mohnhin.info>
+#
+#    Based on GNU Health
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,10 +20,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-#
-# Localization module for Jamaica Ministry of Health
-#
-# The documentation of the module goes in the "doc" directory.
+
 
 import string
 import random
@@ -31,7 +30,7 @@ from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
-__all__ = ['PartyPatient', 'AlternativePersonID', 'PostOffice',
+__all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance']
 __metaclass__ = PoolMeta
 
@@ -40,6 +39,7 @@ _STATES = {
 }
 _DEPENDS = ['is_person']
 
+JAMAICA = lambda : Pool().get('country.country')(89)
 
 class PartyPatient (ModelSQL, ModelView):
     'Party'
@@ -196,6 +196,14 @@ class PartyPatient (ModelSQL, ModelView):
             self.raise_user_error('unidentified_party_warning')
 
 
+class PatientData(ModelSQL, ModelView):
+    '''Patient related information, redefined to fix name display/generation'''
+    __name__ = 'gnuhealth.patient'
+
+    def get_rec_name(self, name):
+        return self.name.name
+
+
 class AlternativePersonID (ModelSQL, ModelView):
     'Alternative person ID'
     __name__ ='gnuhealth.person_alternative_identification' 
@@ -287,10 +295,19 @@ class DomiciliaryUnit(ModelSQL, ModelView):
         domain=[('post_office', '=', Eval('address_post_office'))],
         depends=['address_post_office'], help="Select District/Community, Jamaica only")
     desc = fields.Char('Additional Description')
+    city_town = fields.Function(fields.Char('City/Town/P.O.'), 'get_city_town')
 
     @classmethod
     def default_country(cls):
-        Pool().get('country.country')(89)
+        return JAMAICA()
+
+    def get_city_town(self, name):
+        '''returns the post office for jamaica or the city or municipality for
+        other addresses'''
+        if self.address_country == JAMAICA():
+            return self.address_post_office
+        else:
+            return self.address_city or self.address_municipality
 
     # @fields.depends('address_subdivision')
     # def on_change_with_name(self, *arg, **kwarg):
