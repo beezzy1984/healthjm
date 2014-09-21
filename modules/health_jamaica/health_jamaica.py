@@ -31,7 +31,8 @@ from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
-    'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance']
+    'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance',
+    'PartyAddress']
 __metaclass__ = PoolMeta
 
 _STATES = {
@@ -195,13 +196,57 @@ class PartyPatient (ModelSQL, ModelView):
         if not self.party_warning_ack:
             self.raise_user_error('unidentified_party_warning')
 
+    # @classmethod
+    # def write(cls, parties, vals):
+    #     # We use this method overwrite to make the fields that have a unique
+    #     # constraint get the NULL value at PostgreSQL level, and not the value
+    #     # '' coming from the client
+    #     print('parties and vals')
+    #     print(repr(parties))
+    #     print(repr(vals))
+
+    #     # if vals.get('ref') == '':
+    #     #     vals['ref'] = None
+    #     return super(PartyPatient, cls).write(parties, vals)
 
 class PatientData(ModelSQL, ModelView):
     '''Patient related information, redefined to fix name display/generation'''
     __name__ = 'gnuhealth.patient'
 
+    ses = fields.Selection([
+        (None, ''),
+        ('0', 'Lower'),
+        ('1', 'Lower-middle'),
+        ('2', 'Middle'),
+        ('3', 'Upper-middle'),
+        ('4', 'Upper'),
+        ], 'Socioeconomics', help="SES - Socioeconomic Status", sort=False)
+
     def get_rec_name(self, name):
         return self.name.name
+
+    @classmethod
+    def __setup__(cls):
+        super(PatientData, cls).__setup__()
+        cls.puid.string = 'UPI'
+
+class PartyAddress(ModelSQL, ModelView):
+    'Party Address, defines parties that are related to patients'
+    __name__ = 'party.address'
+
+    relationship = fields.Selection([
+        ('spouse','Spouse (husband/wife)'),
+        ('parent','Parent (mother/father)'),
+        ('guardian','Guardian/Foster parent'),
+        ('sibling', 'Sibling (brother/sister)'),
+        ('grandparent','Grandparent'),
+        ('cousin','Cousin'),
+        ('auntuncle','Aunt/Uncle'),
+        ('friend','Friend'),
+        ('coworker','Co-worker'),
+        ('other', 'Other')
+        ],'Relationship', help="Relationship of contact to patient", sort=True)
+
 
 
 class AlternativePersonID (ModelSQL, ModelView):
