@@ -82,10 +82,15 @@
         <field name="inherit" ref="health.gnuhealth_patient_tree"/>
         <field name="name">patient_tree</field>
     </record>
-
     <record model="ir.ui.view" id="healthjm_patient_form">
         <field name="model">gnuhealth.patient</field>
         <field name="inherit" ref="health.gnuhealth_patient_view_form"/>
         <field name="name">patient_form</field>
-    </record>    
+    </record>
+<!--     <record model="ir.ui.view" id="healthjm_patient_form_se">
+        <field name="model">gnuhealth.patient</field>
+        <field name="inherit" ref="health_socioeconomics.gnuhealth_patient_view"/>
+        <field name="type">form</field>
+        <field name="name">patient_form_se</field>
+    </record> -->
 </data>

@@ -222,6 +222,20 @@ class PatientData(ModelSQL, ModelView):
         ('4', 'Upper'),
         ], 'Socioeconomics', help="SES - Socioeconomic Status", sort=False)
 
+    religion = fields.Selection([
+        ('christianw', 'Christian (Traditional) - Anglican/Baptist/Catholic etc.'),
+        ('sda', 'Seventh Day Adventists'),
+        ('jehova', 'Jehova\'s Witness'),
+        ('christmodern', 'Christian (Modern) - Universal/Mormon etc'),
+        ('rasta','Rastafarian'),
+        ('jew', 'Jewish (all)'),
+        ('muslims', 'Islam (Muslim, all schools)'),
+        ('buddhist', 'Buddhist'),
+        ('hindu', 'Hindu'),
+        ('none', 'None/Atheist/Agnostic'),
+        ('unknown', 'Unknown')
+        ], 'Religion', help='Religion or religious persuasion', sort=False)
+
     def get_rec_name(self, name):
         return self.name.name
 
@@ -302,6 +316,23 @@ class PostOffice(ModelSQL, ModelView):
                 'The Post Office code be unique !'),
         ]
 
+    @classmethod
+    def __register__(cls, module_name):
+        '''handles the rewiring of the Jamaica parishes to merge Kingston and
+        Saint Andrew (JM-01 and JM-02)'''
+        cursor = Transaction().cursor
+        # update subdivision table to remove st. andrew and merge with Kgn
+        cursor.execute('Select name from country_subdivision where code=%s',('JM-02',))
+        standrew = cursor.fetchone()
+        if standrew:
+            sql = ['UPDATE country_subdivision set name=%s where code=%s',
+                   'DELETE from country_subdivision where code=%s' ]
+            parms = [('Kingston & Saint Andrew', 'JM-01'), ('JM-02',)]
+            for query, query_param in zip(sql, parms):
+                cursor.execute(query, query_param)
+            cursor.commit()
+
+
 
 class DistrictCommunity(ModelSQL, ModelView):
     'Country District Community'
@@ -349,8 +380,9 @@ class DomiciliaryUnit(ModelSQL, ModelView):
     def get_city_town(self, name):
         '''returns the post office for jamaica or the city or municipality for
         other addresses'''
-        if self.address_country == JAMAICA():
-            return self.address_post_office
+
+        if self.address_country == JAMAICA() and self.address_post_office:
+            return self.address_post_office.name
         else:
             return self.address_city or self.address_municipality
 
