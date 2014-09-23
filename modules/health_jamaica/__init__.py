@@ -35,4 +35,5 @@ def register():
         DomiciliaryUnit,
         Newborn,
         Insurance,
+        HealthProfessional,
         module='health_jamaica', type_='model')

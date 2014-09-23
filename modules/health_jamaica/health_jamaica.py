@@ -32,7 +32,7 @@ from trytond.transaction import Transaction
 
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance',
-    'PartyAddress']
+    'PartyAddress', 'HealthProfessional']
 __metaclass__ = PoolMeta
 
 _STATES = {
@@ -223,6 +223,7 @@ class PatientData(ModelSQL, ModelView):
         ], 'Socioeconomics', help="SES - Socioeconomic Status", sort=False)
 
     religion = fields.Selection([
+        (None, ''),
         ('christianw', 'Christian (Traditional) - Anglican/Baptist/Catholic etc.'),
         ('sda', 'Seventh Day Adventists'),
         ('jehova', 'Jehova\'s Witness'),
@@ -249,6 +250,7 @@ class PartyAddress(ModelSQL, ModelView):
     __name__ = 'party.address'
 
     relationship = fields.Selection([
+        (None, ''),
         ('spouse','Spouse (husband/wife)'),
         ('parent','Parent (mother/father)'),
         ('guardian','Guardian/Foster parent'),
@@ -292,11 +294,11 @@ class AlternativePersonID (ModelSQL, ModelView):
         #     if selection not in cls.alternative_id_type.selection:
         #         cls.alternative_id_type.selection.append(selection)
 
-    @fields.depends('alternative_id_type')
-    def on_change_with_issuedby(self, *arg, **kwarg):
-        print(('*'*20) + " on_change_with_issuedby " + ('*'*20) )
-        print(repr(self.alternative_id_type))
-        return ''
+    # @fields.depends('alternative_id_type')
+    # def on_change_with_issuedby(self, *arg, **kwarg):
+    #     print(('*'*20) + " on_change_with_issuedby " + ('*'*20) )
+    #     print(repr(self.alternative_id_type))
+    #     return ''
 
 class PostOffice(ModelSQL, ModelView):
     'Country Post Office'
@@ -320,6 +322,7 @@ class PostOffice(ModelSQL, ModelView):
     def __register__(cls, module_name):
         '''handles the rewiring of the Jamaica parishes to merge Kingston and
         Saint Andrew (JM-01 and JM-02)'''
+        super(PostOffice, cls).__register__(module_name)
         cursor = Transaction().cursor
         # update subdivision table to remove st. andrew and merge with Kgn
         cursor.execute('Select name from country_subdivision where code=%s',('JM-02',))
@@ -474,4 +477,10 @@ class Insurance(ModelSQL, ModelView):
     def get_rec_name(self, name):
         return (self.company.name + ' : ' + self.number)
 
+class HealthProfessional(ModelSQL, ModelView):
+    'Health Professional'
+    __name__ = 'gnuhealth.healthprofessional'
 
+    def get_rec_name(self, name):
+        if self.name:
+            return self.name.name
