@@ -2,17 +2,30 @@
 <tryton>
     <data>
         <!-- Health Centre Face Sheet -->
-        <record model="ir.action.report" id="jmreport_health_profile">
+        <record model="ir.action.report" id="jmreport_facesheet_hc">
             <field name="name">Health Centre Facesheet</field>
             <field name="model">gnuhealth.patient</field>
-            <field name="report_name">health_jamaica.facesheet_hc</field>
+            <field name="report_name">health_jamaica.report_facesheet_hc</field>
             <field name="active" eval="True" />
-            <field name="report">health_jamaica/report/health_profile.odt</field>
+            <field name="report">health_jamaica/report/facesheet_hc.odt</field>
         </record>
-        <record model="ir.action.keyword" id="jmreport_health_profile_kw"> 
+        <record model="ir.action.keyword" id="jmkw_facesheet_hc"> 
             <field name="keyword">form_print</field> 
             <field name="model">gnuhealth.patient,-1</field> 
-            <field name="action" ref="jmreport_health_profile"/> 
-        </record> 
+            <field name="action" ref="jmreport_facesheet_hc"/> 
+        </record>
+        <!-- Hospital Face Sheet -->
+        <record model="ir.action.report" id="jmreport_facesheet_hosp">
+            <field name="name">Hospital Facesheet</field>
+            <field name="model">gnuhealth.patient</field>
+            <field name="report_name">health_jamaica.report_facesheet_hosp</field>
+            <field name="active" eval="True" />
+            <field name="report">health_jamaica/report/facesheet_hosp.odt</field>
+        </record>
+        <record model="ir.action.keyword" id="jmkw_facesheet_hosp"> 
+            <field name="keyword">form_print</field> 
+            <field name="model">gnuhealth.patient,-1</field> 
+            <field name="action" ref="jmreport_facesheet_hosp"/> 
+        </record>
     </data>
 </tryton>
