@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<tryton>
+    <data>
+        <!-- Health Centre Face Sheet -->
+        <record model="ir.action.report" id="jmreport_health_profile">
+            <field name="name">Health Centre Facesheet</field>
+            <field name="model">gnuhealth.patient</field>
+            <field name="report_name">health_jamaica.facesheet_hc</field>
+            <field name="active" eval="True" />
+            <field name="report">health_jamaica/report/health_profile.odt</field>
+        </record>
+        <record model="ir.action.keyword" id="jmreport_health_profile_kw"> 
+            <field name="keyword">form_print</field> 
+            <field name="model">gnuhealth.patient,-1</field> 
+            <field name="action" ref="jmreport_health_profile"/> 
+        </record> 
+    </data>
+</tryton>
