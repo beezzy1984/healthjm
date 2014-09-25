@@ -250,18 +250,20 @@ class PartyAddress(ModelSQL, ModelView):
     __name__ = 'party.address'
 
     relationship = fields.Selection([
-        (None, ''),
+        ('', ''),
+        ('offspring', 'Son/Daughter'),
         ('spouse','Spouse (husband/wife)'),
         ('parent','Parent (mother/father)'),
         ('guardian','Guardian/Foster parent'),
         ('sibling', 'Sibling (brother/sister)'),
         ('grandparent','Grandparent'),
+        ('grandchild', 'Grandchild'),
         ('cousin','Cousin'),
         ('auntuncle','Aunt/Uncle'),
         ('friend','Friend'),
         ('coworker','Co-worker'),
         ('other', 'Other')
-        ],'Relationship', help="Relationship of contact to patient", sort=True)
+        ],'Relationship', help="Relationship of contact to patient", sort=False)
 
 
 
