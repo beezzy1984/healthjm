@@ -36,4 +36,5 @@ def register():
         Newborn,
         Insurance,
         HealthProfessional,
+        Appointment,
         module='health_jamaica', type_='model')

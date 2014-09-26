@@ -25,6 +25,7 @@
 import string
 import random
 import hashlib
+from datetime import date
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
@@ -32,7 +33,7 @@ from trytond.transaction import Transaction
 
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance',
-    'PartyAddress', 'HealthProfessional']
+    'PartyAddress', 'HealthProfessional', 'Appointment']
 __metaclass__ = PoolMeta
 
 _STATES = {
@@ -120,9 +121,10 @@ class PartyPatient (ModelSQL, ModelView):
             cls.unidentified.on_change.add('unidentified')
         cls._error_messages.update({
             'unidentified_party_warning':
-            '== UNIDENTIFIED VERIFICATION ==\n\n'
-            '- IS THE PARTY UNINDENTIFIED ? \n'
-            'Verify and check mark the party as verified\n',
+            '== Indentity Verification ==\n\n'
+            'Please enter an Alternative ID before declaring\n'
+            'that the party\'s identity has been verified.\n',
+            'future_dob_error':'Date of birth cannot be in the future.'
         })
 
     @staticmethod
@@ -191,10 +193,15 @@ class PartyPatient (ModelSQL, ModelView):
         super(PartyPatient, cls).validate(parties)
         for party in parties:
             party.check_party_warning()
+            party.check_dob()
 
     def check_party_warning(self):
         if not self.party_warning_ack:
             self.raise_user_error('unidentified_party_warning')
+
+    def check_dob(self):
+        if self.dob > date.today():
+            self.raise_user_error('future_dob_error')
 
     # @classmethod
     # def write(cls, parties, vals):
@@ -260,6 +267,7 @@ class PartyAddress(ModelSQL, ModelView):
         ('grandchild', 'Grandchild'),
         ('cousin','Cousin'),
         ('auntuncle','Aunt/Uncle'),
+        ('girlboyfriend', 'Girlfriend/Boyfriend'),
         ('friend','Friend'),
         ('coworker','Co-worker'),
         ('other', 'Other')
@@ -486,3 +494,36 @@ class HealthProfessional(ModelSQL, ModelView):
     def get_rec_name(self, name):
         if self.name:
             return self.name.name
+
+
+class Appointment(ModelSQL, ModelView):
+    'Patient Appointments'
+    __name__ = 'gnuhealth.appointment'
+
+    state = fields.Selection([
+        (None, ''),
+        ('free', 'Scheduled'),
+        ('confirmed', 'Confirmed'),
+        ('done', 'Done'),
+        ('user_cancelled', 'Cancelled by patient'),
+        ('center_cancelled', 'Cancelled by Health Center'),
+        ('no_show', 'No show')
+        ], 'State', sort=False)
+
+    @staticmethod
+    def default_state():
+        return 'free'
+
+    @classmethod
+    def __register__(cls, module_name):
+        '''hack to rename the window title from free to scheduled'''
+        super(Appointment, cls).__register__(module_name)
+        cursor = Transaction().cursor
+        # update ir_action_act_window_domain table to change name from free
+        cursor.execute('Select count(*) from ir_action_act_window_domain where name=%s',('Free',))
+        freetab = cursor.fetchone()
+        if freetab and freetab[0] == 1:
+            sql = 'UPDATE ir_action_act_window_domain set name=%s where name=%s'
+            parms = ('Scheduled', 'Free')
+            cursor.execute(sql, parms)
+            cursor.commit()

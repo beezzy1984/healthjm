@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-
-<data>
+<tryton>
+  <data>
 
     <!-- Icons -->
 
@@ -93,4 +93,12 @@
         <field name="type">form</field>
         <field name="name">patient_form_se</field>
     </record> -->
-</data>
+
+    <!-- <record model="ir.action.act_window.domain" id="health.act_gnuhealth_appointment_domain_free">
+        <field name="name">Scheduled</field>
+        <field name="sequence" eval="10"/>
+        <field name="domain">[('state', '=', 'free')]</field>
+        <field name="act_window" ref="health.action_gnuhealth_appointment_view"/>
+    </record>  -->   
+  </data>
+</tryton>
