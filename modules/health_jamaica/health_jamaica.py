@@ -25,8 +25,10 @@
 import string
 import random
 import hashlib
-from datetime import date
-from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal
+import re
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
+from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
@@ -101,8 +103,9 @@ class PartyPatient (ModelSQL, ModelView):
 
     party_warning_ack = fields.Boolean('Party verified', 
         states={
-            'invisible': Not(Bool(Eval('unidentified'))),
-            'readonly': Bool(Eval('ref'))
+            'invisible': And(Not(Bool(Eval('unidentified'))),
+                             Not(Bool(Eval('ref')))),
+            'readonly': Bool(Eval('party_warning_ack'))
             })
 
     occupation = fields.Many2One('gnuhealth.occupation', 'Occupational Group')
@@ -124,11 +127,17 @@ class PartyPatient (ModelSQL, ModelView):
             '== Indentity Verification ==\n\n'
             'Please enter an Alternative ID before declaring\n'
             'that the party\'s identity has been verified.\n',
-            'future_dob_error':'Date of birth cannot be in the future.'
+            'future_dob_error':'== Error ==\n\nDate of birth cannot be in the future.',
+            'unidentified_or_altid':'== Party Identification ==\n\n'
+                        'Please check the unidentified box or add an alternative id'
         })
 
     @staticmethod
-    def default_party_warning_ack():
+    def default_unidentified():
+        return True
+
+    @staticmethod
+    def default_alternative_identification():
         return True
 
     def on_change_unidentified(self):
@@ -175,6 +184,7 @@ class PartyPatient (ModelSQL, ModelView):
                     values['ref'] = 'NN-' + values.get('ref')
                 if 'is_person' in values and not values['is_person']:
                     values['ref'] = 'NP-' + values['ref']
+
             if not values.get('code'):
                 config = Configuration(1)
                 # Use the company name . Initially, use the name
@@ -196,25 +206,26 @@ class PartyPatient (ModelSQL, ModelView):
             party.check_dob()
 
     def check_party_warning(self):
-        if not self.party_warning_ack:
-            self.raise_user_error('unidentified_party_warning')
+        # if len(self.alternative_ids) == 0 and not self.unidentified:
+        #     self.raise_user_error('unidentified_or_altid')
+
+        # if len(self.alternative_ids) == 0 and self.party_warning_ack:
+        #     self.raise_user_error('unidentified_party_warning')
+        pass
 
     def check_dob(self):
         if self.dob > date.today():
             self.raise_user_error('future_dob_error')
 
-    # @classmethod
-    # def write(cls, parties, vals):
-    #     # We use this method overwrite to make the fields that have a unique
-    #     # constraint get the NULL value at PostgreSQL level, and not the value
-    #     # '' coming from the client
-    #     print('parties and vals')
-    #     print(repr(parties))
-    #     print(repr(vals))
-
-    #     # if vals.get('ref') == '':
-    #     #     vals['ref'] = None
-    #     return super(PartyPatient, cls).write(parties, vals)
+    @classmethod
+    def write(cls, parties, vals):
+        import pdb;pdb.set_trace()
+        regex = re.compile(u'NN-([A-Z]{3}\d{3}[A-Z]{3})')
+        for party in parties:
+            if vals.get('party_warning_ack') and regex.match(party.ref):
+                # remove the NN from then UPI
+                vals['ref'] = ''.join(regex.split(party.ref))
+        return super(PartyPatient, cls).write(parties, vals)
 
 class PatientData(ModelSQL, ModelView):
     '''Patient related information, redefined to fix name display/generation'''
@@ -243,6 +254,16 @@ class PatientData(ModelSQL, ModelView):
         ('none', 'None/Atheist/Agnostic'),
         ('unknown', 'Unknown')
         ], 'Religion', help='Religion or religious persuasion', sort=False)
+    dob = fields.Function(fields.Date('DOB'), 'get_person_field',
+                                searcher='search_person_field')
+    firstname = fields.Function(fields.Char('First name'), 'get_person_field',
+                                searcher='search_person_field')
+    middlename = fields.Function(fields.Char('Middle name'), 'get_person_field',
+                                searcher='search_person_field')
+    mother_maiden_name = fields.Function(fields.Char('Mother\'s maiden name'),
+                                'get_person_field', searcher='search_person_field')
+    father_name = fields.Function(fields.Char('Father\'s name'), 'get_person_field',
+                                searcher='search_person_field')
 
     def get_rec_name(self, name):
         return self.name.name
@@ -251,6 +272,66 @@ class PatientData(ModelSQL, ModelView):
     def __setup__(cls):
         super(PatientData, cls).__setup__()
         cls.puid.string = 'UPI'
+
+    def get_person_field(self, field_name):
+        return getattr(self.name, field_name)
+
+    @classmethod
+    def search_person_field(cls, field_name, clause):
+        return [('name.{}'.format(field_name), clause[1], clause[2])]
+
+    # Get the patient age in the following format : 'YEARS MONTHS DAYS'
+    # It will calculate the age of the patient while the patient is alive.
+    # When the patient dies, it will show the age at time of death.
+
+    def patient_age(self, name):
+
+        def compute_age_from_dates(patient_dob, patient_deceased,
+                                   patient_dod, patient_sex):
+
+            now = datetime.now()
+
+            if (patient_dob):
+                dob = datetime.strptime(str(patient_dob), '%Y-%m-%d')
+
+                if patient_deceased:
+                    dod = datetime.strptime(
+                        str(patient_dod), '%Y-%m-%d %H:%M:%S')
+                    delta = relativedelta(dod, dob)
+                    deceased = '(deceased)'
+                else:
+                    delta = relativedelta(now, dob)
+                    deceased = ''
+                ymd = []
+                if delta.years >= 1:
+                    ymd.append(str(delta.years) + 'y')
+                if (delta.months >0 or delta.years > 0) and delta.years < 10:
+                    ymd.append(str(delta.months) + 'm')
+                if delta.years <= 2: 
+                    ymd.append(str(delta.days) + 'd')
+                ymd.append(deceased)
+
+                years_months_days = ' '.join(ymd)
+            else:
+                years_months_days = '--'
+
+            # Return the age in format y m d when the caller is the field name
+            if name == 'age':
+                return years_months_days
+
+            # Return if the patient is in the period of childbearing age >10 is
+            # the caller is childbearing_potential
+
+            if (name == 'childbearing_age' and patient_dob):
+                if (delta.years >= 11
+                   and delta.years <= 55 and patient_sex == 'f'):
+                    return True
+                else:
+                    return False
+
+        return compute_age_from_dates(self.dob, self.deceased,
+                                      self.dod, self.sex)
+
 
 class PartyAddress(ModelSQL, ModelView):
     'Party Address, defines parties that are related to patients'
