@@ -11,7 +11,7 @@
         <label name="country" />
         <field name="country" />
         <label name="subdivision" />
-        <field name="subdivision" widget="selection" />
+        <field name="subdivision" />
         <newline />
 
         <label name="post_office" />

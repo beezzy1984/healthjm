@@ -233,7 +233,7 @@ class PartyPatient (ModelSQL, ModelView):
             self.raise_user_error('unidentified_party_warning')
 
     def check_dob(self):
-        if self.dob > date.today():
+        if self.dob and self.dob > date.today():
             self.raise_user_error('future_dob_error')
 
     def get_alt_ids(self, field_name):

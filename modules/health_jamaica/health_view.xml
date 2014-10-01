@@ -92,7 +92,11 @@
         <field name="inherit" ref="party.address_view_form"/>
         <field name="name">address_form_jm</field>
     </record>
-
+    <record model="ir.ui.view" id="healthjm_signs_symptoms_view">
+        <field name="model">gnuhealth.signs_and_symptoms</field>
+        <field name="inherit" ref="health.gnuhealth_signs_and_symptoms_form"/>
+        <field name="name">signs_and_symptoms_form</field>
+    </record>
     <!-- <record model="ir.action.act_window.domain" id="health.act_gnuhealth_appointment_domain_free">
         <field name="name">Scheduled</field>
         <field name="sequence" eval="10"/>
