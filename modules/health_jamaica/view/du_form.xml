@@ -5,7 +5,7 @@
             <label name="address_country"/>
             <field name="address_country"/>
             <label name="address_subdivision"/>
-            <field name="address_subdivision"/>
+            <field name="address_subdivision" widget="selection" />
             <label name="name"/>
             <field name="name"/>
             <newline/>

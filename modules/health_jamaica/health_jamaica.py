@@ -28,7 +28,7 @@ import hashlib
 import re
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
-from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And
+from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
@@ -69,7 +69,8 @@ class PartyPatient (ModelSQL, ModelView):
     lastname = fields.Char('Last Name', help='Last Name',
         states={'invisible': Not(Bool(Eval('is_person')))},
         select=True)
-    # maiden_name = fields.Char('Maiden Name',)
+    maiden_name = fields.Char('Maiden Name', 
+                          states={'invisible':Or(Not(Equal(Eval('marital_status'), 'm')), Equal(Eval('sex'), 'm'))})
 
     suffix = fields.Selection([
         (None,''),
@@ -397,29 +398,6 @@ class PatientData(ModelSQL, ModelView):
                                       self.dod, self.sex)
 
 
-class PartyAddress(ModelSQL, ModelView):
-    'Party Address, defines parties that are related to patients'
-    __name__ = 'party.address'
-
-    relationship = fields.Selection([
-        ('', ''),
-        ('offspring', 'Son/Daughter'),
-        ('spouse','Spouse (husband/wife)'),
-        ('parent','Parent (mother/father)'),
-        ('guardian','Guardian/Foster parent'),
-        ('sibling', 'Sibling (brother/sister)'),
-        ('grandparent','Grandparent'),
-        ('grandchild', 'Grandchild'),
-        ('cousin','Cousin'),
-        ('auntuncle','Aunt/Uncle'),
-        ('girlboyfriend', 'Girlfriend/Boyfriend'),
-        ('friend','Friend'),
-        ('coworker','Co-worker'),
-        ('other', 'Other')
-        ],'Relationship', help="Relationship of contact to patient", sort=False)
-
-
-
 class AlternativePersonID (ModelSQL, ModelView):
     'Alternative person ID'
     __name__ ='gnuhealth.person_alternative_identification' 
@@ -540,6 +518,50 @@ class DistrictCommunity(ModelSQL, ModelView):
         ]
 
 
+ADDRESS_STATES = { 'readonly': ~Eval('active')}
+ADDRESS_DEPENDS = ['active']
+
+class PartyAddress(ModelSQL, ModelView):
+    'Party Address, defines parties that are related to patients'
+    __name__ = 'party.address'
+
+    relationship = fields.Selection([
+        ('', ''),
+        ('offspring', 'Son/Daughter'),
+        ('spouse','Spouse (husband/wife)'),
+        ('parent','Parent (mother/father)'),
+        ('guardian','Guardian/Foster parent'),
+        ('sibling', 'Sibling (brother/sister)'),
+        ('grandparent','Grandparent'),
+        ('grandchild', 'Grandchild'),
+        ('cousin','Cousin'),
+        ('auntuncle','Aunt/Uncle'),
+        ('girlboyfriend', 'Girlfriend/Boyfriend'),
+        ('friend','Friend'),
+        ('coworker','Co-worker'),
+        ('other', 'Other')
+        ],'Relationship', help="Relationship of contact to patient", sort=False)
+
+
+    streetbis = fields.Char('Apartment/Suite #', states=ADDRESS_STATES,
+        depends=ADDRESS_DEPENDS)
+    subdivision = fields.Many2One("country.subdivision",
+            'Parish/Province', domain=[('country', '=', Eval('country'))],
+            states=ADDRESS_STATES, depends=['active', 'country'])
+    address_street_num = fields.Char('Street Number', size=8,
+        states=ADDRESS_STATES)
+    post_office = fields.Many2One(
+        'country.post_office', 'Post Office (JM)', help="Closest Post Office, Jamaica only",
+        domain=[('subdivision', '=', Eval('subdivision'))],
+        depends=['subdivision'], states=ADDRESS_STATES)
+    district_community = fields.Many2One(
+        'country.district_community', 'District (JM)', states=ADDRESS_STATES,
+        domain=[('post_office', '=', Eval('post_office'))],
+        depends=['post_office'], help="Select District/Community, Jamaica only")
+    desc = fields.Char('Additional Description', states=ADDRESS_STATES,
+        help="Landmark or additional directions")
+ 
+
 class DomiciliaryUnit(ModelSQL, ModelView):
     'Domiciliary Unit'
     __name__ = 'gnuhealth.du'
@@ -558,7 +580,8 @@ class DomiciliaryUnit(ModelSQL, ModelView):
         'country.district_community', 'District (JM)',
         domain=[('post_office', '=', Eval('address_post_office'))],
         depends=['address_post_office'], help="Select District/Community, Jamaica only")
-    desc = fields.Char('Additional Description')
+    desc = fields.Char('Additional Description',
+        help="Landmark or additional directions")
     city_town = fields.Function(fields.Char('City/Town/P.O.'), 'get_city_town')
 
     @classmethod

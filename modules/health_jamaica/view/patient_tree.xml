@@ -9,8 +9,8 @@
     <xpath expr="/tree/field[@name=&quot;puid&quot;]" position="before">
         <field name="firstname" expand="1" />
         <field name="middlename" />
-        <field name="dob" tree_invisible="1" />
-        <field name="age" />
+        <field name="dob" />
+<!--         <field name="age" /> -->
         <field name="mother_maiden_name" tree_invisible="1" />
         <field name="father_name"  tree_invisible="1" />
         <field name="medical_record_num" tree_invisible="1" />

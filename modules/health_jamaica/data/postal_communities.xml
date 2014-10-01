@@ -1023,7 +1023,7 @@
 		</record>
 		<record id="jmpo_P12A05C" model="country.post_office">
 			<field name="code">P12A05C</field>
-			<field name="subdivision" ref="country.jm-o7"/>
+			<field name="subdivision" ref="country.jm-07"/>
 			<field name="name">Lorrimers P.O.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
