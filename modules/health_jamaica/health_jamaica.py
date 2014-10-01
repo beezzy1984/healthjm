@@ -69,6 +69,7 @@ class PartyPatient (ModelSQL, ModelView):
     lastname = fields.Char('Last Name', help='Last Name',
         states={'invisible': Not(Bool(Eval('is_person')))},
         select=True)
+    # maiden_name = fields.Char('Maiden Name',)
 
     suffix = fields.Selection([
         (None,''),
@@ -109,6 +110,12 @@ class PartyPatient (ModelSQL, ModelView):
             })
 
     occupation = fields.Many2One('gnuhealth.occupation', 'Occupational Group')
+    insurance = fields.One2Many('gnuhealth.insurance', 'name', 'Insurance',
+        help="Insurance Plans associated to this party")
+    medical_record_num = fields.Function(fields.Char('Medical Record Num.'),
+        'get_alt_ids', searcher='search_alt_ids')
+    alt_ids = fields.Function(fields.Char('Alternate IDs'), 'get_alt_ids',
+        searcher='search_alt_ids')
 
     def get_rec_name(self, name):
         # simplified since we generate the person name and all others are okay
@@ -205,27 +212,61 @@ class PartyPatient (ModelSQL, ModelView):
             party.check_party_warning()
             party.check_dob()
 
-    def check_party_warning(self):
-        # if len(self.alternative_ids) == 0 and not self.unidentified:
-        #     self.raise_user_error('unidentified_or_altid')
+    @classmethod
+    def write(cls, parties, vals):
+        regex = re.compile(u'NN-([A-Z]{3}\d{3}[A-Z]{3})')
+        for party in parties:
+            if vals.get('party_warning_ack') and regex.match(party.ref):
+                # remove the NN from the UPI
+                vals['ref'] = ''.join(regex.split(party.ref))
+        return super(PartyPatient, cls).write(parties, vals)
 
-        # if len(self.alternative_ids) == 0 and self.party_warning_ack:
-        #     self.raise_user_error('unidentified_party_warning')
-        pass
+    def check_party_warning(self):
+        '''validates that a party being entered as verified has an alt-id
+        if there is no alt-id, then the party should be labeled as unidentified
+        '''
+        if len(self.alternative_ids) == 0 and not self.unidentified:
+            self.raise_user_error('unidentified_or_altid')
+
+        if len(self.alternative_ids) == 0 and self.party_warning_ack:
+            self.raise_user_error('unidentified_party_warning')
 
     def check_dob(self):
         if self.dob > date.today():
             self.raise_user_error('future_dob_error')
 
+    def get_alt_ids(self, field_name):
+        if (field_name == 'medical_record_num'):
+            for altid in self.alternative_ids:
+                if altid.alternative_id_type == 'medical_record':
+                    return altid.code
+            return ''
+        else:
+            altids = []
+            for altid in self.alternative_ids:
+                if altid.alternative_id_type != 'medical_record':
+                    altids.append('-'.join([altid.alternative_id_type,altid.code]))
+            return ', '.join(altids)
+
+
     @classmethod
-    def write(cls, parties, vals):
-        import pdb;pdb.set_trace()
-        regex = re.compile(u'NN-([A-Z]{3}\d{3}[A-Z]{3})')
-        for party in parties:
-            if vals.get('party_warning_ack') and regex.match(party.ref):
-                # remove the NN from then UPI
-                vals['ref'] = ''.join(regex.split(party.ref))
-        return super(PartyPatient, cls).write(parties, vals)
+    def search_alt_ids(cls, field_name, clause):
+        if field_name == 'medical_record_num':
+            return ['AND',(('alternative_ids.alternative_id_type','=','medical_record'),
+                    ('alternative_ids.code',)+tuple(clause[1:]))]
+        else:
+            return ['AND',(
+            ('alternative_ids.alternative_id_type','!=','medical_record'),
+            ('alternative_ids.code', clause[1], clause[2]))]
+
+    def get_person_field(self, field_name):
+        return getattr(self.name, field_name)
+
+    @classmethod
+    def search_person_field(cls, field_name, clause):
+        return [('name.{}'.format(field_name), clause[1], clause[2])]
+
+
 
 class PatientData(ModelSQL, ModelView):
     '''Patient related information, redefined to fix name display/generation'''
@@ -264,6 +305,10 @@ class PatientData(ModelSQL, ModelView):
                                 'get_person_field', searcher='search_person_field')
     father_name = fields.Function(fields.Char('Father\'s name'), 'get_person_field',
                                 searcher='search_person_field')
+    medical_record_num = fields.Function(fields.Char('Medical Record Number'),
+        'get_person_field', searcher='search_alt_ids')
+    alt_ids = fields.Function(fields.Char('Alternate IDs'), 'get_person_field',
+        searcher='search_alt_ids')
 
     def get_rec_name(self, name):
         return self.name.name
@@ -279,6 +324,16 @@ class PatientData(ModelSQL, ModelView):
     @classmethod
     def search_person_field(cls, field_name, clause):
         return [('name.{}'.format(field_name), clause[1], clause[2])]
+
+    @classmethod
+    def search_alt_ids(cls, field_name, clause):
+        if field_name == 'medical_record_num':
+            return ['AND',(('name.alternative_ids.alternative_id_type','=','medical_record'),
+                    ('name.alternative_ids.code',)+tuple(clause[1:]))]
+        else:
+            return ['AND',(
+            ('name.alternative_ids.alternative_id_type','!=','medical_record'),
+            ('name.alternative_ids.code', clause[1], clause[2]))]
 
     # Get the patient age in the following format : 'YEARS MONTHS DAYS'
     # It will calculate the age of the patient while the patient is alive.
@@ -381,6 +436,18 @@ class AlternativePersonID (ModelSQL, ModelView):
                 ('other', 'Other')
             ]
         cls.alternative_id_type.selection = selections[:]
+        cls._error_messages.update({
+            'invalid_trn':'Invalid format for TRN',
+            'invalid_medical_record': 'Invalid format for medical record number',
+            'invalid_format':'Invalid format'
+        })
+        cls.format_test = {
+            'trn':re.compile('1\d{8}'),
+            'medical_record': re.compile('\d{6}[a-z]?', re.I),
+            'pathID':re.compile('\d{8}'),
+            'gojhcard':re.compile('\d{10}'),
+            'nunnum':re.compile('\d{9}')
+        }
         # for selection in selections:
         #     if selection not in cls.alternative_id_type.selection:
         #         cls.alternative_id_type.selection.append(selection)
@@ -390,6 +457,24 @@ class AlternativePersonID (ModelSQL, ModelView):
     #     print(('*'*20) + " on_change_with_issuedby " + ('*'*20) )
     #     print(repr(self.alternative_id_type))
     #     return ''
+
+    @classmethod
+    def validate(cls, records):
+        super(AlternativePersonID, cls).validate(records)
+        for alternative_id in records:
+            alternative_id.check_format()
+
+    def check_format(self):
+        format_tester = self.format_test.get(self.alternative_id_type, False)
+        if format_tester:
+            if format_tester.match(self.code):
+                pass
+            else:
+                error_msg = 'invalid_{}'.format(self.alternative_id_type)
+                if not self._error_messages.has_key(error_msg):
+                    error_msg = 'invalid_format'
+                self.raise_user_error(error_msg)
+
 
 class PostOffice(ModelSQL, ModelView):
     'Country Post Office'

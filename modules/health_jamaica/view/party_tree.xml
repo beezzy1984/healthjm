@@ -3,7 +3,12 @@
 	<xpath expr="/tree/field[@name=&quot;name&quot;]" position="replace_attributes">
 		<field name="name" expand="1" />
 	</xpath>
-	<xpath expr="/tree/field[@name=&quot;lastname&quot;]" position="replace_attributes">
-		<field name="lastname" tree_invisible="1" />
-	</xpath>
+	<xpath expr="/tree/field[@name=&quot;lastname&quot;]" position="replace">
+        <field name="medical_record_num" />
+        <field name="alt_ids" tree_invisible="1" />
+    </xpath>
+	<xpath expr="/tree/field[@name=&quot;is_person&quot;]" position="replace" />
+    <xpath expr="/tree/field[@name=&quot;active&quot;]" position="replace" />
+    <xpath expr="/tree/field[@name=&quot;lang&quot;]" position="replace" />
+    <xpath expr="/tree/field[@name=&quot;vat_code&quot;]" position="replace" />
 </data>
