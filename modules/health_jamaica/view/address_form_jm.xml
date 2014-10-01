@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<data>
+    <xpath expr="/form/label[@name=&quot;country&quot;]" position="replace" />
+    <xpath expr="/form/field[@name=&quot;country&quot;]" position="replace" />
+    <xpath expr="/form/label[@name=&quot;subdivision&quot;]" position="replace">
+    </xpath>
+    <xpath expr="/form/field[@name=&quot;subdivision&quot;]" position="replace">
+    </xpath>
+
+    <xpath expr="/form/label[@name=&quot;street&quot;]" position="before">
+        <label name="country" />
+        <field name="country" />
+        <label name="subdivision" />
+        <field name="subdivision" widget="selection" />
+        <newline />
+
+        <label name="post_office" />
+        <field name="post_office" widget="selection" />
+        
+        <label name="district_community" />
+        <field name="district_community" widget="selection" />
+        <newline />
+        <label name="address_street_num" colspan="1" />
+        <field name="address_street_num" colspan="1" />
+    </xpath>
+    <xpath expr="/form/label[@name=&quot;street&quot;]" position="replace_attributes">
+        <label name="street" colspan="1" />
+    </xpath>
+
+    <xpath expr="/form/field[@name=&quot;streetbis&quot;]" position="after">
+        <label name="desc" />
+        <field name="desc" />
+    </xpath>
+
+<!--     <xpath expr="/form/field[@name=&quot;street&quot;]" position="replace_attributes">
+        <label name="street" colspan="1" />
+    </xpath> -->
+    <xpath expr="/form/field[@name=&quot;street&quot;]" position="after">
+        <newline />
+    </xpath>
+
+
+
+</data>
