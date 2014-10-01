@@ -240,7 +240,7 @@ class PartyPatient (ModelSQL, ModelView):
             for altid in self.alternative_ids:
                 if altid.alternative_id_type == 'medical_record':
                     return altid.code
-            return ''
+            return '--'
         else:
             altids = []
             for altid in self.alternative_ids:
@@ -271,6 +271,15 @@ class PartyPatient (ModelSQL, ModelView):
 class PatientData(ModelSQL, ModelView):
     '''Patient related information, redefined to fix name display/generation'''
     __name__ = 'gnuhealth.patient'
+
+    name = fields.Many2One(
+        'party.party', 'Patient', required=True,
+        domain=[
+            ('is_patient', '=', True),
+            ('is_person', '=', True),
+            ],
+        # states={'readonly': Bool(Eval('name'))},
+        help="Person that is this patient")
 
     ses = fields.Selection([
         (None, ''),

@@ -1023,7 +1023,7 @@
 		</record>
 		<record id="jmpo_P12A05C" model="country.post_office">
 			<field name="code">P12A05C</field>
-			<field name="subdivision" ref="country.jm-12"/>
+			<field name="subdivision" ref="country.jm-o7"/>
 			<field name="name">Lorrimers P.O.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
@@ -1053,7 +1053,7 @@
 		</record>
 		<record id="jmpo_P1266F4" model="country.post_office">
 			<field name="code">P1266F4</field>
-			<field name="subdivision" ref="country.jm-12"/>
+			<field name="subdivision" ref="country.jm-11"/>
 			<field name="name">Nain P.O.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
@@ -1071,8 +1071,8 @@
 		</record>
 		<record id="jmpo_P120B8A" model="country.post_office">
 			<field name="code">P120B8A</field>
-			<field name="subdivision" ref="country.jm-12"/>
-			<field name="name">Peppers P.O</field>
+			<field name="subdivision" ref="country.jm-11"/>
+			<field name="name">Pepper P.O</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
 		<record id="jmpo_P12E7D1" model="country.post_office">
@@ -1191,7 +1191,7 @@
 		</record>
 		<record id="jmpo_G121508" model="country.post_office">
 			<field name="code">G121508</field>
-			<field name="subdivision" ref="country.jm-12"/>
+			<field name="subdivision" ref="country.jm-11"/>
 			<field name="name">Goshen P.A.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
