@@ -97,5 +97,83 @@
 			<field name="description">EXAMINATION FOR LICENCE AS FOOD HANDLER OR VENDOR</field>
 			<field name="name">4-162</field>
 		</record>
+
+		<!-- ICD R Codes -->
+		<record id="R197" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-2" />
+			<field name="code">R19.7</field>
+			<field name="name">DIARRHOEA, UNSPECIFIED</field>
+		</record>
+		<record id="R531" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-8" />
+			<field name="code">R53.1</field>
+			<field name="name">ASTHENIA (GENERALIZED WEAKNESS)</field>
+		</record>
+		<record id="R532" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-8" />
+			<field name="code">R53.2</field>
+			<field name="name">DEBILITY</field>
+		</record>
+		<record id="R533" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-8" />
+			<field name="code">R53.3</field>
+			<field name="name">GENERAL PHYSICAL DETERIORATION</field>
+		</record>
+		<record id="R534" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-8" />
+			<field name="code">R53.4</field>
+			<field name="name">LETHARGY</field>
+		</record>
+		<record id="R535" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-8" />
+			<field name="code">R53.5</field>
+			<field name="name">TIREDNESS</field>
+		</record>
+		<record id="R295" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-4" />
+			<field name="code">R29.5</field>
+			<field name="name">JOINT PAIN OR STIFFNESS (ARTHRALGIA)</field>
+		</record>
+		<record id="R297" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-4" />
+			<field name="code">R29.7</field>
+			<field name="name">JOINT SWELLING </field>
+		</record>
+		<record id="R602" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-8" />
+			<field name="code">R60.2</field>
+			<field name="name">PERIARTICULAR OEDEMA</field>
+		</record>
+		<record id="R523" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-8" />
+			<field name="code">R52.3</field>
+			<field name="name">MUSCLE PAIN</field>
+		</record>
+		<record id="R524" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-8" />
+			<field name="code">R52.4</field>
+			<field name="name">BACK PAIN</field>
+		</record>
+		<record id="R110" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-2" />
+			<field name="code">R11.0</field>
+			<field name="name">NAUSEA</field>
+		</record>
+		<record id="R111" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-2" />
+			<field name="code">R11.1</field>
+			<field name="name">VOMITTING</field>
+		</record>
+		<record id="R105" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-2" />
+			<field name="code">R10.5</field>
+			<field name="name">PELVIC PAIN</field>
+		</record>
+		<record id="R106" model="gnuhealth.pathology">
+			<field name="category" ref="health_icd10.icdcat18-2" />
+			<field name="code">R10.6</field>
+			<field name="name">PERINEAL PAIN</field>
+		</record>		
+
 	</data>
 </tryton>
