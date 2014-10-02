@@ -28,10 +28,10 @@ def register():
     Pool.register(
         PartyPatient,
         PatientData,
-        PartyAddress,
         AlternativePersonID,
         PostOffice,
         DistrictCommunity,
+        PartyAddress,
         DomiciliaryUnit,
         Newborn,
         Insurance,
