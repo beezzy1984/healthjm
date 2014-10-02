@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<tryton>
+	<data>
+		<record id="icpm_2-901" model="gnuhealth.procedure">
+			<field name="description">MICROSCOPY</field>
+			<field name="name">2-901</field>
+		</record>
+		<record id="icpm_2-130" model="gnuhealth.procedure">
+			<field name="description">BLOOD SUGAR</field>
+			<field name="name">2-130</field>
+		</record>
+		<record id="icpm_2-255" model="gnuhealth.procedure">
+			<field name="description">URINE (ROUTINE URINALYSIS)</field>
+			<field name="name">2-255</field>
+		</record>
+		<record id="icpm_2-801" model="gnuhealth.procedure">
+			<field name="description">HAEMATOLOGY</field>
+			<field name="name">2-801</field>
+		</record>
+		<record id="icpm_2-609" model="gnuhealth.procedure">
+			<field name="description">RPR/TRUST TEST</field>
+			<field name="name">2-609</field>
+		</record>
+		<record id="icpm_5-890" model="gnuhealth.procedure">
+			<field name="description">SUTURES</field>
+			<field name="name">5-890</field>
+		</record>
+		<record id="icpm_9-121" model="gnuhealth.procedure">
+			<field name="description">INTRAMUSCULAR INJECTION OF DRUG</field>
+			<field name="name">9-121</field>
+		</record>
+		<record id="icpm_8-192" model="gnuhealth.procedure">
+			<field name="description">DRESSING (WOUND, ULCER OR BURN)</field>
+			<field name="name">8-192</field>
+		</record>
+		<record id="icpm_5-882" model="gnuhealth.procedure">
+			<field name="description">INCISION &amp; DRAINAGE</field>
+			<field name="name">5-882</field>
+		</record>
+		<record id="icpm_8-130" model="gnuhealth.procedure">
+			<field name="description">CATHETERIZATION</field>
+			<field name="name">8-130</field>
+		</record>
+		<record id="icpm_8-753" model="gnuhealth.procedure">
+			<field name="description">NEBULIZATION</field>
+			<field name="name">8-753</field>
+		</record>
+		<record id="icpm_1-300" model="gnuhealth.procedure">
+			<field name="description">DENTAL EXAMINATION</field>
+			<field name="name">1-300</field>
+		</record>
+		<record id="icpm_5-232" model="gnuhealth.procedure">
+			<field name="description">DENTAL FILLING</field>
+			<field name="name">5-232</field>
+		</record>
+		<record id="icpm_5-230" model="gnuhealth.procedure">
+			<field name="description">DENTAL EXTRACTION</field>
+			<field name="name">5-230</field>
+		</record>
+		<record id="icpm_4-521" model="gnuhealth.procedure">
+			<field name="description">DENTAL CLEANING (SCALING AND POLISHING)</field>
+			<field name="name">4-521</field>
+		</record>
+		<record id="icpm_9-301" model="gnuhealth.procedure">
+			<field name="description">DENTURES</field>
+			<field name="name">9-301</field>
+		</record>
+		<record id="icpm_4-150" model="gnuhealth.procedure">
+			<field name="description">MEDICAL EXAMINATION OF RAPE VICTIM</field>
+			<field name="name">4-150</field>
+		</record>
+		<record id="icpm_1-211" model="gnuhealth.procedure">
+			<field name="description">VISUAL ACUITY</field>
+			<field name="name">1-211</field>
+		</record>
+		<record id="icpm_1-220" model="gnuhealth.procedure">
+			<field name="description">OPHTHALMOSCOPIC EXAMINATION OF EYES</field>
+			<field name="name">1-220</field>
+		</record>
+		<record id="icpm_4-653" model="gnuhealth.procedure">
+			<field name="description">INSERTION OF INTRA-UTERINE DEVICE</field>
+			<field name="name">4-653</field>
+		</record>
+		<record id="icpm_4-251" model="gnuhealth.procedure">
+			<field name="description">PAP SMEAR</field>
+			<field name="name">4-251</field>
+		</record>
+		<record id="icpm_1-342" model="gnuhealth.procedure">
+			<field name="description">PROSTATE EXAMINATION</field>
+			<field name="name">1-342</field>
+		</record>
+		<record id="icpm_1-380" model="gnuhealth.procedure">
+			<field name="description">BREAST EXAMINATION</field>
+			<field name="name">1-380</field>
+		</record>
+		<record id="icpm_4-162" model="gnuhealth.procedure">
+			<field name="description">EXAMINATION FOR LICENCE AS FOOD HANDLER OR VENDOR</field>
+			<field name="name">4-162</field>
+		</record>
+	</data>
+</tryton>
