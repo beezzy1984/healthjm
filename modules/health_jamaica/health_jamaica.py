@@ -35,7 +35,7 @@ from trytond.transaction import Transaction
 
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance',
-    'PartyAddress', 'HealthProfessional', 'Appointment']
+    'PartyAddress', 'HealthProfessional', 'Appointment', 'SignsAndSymptoms']
 __metaclass__ = PoolMeta
 
 _STATES = {
@@ -727,3 +727,15 @@ class Appointment(ModelSQL, ModelView):
             parms = ('Scheduled', 'Free')
             cursor.execute(sql, parms)
             cursor.commit()
+
+
+class SignsAndSymptoms(ModelSQL, ModelView):
+    'Evaluation Signs and Symptoms'
+    __name__ = 'gnuhealth.signs_and_symptoms'
+
+    sign_or_symptom = fields.Selection([
+        (None, ''),
+        ('sign', 'Sign'),
+        ('symptom', 'Symptom')],
+        'Subjective / Objective', required=False, 
+        states={'invisible':True})

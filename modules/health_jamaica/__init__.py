@@ -37,4 +37,5 @@ def register():
         Insurance,
         HealthProfessional,
         Appointment,
+        SignsAndSymptoms,
         module='health_jamaica', type_='model')
