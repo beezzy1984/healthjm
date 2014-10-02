@@ -319,6 +319,8 @@ class PatientData(ModelSQL, ModelView):
         'get_person_field', searcher='search_alt_ids')
     alt_ids = fields.Function(fields.Char('Alternate IDs'), 'get_person_field',
         searcher='search_alt_ids')
+    du = fields.Function(fields.Char('Domiciliary Unit'),
+                            'get_person_field', searcher='search_person_field')
 
     def get_rec_name(self, name):
         return self.name.name
