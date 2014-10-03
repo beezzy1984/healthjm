@@ -740,3 +740,7 @@ class SignsAndSymptoms(ModelSQL, ModelView):
         ('symptom', 'Symptom')],
         'Subjective / Objective', required=False, 
         states={'invisible':True})
+
+    @staticmethod
+    def default_sign_or_symptom():
+        return 'symptom'
