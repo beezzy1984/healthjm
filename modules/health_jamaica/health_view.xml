@@ -97,6 +97,11 @@
         <field name="inherit" ref="health.gnuhealth_signs_and_symptoms_form"/>
         <field name="name">signs_and_symptoms_form</field>
     </record>
+    <record model="ir.ui.view" id="healthjm_signs_and_symptoms_tree">
+        <field name="model">gnuhealth_signs_and_symptoms</field>
+        <field name="inherit" ref="health.gnuhealth_signs_and_symptoms_tree"/>
+        <field name="name">signs_and_symptoms_tree</field>
+    </record>   
     <record model="ir.ui.view" id="healthjm_patient_procedure">
         <field name="model">gnuhealth.directions</field>
         <field name="inherit" ref="health.gnuhealth_directions_form"/>
