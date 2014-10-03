@@ -113,6 +113,7 @@ class PartyPatient (ModelSQL, ModelView):
     occupation = fields.Many2One('gnuhealth.occupation', 'Occupational Group')
     insurance = fields.One2Many('gnuhealth.insurance', 'name', 'Insurance',
         help="Insurance Plans associated to this party")
+    du = fields.Many2One('gnuhealth.du', 'Address')
     medical_record_num = fields.Function(fields.Char('Medical Record Num.'),
         'get_alt_ids', searcher='search_alt_ids')
     alt_ids = fields.Function(fields.Char('Alternate IDs'), 'get_alt_ids',
@@ -319,7 +320,7 @@ class PatientData(ModelSQL, ModelView):
         'get_person_field', searcher='search_alt_ids')
     alt_ids = fields.Function(fields.Char('Alternate IDs'), 'get_person_field',
         searcher='search_alt_ids')
-    du = fields.Function(fields.Char('Domiciliary Unit'),
+    du = fields.Function(fields.Char('Address'),
                             'get_person_field', searcher='search_person_field')
 
     def get_rec_name(self, name):
