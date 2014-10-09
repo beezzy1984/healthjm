@@ -33,9 +33,12 @@ from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
+from .tryton_utils import negate_clause, replace_clause_column
+
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance',
-    'PartyAddress', 'HealthProfessional', 'Appointment', 'SignsAndSymptoms']
+    'PartyAddress', 'HealthProfessional', 'Appointment', 'PatientEvaluation',
+    'SignsAndSymptoms']
 __metaclass__ = PoolMeta
 
 _STATES = {
@@ -322,6 +325,8 @@ class PatientData(ModelSQL, ModelView):
         searcher='search_alt_ids')
     du = fields.Function(fields.Char('Address'),
                             'get_person_field', searcher='search_person_field')
+    unidentified = fields.Function(fields.Boolean('Unidentified'),
+        'get_unidentified', searcher='search_unidentified')
 
     def get_rec_name(self, name):
         return self.name.name
@@ -333,6 +338,12 @@ class PatientData(ModelSQL, ModelView):
 
     def get_person_field(self, field_name):
         return getattr(self.name, field_name)
+
+    def get_unidentified(self, field_name):
+        if self.name.unidentified and not self.name.party_warning_ack:
+            return True
+        else:
+            return False
 
     @classmethod
     def search_person_field(cls, field_name, clause):
@@ -347,6 +358,15 @@ class PatientData(ModelSQL, ModelView):
             return ['AND',(
             ('name.alternative_ids.alternative_id_type','!=','medical_record'),
             ('name.alternative_ids.code', clause[1], clause[2]))]
+
+    @classmethod
+    def search_unidentified(cls, field_name, clause):
+        cond = ['AND', replace_clause_column(clause, 'name.unidentified'),
+                negate_clause(replace_clause_column(clause,
+                                                    'name.party_warning_ack'))
+               ]
+        print(repr(cond))
+        return cond
 
     # Get the patient age in the following format : 'YEARS MONTHS DAYS'
     # It will calculate the age of the patient while the patient is alive.
@@ -711,6 +731,10 @@ class Appointment(ModelSQL, ModelView):
         ('no_show', 'No show')
         ], 'State', sort=False)
 
+    speciality = fields.Many2One(
+        'gnuhealth.specialty', 'Specialty',
+        help='Medical Specialty / Sector', states={'required':True})
+
     @staticmethod
     def default_state():
         return 'free'
@@ -730,6 +754,16 @@ class Appointment(ModelSQL, ModelView):
             cursor.commit()
 
 
+class PatientEvaluation(ModelSQL, ModelView):
+    'Patient Evaluation'
+    __name__ = 'gnuhealth.patient.evaluation'
+
+    diagnostic_hypothesis = fields.One2Many(
+        'gnuhealth.diagnostic_hypothesis',
+        'evaluation', 'Hypotheses / DDx', help='Other Diagnostic Hypotheses /'
+        ' Differential Diagnosis (DDx)', states={'required':True})
+
+
 class SignsAndSymptoms(ModelSQL, ModelView):
     'Evaluation Signs and Symptoms'
     __name__ = 'gnuhealth.signs_and_symptoms'
@@ -744,3 +778,4 @@ class SignsAndSymptoms(ModelSQL, ModelView):
     @staticmethod
     def default_sign_or_symptom():
         return 'symptom'
+

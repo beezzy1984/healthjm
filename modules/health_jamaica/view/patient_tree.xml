@@ -14,6 +14,7 @@
         <field name="mother_maiden_name" tree_invisible="1" />
         <field name="father_name"  tree_invisible="1" />
         <field name="medical_record_num" />
+        <field name="unidentified" tree_invisible="1" />
         <field name="alt_ids" tree_invisible="1" />
     </xpath>
 </data><!-- 
