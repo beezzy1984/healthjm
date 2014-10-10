@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <tryton>
-	<data noupdate="0" skiptest="0">
+	<data>
         <record model="gnuhealth.occupation" id="health.occ1">
             <field name="name">Unemployed/Unknown</field>
             <field name="code">9999</field>
@@ -19,7 +19,7 @@
 		</record>
 		<record id="health.occ5" model="gnuhealth.occupation">
 			<field name="code">1114</field>
-			<field name="name">Senior Officials of Special - Interest Organizations</field>
+			<field name="name">Senior Officials of Special-Interest Organizations</field>
 		</record>
 		<record id="health.occ6" model="gnuhealth.occupation">
 			<field name="code">1120</field>

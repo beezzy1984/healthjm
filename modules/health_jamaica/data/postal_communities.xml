@@ -25487,7 +25487,7 @@
 		</record>
 		<record id="jmdisco_5544" model="country.district_community">
 			<field name="post_office" ref="health_jamaica.jmpo_P07566C"/>
-			<field name="name">Slat Marsh</field>
+			<field name="name">Salt Marsh</field>
 		</record>
 		<record id="jmdisco_5545" model="country.district_community">
 			<field name="post_office" ref="health_jamaica.jmpo_P07566C"/>

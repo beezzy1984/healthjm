@@ -23,9 +23,12 @@
 
 from trytond.pool import Pool
 from .health_jamaica import *
+from .wizards import *
+from .reports import *
 
 def register():
     Pool.register(
+        OccupationalGroup,
         PartyPatient,
         PatientData,
         AlternativePersonID,
@@ -37,5 +40,17 @@ def register():
         Insurance,
         HealthProfessional,
         Appointment,
+        PatientEvaluation,
         SignsAndSymptoms,
+        PatientRegisterModel,
         module='health_jamaica', type_='model')
+
+    Pool.register(
+        PatientRegisterWizard,
+        module='health_jamaica', type_='wizard'
+    )
+
+    Pool.register(
+        DailyPatientRegister,
+        module='health_jamaica', type_='report'
+    )

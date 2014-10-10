@@ -7,6 +7,8 @@
             <field name="model">gnuhealth.patient</field>
             <field name="report_name">health_jamaica.report_facesheet_hc</field>
             <field name="active" eval="True" />
+            <field name="template_extension">odt</field>
+            <field name="extension">pdf</field>
             <field name="report">health_jamaica/report/facesheet_hc.odt</field>
         </record>
         <record model="ir.action.keyword" id="jmkw_facesheet_hc"> 
@@ -20,6 +22,8 @@
             <field name="model">gnuhealth.patient</field>
             <field name="report_name">health_jamaica.report_facesheet_hosp</field>
             <field name="active" eval="True" />
+            <field name="template_extension">odt</field>
+            <field name="extension">pdf</field>
             <field name="report">health_jamaica/report/facesheet_hosp.odt</field>
         </record>
         <record model="ir.action.keyword" id="jmkw_facesheet_hosp"> 
@@ -28,6 +32,46 @@
             <field name="action" ref="jmreport_facesheet_hosp"/> 
         </record>
 
+<!-- Patient Register Report -->
+        <record model="ir.action.report" id="jmreport_patientregister">
+            <field name="name">Patient Register</field>
+            <field name="model">gnuhealth.patient.evaluation</field>
+            <field name="report_name">health_jamaica.report_patient_register</field>
+            <field name="active" eval="True" />
+            <field name="report">health_jamaica/report/patient_register.odt</field>
+            <field name="template_extension">odt</field>
+            <field name="extension">pdf</field>
+        </record>
+        <record model="ir.ui.view" id="report_patientregister_start">
+            <field name="model">healthjm.report.patientregister.start</field>
+            <field name="type">form</field>
+            <field name="name">report_patientregister_start</field>
+        </record>
+        <record model="ir.ui.view" id="report_patientregister_result">
+            <field name="model">healthjm.report.patientregister.start</field>
+            <field name="type">form</field>
+            <field name="name">report_patientregister_result</field>
+        </record>
+        <record model="ir.action.wizard" id="action_patientregister_wizard">
+            <field name="name">Patient Register</field>
+            <field name="wiz_name">healthjm.report.patientregister.wizard</field>
+        </record>
+
+<!--         <record model="ir.action.act_window" id="action_patientregister_window">
+            <field name="name">Patient Register</field>
+            <field name="res_model">healthjm.report.patientregister.start</field>
+        </record>
+
+        <record model="ir.action.act_window.view" id="act_gnuhealth_procedure_view_list">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="report_patientregister_start"/>
+            <field name="act_window" ref="action_patientregister_window" />
+        </record> -->
+
+        <menuitem id="patientregister_menu" name="Patient Register"
+            parent="health.gnuhealth_reporting_menu" sequence="2" action="action_patientregister_wizard" icon="gnuhealth-list" />
+        
+<!-- END of Patient Register Report -->
         <!-- Appointment Register -->
 <!--         <record model="ir.action.report" id="jmreport_facesheet_hosp">
             <field name="name">Patient Register</field>

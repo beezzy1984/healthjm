@@ -1,14 +1,12 @@
 '''Utilities that make dealing with tryton idosynchrasies easier'''
 
-
-
 def negate(operator):
 	'''returns the opposite operator of a domain operator. 
 	e.g. if called as negate('=') it will return "!="
 	'''
-	converter = {'=':'!=', '<':'>', '<=':'>='}
+	converter = {u'=':u'!=', u'<':u'>', u'<=':u'>='}
 	converter.update([(y,x) for x,y in converter.items()])
-	return converter.get(operator, 'not {}'.format(operator))
+	return converter.get(operator, (u'not {}').format(operator))
 
 
 def replace_clause_column(clause, new_column):

@@ -38,7 +38,7 @@ from .tryton_utils import negate_clause, replace_clause_column
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance',
     'PartyAddress', 'HealthProfessional', 'Appointment', 'PatientEvaluation',
-    'SignsAndSymptoms']
+    'SignsAndSymptoms', 'OccupationalGroup']
 __metaclass__ = PoolMeta
 
 _STATES = {
@@ -46,7 +46,22 @@ _STATES = {
 }
 _DEPENDS = ['is_person']
 
-JAMAICA = lambda : Pool().get('country.country')(89)
+JAMAICA_ID=89
+JAMAICA = lambda : Pool().get('country.country')(JAMAICA_ID)
+SEX_OPTIONS = [('m', 'Male'), ('f', 'Female'), ('u', 'Unknown')]
+
+
+class OccupationalGroup(ModelSQL, ModelView):
+    '''Occupational Group'''
+    __name__ = 'gnuhealth.occupation'
+
+    @classmethod
+    def __register__(cls, module_name):
+        super(OccupationalGroup, cls).__register__(module_name)
+        # remove the occupations from the table that don't have 4 char codes
+        cursor = Transaction().cursor
+        cursor.execute('delete from gnuhealth_occupation where char_length(code)<4')
+
 
 class PartyPatient (ModelSQL, ModelView):
     'Party'
@@ -99,13 +114,9 @@ class PartyPatient (ModelSQL, ModelView):
     # gender vs sex: According to the AMA Manual of Style :
     # Gender refers to the psychological/societal aspects of being male or female,
     # sex refers specifically to the physical aspects. Do not interchange
-    sex = fields.Selection([
-        (None,''),
-        ('m', 'Male'),
-        ('f', 'Female'),
-        ('u', 'Unknown')
-        ], 'Sex', states={'required':Bool(Eval('is_person'))})
-
+    sex = fields.Selection([(None,'')] + SEX_OPTIONS,
+                           'Sex', states={'required':Bool(Eval('is_person'))})
+    sex_display = fields.Function(fields.Char('Sex'), 'get_sex_display')
     party_warning_ack = fields.Boolean('Party verified', 
         states={
             'invisible': And(Not(Bool(Eval('unidentified'))),
@@ -271,6 +282,13 @@ class PartyPatient (ModelSQL, ModelView):
     def search_person_field(cls, field_name, clause):
         return [('name.{}'.format(field_name), clause[1], clause[2])]
 
+    def get_sex_display(self, field_name):
+        sex_dict = dict(SEX_OPTIONS)
+        return sex_dict.get(self.sex, '')
+
+
+BloodDict = dict([('{}{}'.format(t,r),(t,r)) for t in ['A','B','AB','O']
+                    for r in ['+','-']])
 
 
 class PatientData(ModelSQL, ModelView):
@@ -309,6 +327,7 @@ class PatientData(ModelSQL, ModelView):
         ('none', 'None/Atheist/Agnostic'),
         ('unknown', 'Unknown')
         ], 'Religion', help='Religion or religious persuasion', sort=False)
+    sex_display = fields.Function(fields.Char('Sex'), 'get_person_field')
     dob = fields.Function(fields.Date('DOB'), 'get_person_field',
                                 searcher='search_person_field')
     firstname = fields.Function(fields.Char('First name'), 'get_person_field',
@@ -327,6 +346,11 @@ class PatientData(ModelSQL, ModelView):
                             'get_person_field', searcher='search_person_field')
     unidentified = fields.Function(fields.Boolean('Unidentified'),
         'get_unidentified', searcher='search_unidentified')
+
+    blood_rh = fields.Function(
+                fields.Selection([(None, '')]+[(x,x) for x in BloodDict.keys()],
+                                 'Blood type'),
+                'get_blood_rh', 'set_blood_rh', searcher='search_blood_rh')
 
     def get_rec_name(self, name):
         return self.name.name
@@ -419,7 +443,29 @@ class PatientData(ModelSQL, ModelView):
 
         return compute_age_from_dates(self.dob, self.deceased,
                                       self.dod, self.sex)
+    
+    @classmethod
+    def search_blood_rh(cls, field_name, clause):
+        res = []
+        real_val = BloodDict.get(clause[2])
+        if real_val:
+            res = ['AND', ('blood_type',clause[1], real_val[0]),
+                   ('rh',clause[1],real_val[1])]
 
+        return res
+
+    @classmethod
+    def set_blood_rh(cls, ids, name, value):
+        real_val = BloodDict.get(value, '')
+        if real_val:
+            self.blood_type,self.rh = real_val
+        else:
+            self.blood_type,self.rh = None,None
+
+
+    def get_blood_rh(self, field_name):
+        if self.blood_type and self.rh:
+            return '{}{}'.format(self.blood_type,self.rh)
 
 class AlternativePersonID (ModelSQL, ModelView):
     'Alternative person ID'
@@ -545,7 +591,7 @@ ADDRESS_STATES = { 'readonly': ~Eval('active')}
 ADDRESS_DEPENDS = ['active']
 
 class PartyAddress(ModelSQL, ModelView):
-    'Party Address, defines parties that are related to patients'
+    'Party Address'
     __name__ = 'party.address'
 
     relationship = fields.Selection([
@@ -608,8 +654,8 @@ class DomiciliaryUnit(ModelSQL, ModelView):
     city_town = fields.Function(fields.Char('City/Town/P.O.'), 'get_city_town')
 
     @classmethod
-    def default_country(cls):
-        return JAMAICA()
+    def default_address_country(cls):
+        return JAMAICA_ID
 
     def get_city_town(self, name):
         '''returns the post office for jamaica or the city or municipality for
@@ -619,6 +665,7 @@ class DomiciliaryUnit(ModelSQL, ModelView):
             return self.address_post_office.name
         else:
             return self.address_city or self.address_municipality
+
 
     # @fields.depends('address_subdivision')
     # def on_change_with_name(self, *arg, **kwarg):
