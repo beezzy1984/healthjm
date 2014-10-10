@@ -33,7 +33,8 @@ from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
-from .tryton_utils import negate_clause, replace_clause_column
+from .tryton_utils import (negate_clause, replace_clause_column,
+                           make_selection_display)
 
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance',
@@ -810,6 +811,11 @@ class PatientEvaluation(ModelSQL, ModelView):
         'evaluation', 'Hypotheses / DDx', help='Other Diagnostic Hypotheses /'
         ' Differential Diagnosis (DDx)', states={'required':True})
 
+    visit_type_display = fields.Function(fields.Char('Visit Type'),
+                                         'get_selection_display')
+
+    def get_selection_display(self, fn):
+        return make_selection_display()(self,'visit_type')
 
 class SignsAndSymptoms(ModelSQL, ModelView):
     'Evaluation Signs and Symptoms'
