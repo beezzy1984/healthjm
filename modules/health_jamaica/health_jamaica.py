@@ -630,7 +630,41 @@ class PartyAddress(ModelSQL, ModelView):
         depends=['post_office'], help="Select District/Community, Jamaica only")
     desc = fields.Char('Additional Description', states=ADDRESS_STATES,
         help="Landmark or additional directions")
- 
+    full_address = fields.Function(fields.Text('Full Address'),
+            'get_full_address')
+
+    @classmethod
+    def default_country(cls):
+        return JAMAICA_ID
+
+    def get_full_address(self, name):
+        if self.country and self.country.id == JAMAICA_ID:
+            addr,line = [],[]
+            if self.address_street_num: line.append(self.address_street_num)
+            if self.street: line.append(','.join([self.street,'']))
+            if self.streetbis: line.extend([' Apt#', self.streetbis])
+            if line:
+                addr.append(u' '.join(line[:]))
+                line =[]
+            if self.district_community and self.district_community.id:
+                line.append(','.join([self.district_community.name,'']))
+
+            if self.post_office:
+                line.append(self.post_office.name)
+
+            if line:
+                addr.append(u' '.join(line[:]))
+                line=[]
+
+            if self.subdivision:
+                # if not self.district_community and self.district
+                line.append(self.subdivision.name)
+            line.append(self.country.name)
+
+            addr.append(u' '.join(line))
+            return (u'\r\n').join(addr)
+        else:
+            return super(PartyAddress, self).get_full_address(name)
 
 class DomiciliaryUnit(ModelSQL, ModelView):
     'Domiciliary Unit'
@@ -654,6 +688,9 @@ class DomiciliaryUnit(ModelSQL, ModelView):
         help="Landmark or additional directions")
     city_town = fields.Function(fields.Char('City/Town/P.O.'), 'get_city_town')
 
+    full_address = fields.Function(fields.Text('Full Address'),
+            'get_full_address')
+
     @classmethod
     def default_address_country(cls):
         return JAMAICA_ID
@@ -667,6 +704,32 @@ class DomiciliaryUnit(ModelSQL, ModelView):
         else:
             return self.address_city or self.address_municipality
 
+    def get_full_address(self, name):
+        if self.address_country and self.address_country.id == JAMAICA_ID:
+            addr,line = [],[]
+            if self.address_street_num: line.append(self.address_street_num)
+            if self.address_street: line.append(','.join([self.address_street,'']))
+            if self.address_street_bis: line.extend([' Apt#', self.address_street_bis])
+            if line:
+                addr.append(u' '.join(line[:]))
+                line =[]
+            if self.address_district_community and self.address_district_community.id:
+                line.append(','.join([self.address_district_community.name,'']))
+
+            if self.address_post_office:
+                line.append(self.address_post_office.name)
+
+            if line:
+                addr.append(u' '.join(line[:]))
+                line=[]
+
+            if self.address_subdivision:
+                # if not self.district_community and self.district
+                line.append(self.address_subdivision.name)
+            line.append(self.address_country.name)
+
+            addr.append(u' '.join(line))
+            return (u'\r\n').join(addr)
 
     # @fields.depends('address_subdivision')
     # def on_change_with_name(self, *arg, **kwarg):
