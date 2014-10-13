@@ -107,7 +107,24 @@
         <field name="inherit" ref="health.gnuhealth_directions_form"/>
         <field name="name">procedures_view_form</field>
     </record>
-
+    <record model="ir.ui.view" id="healthjm_pathology_group_form">
+        <field name="model">gnuhealth.pathology.group</field>
+        <field name="type">form</field>
+        <field name="inherit" ref="health.gnuhealth_pathology_group_form" />
+        <field name="name">pathology_group_form</field>
+    </record>
+    <record model="ir.ui.view" id="healthjm_diagnostic_hypothesis_form">
+        <field name="model">gnuhealth.diagnostic_hypothesis</field>
+        <field name="type">form</field>
+        <field name="inherit" ref="health.gnuhealth_diagnostic_hypothesis_form" />
+        <field name="name">diagnostic_hypothesis_form</field>
+    </record>
+    <record model="ir.ui.view" id="healthjm_secondary_condition_form">
+        <field name="model">gnuhealth.secondary_condition</field>
+        <field name="type">form</field>
+        <field name="inherit" ref="health.gnuhealth_secondary_condition_form" />
+        <field name="name">secondary_condition_form</field>
+    </record>    
     <!-- <record model="ir.action.act_window.domain" id="health.act_gnuhealth_appointment_domain_free">
         <field name="name">Scheduled</field>
         <field name="sequence" eval="10"/>
