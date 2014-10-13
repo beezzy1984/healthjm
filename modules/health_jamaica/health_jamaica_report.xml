@@ -8,7 +8,7 @@
             <field name="report_name">health_jamaica.report_facesheet_hc</field>
             <field name="active" eval="True" />
             <field name="template_extension">odt</field>
-            <field name="extension">pdf</field>
+            <!-- <field name="extension">pdf</field> -->
             <field name="report">health_jamaica/report/facesheet_hc.odt</field>
         </record>
         <record model="ir.action.keyword" id="jmkw_facesheet_hc"> 
@@ -23,7 +23,7 @@
             <field name="report_name">health_jamaica.report_facesheet_hosp</field>
             <field name="active" eval="True" />
             <field name="template_extension">odt</field>
-            <field name="extension">pdf</field>
+            <!-- <field name="extension">pdf</field> -->
             <field name="report">health_jamaica/report/facesheet_hosp.odt</field>
         </record>
         <record model="ir.action.keyword" id="jmkw_facesheet_hosp"> 
@@ -40,7 +40,7 @@
             <field name="active" eval="True" />
             <field name="report">health_jamaica/report/patient_register.odt</field>
             <field name="template_extension">odt</field>
-            <field name="extension">pdf</field>
+            <!-- <field name="extension">pdf</field> -->
         </record>
         <record model="ir.ui.view" id="report_patientregister_start">
             <field name="model">healthjm.report.patientregister.start</field>
