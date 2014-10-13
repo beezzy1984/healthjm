@@ -34,7 +34,7 @@
 
 <!-- Patient Register Report -->
         <record model="ir.action.report" id="jmreport_patientregister">
-            <field name="name">Patient Register</field>
+            <field name="name">Patient Evaluation Register</field>
             <field name="model">gnuhealth.patient.evaluation</field>
             <field name="report_name">health_jamaica.report_patient_register</field>
             <field name="active" eval="True" />
@@ -53,7 +53,7 @@
             <field name="name">report_patientregister_result</field>
         </record>
         <record model="ir.action.wizard" id="action_patientregister_wizard">
-            <field name="name">Patient Register</field>
+            <field name="name">Patient Evaluation Register</field>
             <field name="wiz_name">healthjm.report.patientregister.wizard</field>
         </record>
 
@@ -68,7 +68,7 @@
             <field name="act_window" ref="action_patientregister_window" />
         </record> -->
 
-        <menuitem id="patientregister_menu" name="Patient Register"
+        <menuitem id="patientregister_menu" name="Patient Evaluation Register"
             parent="health.gnuhealth_reporting_menu" sequence="2" action="action_patientregister_wizard" icon="gnuhealth-list" />
         
 <!-- END of Patient Register Report -->

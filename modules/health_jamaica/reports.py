@@ -52,8 +52,8 @@ class DailyPatientRegister(Report):
             localcontext['date_start'] = localcontext['eval_date']
             localcontext['date_end'] = data['end_date'].strftime('%Y-%m-%d')
 
-        print('Now we launch the report with %s'%repr(localcontext))
-        print('search criteria = %s'%repr(search_criteria))
+        # print('Now we launch the report with %s'%repr(localcontext))
+        # print('search criteria = %s'%repr(search_criteria))
         
         return super(DailyPatientRegister, cls).parse(report, records, data,
                                                       localcontext)

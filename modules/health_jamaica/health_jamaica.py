@@ -391,7 +391,7 @@ class PatientData(ModelSQL, ModelView):
                 negate_clause(replace_clause_column(clause,
                                                     'name.party_warning_ack'))
                ]
-        print(repr(cond))
+        # print(repr(cond))
         return cond
 
     # Get the patient age in the following format : 'YEARS MONTHS DAYS'
@@ -883,8 +883,8 @@ class DiagnosticHypothesis(ModelSQL, ModelView):
     'Diagnostic Hypotheses'
     __name__ = 'gnuhealth.diagnostic_hypothesis'
 
-    show_first_diagnosis = fields.Function(fields.Boolean('show first diag'),
-                                           'get_sfd')
+    # show_first_diagnosis = fields.Function(fields.Boolean('show first diag'),
+    #                                        'get_sfd')
     first_diagnosis = fields.Boolean('First diagnosis', 
                          help='First time being diagnosed with this ailment',
                          states={'invisible':Bool(Eval('pathology.groups.disease_group.track_first'))},
@@ -909,19 +909,19 @@ class DiagnosticHypothesis(ModelSQL, ModelView):
         super(DiagnosticHypothesis, cls).__setup__()
         cls._show_first_diagnosis = False
 
-    def get_sfd(self, name):
-        if hasattr(self,'_show_first_diagnosis'):
-            pass
-        else:
-            if self.first_diagnosis:
-                val = True
-            else:
-                val = False
-                if self.pathology and self.pathology.groups:
-                    for g in self.pathology.groups:
-                        val |= g.disease_group.track_first                
-            self._show_first_diagnosis = val
-        return self._show_first_diagnosis
+    # def get_sfd(self, name):
+    #     if hasattr(self,'_show_first_diagnosis'):
+    #         pass
+    #     else:
+    #         if self.first_diagnosis:
+    #             val = True
+    #         else:
+    #             val = False
+    #             if self.pathology and self.pathology.groups:
+    #                 for g in self.pathology.groups:
+    #                     val |= g.disease_group.track_first                
+    #         self._show_first_diagnosis = val
+    #     return self._show_first_diagnosis
 
 
 class PatientEvaluation(ModelSQL, ModelView):

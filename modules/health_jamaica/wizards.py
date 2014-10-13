@@ -28,7 +28,7 @@ class PatientRegisterModel(ModelView):
 
     @fields.depends('institution')
     def on_change_with_specialty(self):
-        print('we got a inst = '+str(self.institution))
+        # print('we got a inst = '+str(self.institution))
         if self.institution:
             self.specialty.domain= [('id','in',tuple([x.specialty.id for x in self.institution.specialties]))]
         else:
