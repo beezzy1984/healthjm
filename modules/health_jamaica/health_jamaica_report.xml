@@ -47,11 +47,11 @@
             <field name="type">form</field>
             <field name="name">report_patientregister_start</field>
         </record>
-        <record model="ir.ui.view" id="report_patientregister_result">
+<!--        <record model="ir.ui.view" id="report_patientregister_result">
             <field name="model">healthjm.report.patientregister.start</field>
             <field name="type">form</field>
             <field name="name">report_patientregister_result</field>
-        </record>
+        </record> -->
         <record model="ir.action.wizard" id="action_patientregister_wizard">
             <field name="name">Patient Evaluation Register</field>
             <field name="wiz_name">healthjm.report.patientregister.wizard</field>

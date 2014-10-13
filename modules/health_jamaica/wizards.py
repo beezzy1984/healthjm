@@ -16,7 +16,8 @@ class PatientRegisterModel(ModelView):
     __name__ = 'healthjm.report.patientregister.start'
     on_or_after = fields.Date('Start date', required=True)
     on_or_before = fields.Date('End date')
-    institution = fields.Many2One('gnuhealth.institution', 'Institution')
+    institution = fields.Many2One('gnuhealth.institution', 'Institution',
+                                  states={'readonly':True})
     specialty = fields.Many2One('gnuhealth.specialty', 'Specialty',
                                 depends=['institution'])
 

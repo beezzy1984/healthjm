@@ -7,7 +7,7 @@
     <newline />
     <label name="specialty"/>
     <field name="specialty" widget="selection"/>
-    <label name="institution" readonly="1" />
-    <field name="institution" readonly="1" />
+    <label name="institution"  />
+    <field name="institution"  />
 </form>
     
