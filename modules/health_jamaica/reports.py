@@ -25,8 +25,9 @@ class DailyPatientRegister(Report):
         data['end_date'] = datetime(*(data['end_date'].timetuple()[:3]+(23,59,58)))
 
         search_criteria = [
-            ('evaluation_date.appointment_date','>=',data['start_date']),
-            ('evaluation_date.appointment_date', '<=', data['end_date']),
+            ('state','=','done'),
+            ('evaluation_start','>=',data['start_date']),
+            ('evaluation_start', '<=', data['end_date']),
         ]
         
         if data.get('institution', False):
@@ -52,8 +53,9 @@ class DailyPatientRegister(Report):
             localcontext['date_start'] = localcontext['eval_date']
             localcontext['date_end'] = data['end_date'].strftime('%Y-%m-%d')
 
-        # print('Now we launch the report with %s'%repr(localcontext))
-        # print('search criteria = %s'%repr(search_criteria))
-        
+        print('Now we launch the report with %s'%repr(localcontext))
+        print("*"*80)
+        print('search criteria = %s'%repr(search_criteria))
+
         return super(DailyPatientRegister, cls).parse(report, records, data,
                                                       localcontext)
