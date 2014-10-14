@@ -1,5 +1,11 @@
 '''Utilities that make dealing with tryton idosynchrasies easier'''
 
+import pytz
+from os import path as ospath
+from trytond.transaction import Transaction
+from trytond.pool import Pool
+
+
 def negate(operator):
     '''returns the opposite operator of a domain operator. 
     e.g. if called as negate('=') it will return "!="
@@ -28,3 +34,26 @@ def make_selection_display():
         return xdict.get(field_obj, '')
 
     return _get_x_display
+
+def get_timezone():
+
+    global _cached_timezone
+    if _cached_timezone:
+        return _cached_timezone
+    else:
+        try:
+            company = Transaction().context.get('company')
+            company = Pool().get('company.company')(company)
+            tz = company.get_timezone
+        except 
+            tz = None
+
+    if tz:
+        return pytz.timezone(tz)
+    elif ospath.exists('/etc/localtime'):
+        tz = pytz.tzfile.build_tzinfo('local',open('/etc/localtime', 'rb'))
+    else:
+        raise pytz.UnknownTimeZoneError('Cannot find suitable time zone')
+
+    return tz
+
