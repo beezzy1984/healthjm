@@ -1,3 +1,0 @@
-syntax: glob
-*.pyc
-modules/jamaica_custom/*
