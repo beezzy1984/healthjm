@@ -17,21 +17,37 @@ class PatientRegisterModel(ModelView):
     on_or_after = fields.Date('Start date', required=True)
     on_or_before = fields.Date('End date')
     institution = fields.Many2One('gnuhealth.institution', 'Institution',
-                                  states={'readonly':True})
+                                  states={'readonly': True}, required=True)
     specialty = fields.Many2One('gnuhealth.specialty', 'Specialty',
                                 depends=['institution'])
+
+    @classmethod
+    def __setup__(cls):
+        super(PatientRegisterModel, cls).__setup__()
+        cls._error_messages.update({
+            'required_institution':'''Institution is required.\n
+Your user account is not assigned to an institution.
+This assignment is needed before you can use this report.
+Please contact your system administrator to have this resolved.'''
+            })
 
     @staticmethod
     def default_institution():
         HealthInst = Pool().get('gnuhealth.institution')
-        institution = HealthInst.get_institution()
+        try:
+            institution = HealthInst.get_institution()
+        except AttributeError:
+            self.raise_user_error('required_institution')
         return institution
 
     @fields.depends('institution')
     def on_change_with_specialty(self):
         # print('we got a inst = '+str(self.institution))
         if self.institution:
-            self.specialty.domain= [('id','in',tuple([x.specialty.id for x in self.institution.specialties]))]
+            self.specialty.domain = [
+                ('id', 'in', tuple([x.specialty.id
+                                    for x in self.institution.specialties]))
+            ]
         else:
             self.specialty.domain = []
         return {}
@@ -47,12 +63,6 @@ class PatientRegisterWizard(Wizard):
                     default=True),
         ])
     generate_report = StateAction('health_jamaica.jmreport_patientregister')
-    # result = StateView('healthjm.report.patientregister.start',
-    #     'health_jamaica.report_patientregister_result', [
-    #         Button('Make another report', 'repeat', 'tryton-undo', default=False),
-    #         Button('Close', 'end', 'tryton-close'),
-    #         ])
-    # repeat = StateTransition()
 
 
     def transition_generate_report(self):
@@ -72,7 +82,9 @@ class PatientRegisterWizard(Wizard):
             data['specialty'] = self.start.specialty.id
 
         if self.start.institution:
-                data['institution'] = self.start.institution.id
+            data['institution'] = self.start.institution.id
+        else:
+            self.start.raise_user_error('required_institution')
+            return 'start'
 
         return action, data
-
