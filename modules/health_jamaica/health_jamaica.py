@@ -34,7 +34,7 @@ from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
 from .tryton_utils import (negate_clause, replace_clause_column,
-                           make_selection_display)
+                           make_selection_display, get_timezone)
 
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance',
@@ -864,6 +864,37 @@ class Appointment(ModelSQL, ModelView):
             parms = ('Scheduled', 'Free')
             cursor.execute(sql, parms)
             cursor.commit()
+
+    @classmethod
+    def validate(cls, appointments):
+        super(Appointment, cls).validate(appointments)
+        for appt in appointments:
+            if appt.patient:
+                comp_startdate = datetime(*(appt.appointment_date.timetuple()[:3]+(0,0,0)),
+                                          tzinfo=get_timezone())
+                comp_enddate = datetime(*(appt.appointment_date.timetuple()[:3]+(23,59,59)),
+                                          tzinfo=get_timezone())
+                search_terms = ['AND',
+                            ('patient','=',appt.patient),
+                            ('appointment_date','>=',comp_startdate),
+                            ('appointment_date','<=',comp_enddate)]
+                if appt.id:
+                    search_terms.append(('id','!=',appt.id))
+
+                others = cls.search(search_terms)
+            
+            if others: # pop up the warning
+                # setup warning params
+                warning_code = 'healthjm.duplicate_appointment_warning.w_{}_{}'.format(
+                                appt.patient.id, appt.appointment_date.strftime('%s'))
+                warning_msg = '''Possible Duplicate Appointment\n
+{} {} already has an appointment for {}.
+Are you sure you want to create another one?'''.format(
+                                   appt.patient.name.firstname,
+                                   appt.patient.name.lastname,
+                                   appt.appointment_date.strftime('%b %d'))
+                cls.raise_user_warning(warning_code, warning_msg)
+
 
 class PathologyGroup(ModelSQL, ModelView):
     'Pathology Groups'

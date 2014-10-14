@@ -125,7 +125,7 @@
         <field name="inherit" ref="health.gnuhealth_secondary_condition_form" />
         <field name="name">secondary_condition_form</field>
     </record>    
-    <!-- <record model="ir.action.act_window.domain" id="health.act_gnuhealth_appointment_domain_free">
+    <record model="ir.action.act_window.domain" id="health.act_gnuhealth_appointment_domain_free">
         <field name="name">Scheduled</field>
         <field name="sequence" eval="10"/>
         <field name="domain">[('state', '=', 'free')]</field>
