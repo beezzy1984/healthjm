@@ -963,12 +963,30 @@ class PatientEvaluation(ModelSQL, ModelView):
         'gnuhealth.diagnostic_hypothesis',
         'evaluation', 'Hypotheses / DDx', help='Other Diagnostic Hypotheses /'
         ' Differential Diagnosis (DDx)', states={'required':True})
+    first_visit_this_year = fields.Boolean('First visit this year',
+                                           help='First visit this year')
 
     visit_type_display = fields.Function(fields.Char('Visit Type'),
                                          'get_selection_display')
 
     def get_selection_display(self, fn):
         return make_selection_display()(self,'visit_type')
+
+    @fields.depends('patient', 'evaluation_start', 'institution')
+    def on_change_with_first_visit_this_year(self, *arg, **kwarg):
+        if self.institution and self.patient:
+            M = Pool().get('gnuhealth.patient.evaluation')
+            search_parms = [('evaluation_start','<',self.evaluation_start),
+                            ('patient','=',self.patient.id),
+                            ('institution', '=', self.institution.id)]
+
+            others = M.search(search_parms)
+            if others:
+                return False
+
+        return True
+
+
 
 class SignsAndSymptoms(ModelSQL, ModelView):
     'Evaluation Signs and Symptoms'
