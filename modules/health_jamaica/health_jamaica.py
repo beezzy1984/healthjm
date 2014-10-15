@@ -972,7 +972,7 @@ class PatientEvaluation(ModelSQL, ModelView):
     diagnostic_hypothesis = fields.One2Many(
         'gnuhealth.diagnostic_hypothesis',
         'evaluation', 'Hypotheses / DDx', help='Other Diagnostic Hypotheses /'
-        ' Differential Diagnosis (DDx)', states={'required':True})
+        ' Differential Diagnosis (DDx)', states={'required':False})
     first_visit_this_year = fields.Boolean('First visit this year',
                                            help='First visit this year')
 
