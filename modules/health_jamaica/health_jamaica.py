@@ -231,13 +231,23 @@ class PartyPatient (ModelSQL, ModelView):
             party.check_dob()
 
     @classmethod
-    def write(cls, parties, vals):
+    def write(cls, *args):
         regex = re.compile(u'NN-([A-Z]{3}\d{3}[A-Z]{3})')
-        for party in parties:
-            if vals.get('party_warning_ack') and regex.match(party.ref):
-                # remove the NN from the UPI
-                vals['ref'] = ''.join(regex.split(party.ref))
-        return super(PartyPatient, cls).write(parties, vals)
+        actions = iter(args)
+        for parties, vals in zip(actions, actions):
+            if vals.get('party_warning_ack'):
+                for party in parties:
+                    if regex.match(party.ref):
+                        # remove the NN from the UPI
+                        vals['ref'] = ''.join(regex.split(party.ref))
+        # print("the parties and vals are\n{}\n{}\n{}\n{}".format(
+        #       '*'*80,
+        #       repr(parties),
+        #       '='*80,
+        #       repr(vals)
+        #       ))
+        # import pdb; pdb.set_trace()
+        return super(PartyPatient, cls).write(*args)
 
     def check_party_warning(self):
         '''validates that a party being entered as verified has an alt-id
