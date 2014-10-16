@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <tryton>
-	<data>
+	<data skiptest="0" noupdate="0">
         <record model="gnuhealth.occupation" id="health.occ1">
-            <field name="name">Unemployed/Unknown</field>
+            <field name="name">Unemployed or Unknown</field>
             <field name="code">9999</field>
-        </record>		
+        </record>
 		<record id="health.occ2" model="gnuhealth.occupation">
 			<field name="code">1111</field>
 			<field name="name">Legislators </field>

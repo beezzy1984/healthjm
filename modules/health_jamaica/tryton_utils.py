@@ -5,6 +5,7 @@ from os import path as ospath
 from trytond.transaction import Transaction
 from trytond.pool import Pool
 
+_cached_timezone = None
 
 def negate(operator):
     '''returns the opposite operator of a domain operator. 
@@ -45,15 +46,15 @@ def get_timezone():
             company = Transaction().context.get('company')
             company = Pool().get('company.company')(company)
             tz = company.get_timezone
-        except 
+        except:
             tz = None
 
     if tz:
-        return pytz.timezone(tz)
+        _cached_timezone = pytz.timezone(tz)
     elif ospath.exists('/etc/localtime'):
-        tz = pytz.tzfile.build_tzinfo('local',open('/etc/localtime', 'rb'))
+        _cached_timezone = pytz.tzfile.build_tzinfo('local',open('/etc/localtime', 'rb'))
     else:
         raise pytz.UnknownTimeZoneError('Cannot find suitable time zone')
 
-    return tz
+    return _cached_timezone
 

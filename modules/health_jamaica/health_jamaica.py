@@ -34,7 +34,7 @@ from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
 from .tryton_utils import (negate_clause, replace_clause_column,
-                           make_selection_display)
+                           make_selection_display, get_timezone)
 
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance',
@@ -231,13 +231,23 @@ class PartyPatient (ModelSQL, ModelView):
             party.check_dob()
 
     @classmethod
-    def write(cls, parties, vals):
+    def write(cls, *args):
         regex = re.compile(u'NN-([A-Z]{3}\d{3}[A-Z]{3})')
-        for party in parties:
-            if vals.get('party_warning_ack') and regex.match(party.ref):
-                # remove the NN from the UPI
-                vals['ref'] = ''.join(regex.split(party.ref))
-        return super(PartyPatient, cls).write(parties, vals)
+        actions = iter(args)
+        for parties, vals in zip(actions, actions):
+            if vals.get('party_warning_ack'):
+                for party in parties:
+                    if regex.match(party.ref):
+                        # remove the NN from the UPI
+                        vals['ref'] = ''.join(regex.split(party.ref))
+        # print("the parties and vals are\n{}\n{}\n{}\n{}".format(
+        #       '*'*80,
+        #       repr(parties),
+        #       '='*80,
+        #       repr(vals)
+        #       ))
+        # import pdb; pdb.set_trace()
+        return super(PartyPatient, cls).write(*args)
 
     def check_party_warning(self):
         '''validates that a party being entered as verified has an alt-id
@@ -865,6 +875,37 @@ class Appointment(ModelSQL, ModelView):
             cursor.execute(sql, parms)
             cursor.commit()
 
+    @classmethod
+    def validate(cls, appointments):
+        super(Appointment, cls).validate(appointments)
+        for appt in appointments:
+            if appt.patient:
+                comp_startdate = datetime(*(appt.appointment_date.timetuple()[:3]+(0,0,0)),
+                                          tzinfo=get_timezone())
+                comp_enddate = datetime(*(appt.appointment_date.timetuple()[:3]+(23,59,59)),
+                                          tzinfo=get_timezone())
+                search_terms = ['AND',
+                            ('patient','=',appt.patient),
+                            ('appointment_date','>=',comp_startdate),
+                            ('appointment_date','<=',comp_enddate)]
+                if appt.id:
+                    search_terms.append(('id','!=',appt.id))
+
+                others = cls.search(search_terms)
+            
+            if others: # pop up the warning
+                # setup warning params
+                warning_code = 'healthjm.duplicate_appointment_warning.w_{}_{}'.format(
+                                appt.patient.id, appt.appointment_date.strftime('%s'))
+                warning_msg = '''Possible Duplicate Appointment\n
+{} {} already has an appointment for {}.
+Are you sure you want to create another one?'''.format(
+                                   appt.patient.name.firstname,
+                                   appt.patient.name.lastname,
+                                   appt.appointment_date.strftime('%b %d'))
+                cls.raise_user_warning(warning_code, warning_msg)
+
+
 class PathologyGroup(ModelSQL, ModelView):
     'Pathology Groups'
     __name__ = 'gnuhealth.pathology.group'
@@ -931,13 +972,31 @@ class PatientEvaluation(ModelSQL, ModelView):
     diagnostic_hypothesis = fields.One2Many(
         'gnuhealth.diagnostic_hypothesis',
         'evaluation', 'Hypotheses / DDx', help='Other Diagnostic Hypotheses /'
-        ' Differential Diagnosis (DDx)', states={'required':True})
+        ' Differential Diagnosis (DDx)', states={'required':False})
+    first_visit_this_year = fields.Boolean('First visit this year',
+                                           help='First visit this year')
 
     visit_type_display = fields.Function(fields.Char('Visit Type'),
                                          'get_selection_display')
 
     def get_selection_display(self, fn):
         return make_selection_display()(self,'visit_type')
+
+    @fields.depends('patient', 'evaluation_start', 'institution')
+    def on_change_with_first_visit_this_year(self, *arg, **kwarg):
+        if self.institution and self.patient:
+            M = Pool().get('gnuhealth.patient.evaluation')
+            search_parms = [('evaluation_start','<',self.evaluation_start),
+                            ('patient','=',self.patient.id),
+                            ('institution', '=', self.institution.id)]
+
+            others = M.search(search_parms)
+            if others:
+                return False
+
+        return True
+
+
 
 class SignsAndSymptoms(ModelSQL, ModelView):
     'Evaluation Signs and Symptoms'

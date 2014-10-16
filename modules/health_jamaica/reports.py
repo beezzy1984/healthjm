@@ -5,6 +5,7 @@ from trytond.pyson import Eval, PYSONEncoder, Date
 from trytond.transaction import Transaction
 from trytond.pool import Pool
 from trytond.report import Report
+from .tryton_utils import get_timezone
 
 __all__ = ('DailyPatientRegister', )
 
@@ -58,9 +59,18 @@ class DailyPatientRegister(Report):
 
 
         objects = Evaluation.search(search_criteria,
-                                    order=(('evaluation_endtime','ASC'),))
+                                    order=(('evaluation_start','ASC'),
+                                           ('evaluation_endtime', 'ASC')))
+        groups = {}
+        myzone = get_timezone()
+        for ev in objects:
+            group_key = myzone.fromutc(ev.evaluation_start).strftime('%Y-%m-%d')
+            groups.setdefault(group_key,[]).append(ev)
 
-        localcontext['patient_evaluations'] = objects
+        groups = groups.items()
+        groups.sort(lambda x,y: cmp(x[0],y[0]))
+
+        localcontext['evaluation_groups'] = groups
         localcontext['eval_date'] = data['start_date'].strftime('%Y-%m-%d')
         localcontext['date_start'] = None
         if timedelta(1) < (data['end_date'] - data['start_date']):
