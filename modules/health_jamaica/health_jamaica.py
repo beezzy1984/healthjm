@@ -177,7 +177,7 @@ class PartyPatient (ModelSQL, ModelView):
     def on_change_with_name(self, *arg, **kwarg):
         namelist = [self.lastname]
         if self.firstname:
-            namelist.extend([',', self.firstname])
+            namelist = [''.join((self.lastname,',')), self.firstname]
         if self.middlename:
             namelist.append(self.middlename)
         return ' '.join(namelist)
