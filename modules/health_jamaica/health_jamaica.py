@@ -62,7 +62,13 @@ class OccupationalGroup(ModelSQL, ModelView):
         super(OccupationalGroup, cls).__register__(module_name)
         # remove the occupations from the table that don't have 4 char codes
         cursor = Transaction().cursor
-        cursor.execute('delete from gnuhealth_occupation where char_length(code)<4')
+        cursor.execute('select count(*) from gnuhealth_occupation where char_length(code)=4;')
+        possibly_valid, = cursor.fetchone()
+        if possibly_valid == 0:
+            cursor.execute('delete from gnuhealth_occupation where char_length(code)<4;')
+            cursor.execute('alter sequence gnuhealth_occupation_id_seq restart with 1;')
+        else:
+            print('Mixed occupation list, cannot auto-resolve. Fix by hand')
 
 
 class PartyPatient (ModelSQL, ModelView):
