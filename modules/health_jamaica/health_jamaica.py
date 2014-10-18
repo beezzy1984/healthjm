@@ -177,7 +177,7 @@ class PartyPatient (ModelSQL, ModelView):
     def on_change_with_name(self, *arg, **kwarg):
         namelist = [self.lastname]
         if self.firstname:
-            namelist.extend([',', self.firstname])
+            namelist = [''.join((self.lastname,',')), self.firstname]
         if self.middlename:
             namelist.append(self.middlename)
         return ' '.join(namelist)
@@ -240,13 +240,6 @@ class PartyPatient (ModelSQL, ModelView):
                     if regex.match(party.ref):
                         # remove the NN from the UPI
                         vals['ref'] = ''.join(regex.split(party.ref))
-        # print("the parties and vals are\n{}\n{}\n{}\n{}".format(
-        #       '*'*80,
-        #       repr(parties),
-        #       '='*80,
-        #       repr(vals)
-        #       ))
-        # import pdb; pdb.set_trace()
         return super(PartyPatient, cls).write(*args)
 
     def check_party_warning(self):
