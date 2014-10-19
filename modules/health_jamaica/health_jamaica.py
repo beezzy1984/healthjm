@@ -211,10 +211,11 @@ class PartyPatient (ModelSQL, ModelView):
         for values in vlist:
             if not 'ref' in values:
                 values['ref'] = cls.generate_upc()
-                if 'unidentified' in values and values['unidentified']:
-                    values['ref'] = 'NN-' + values.get('ref')
                 if 'is_person' in values and not values['is_person']:
                     values['ref'] = 'NP-' + values['ref']
+                elif (values.get('is_person', False) and 
+                      values.get('unidentified', False)):
+                    values['ref'] = 'NN-' + values.get('ref')
 
             if not values.get('code'):
                 config = Configuration(1)
