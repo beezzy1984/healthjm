@@ -37,8 +37,8 @@ from .tryton_utils import (negate_clause, replace_clause_column,
                            make_selection_display, get_timezone)
 
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
-    'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance',
-    'PartyAddress', 'HealthProfessional', 'Appointment', 
+    'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'HealthInstitution',
+    'Insurance', 'PartyAddress', 'HealthProfessional', 'Appointment', 
     'DiagnosticHypothesis', 'PathologyGroup', 'PatientEvaluation',
     'SignsAndSymptoms', 'OccupationalGroup']
 __metaclass__ = PoolMeta
@@ -815,6 +815,18 @@ class Newborn (ModelSQL, ModelView):
     cephalic_perimeter = fields.Integer('Head Circumference',
         help="Perimeter in centimeters (cm)")
     length = fields.Integer('Crown-Heel Length', help="Length in centimeters (cm)")
+
+
+class HealthInstitution(ModelSQL, ModelView):
+    'Health Institution'
+    __name__ = 'gnuhealth.institution'
+
+    main_specialty = fields.Many2One('gnuhealth.institution.specialties',
+        'Specialty',
+        domain=[('name', '=', Eval('active_id'))], depends=['specialties'], 
+        help="Choose the speciality in the case of Specialized Hospitals" \
+            " or where this center excels", 
+        states={'required': False, 'readonly': False})
 
 
 class Insurance(ModelSQL, ModelView):

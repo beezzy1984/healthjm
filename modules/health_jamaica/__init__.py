@@ -37,6 +37,7 @@ def register():
         PartyAddress,
         DomiciliaryUnit,
         Newborn,
+        HealthInstitution,
         Insurance,
         PathologyGroup,
         HealthProfessional,
