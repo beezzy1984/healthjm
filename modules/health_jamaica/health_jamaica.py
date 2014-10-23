@@ -194,10 +194,13 @@ class PartyPatient (ModelSQL, ModelView):
         # The STRSIZE constant provides the length of the HIN
         # The format of the UPC is XXXNNNXXX
         STRSIZE = 9
+        letters = ('ABCDEFGHJKLMNPRTUWXY')
+        # letters removed = IOQSVZ because they look too similar to numbers
+        # or to other letters. 
         hin = ''
         for x in range(STRSIZE): 
             if ( x < 3 or x > 5 ):
-                hin = hin + random.choice(string.ascii_uppercase)
+                hin = hin + random.choice(letters)
             else:
                 hin = hin + random.choice(string.digits)
         return hin
