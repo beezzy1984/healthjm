@@ -11,8 +11,8 @@ from trytond.pool import PoolMeta
 #    'PatientVaccination', 'SecondaryCondition', 'SignsAndSymptoms']
 
 __all__ = ['Party', 'PartyAddress', 'OperationalArea',
-    'OperationalSector', 'DomiciliaryUnit',
-    'HealthInstitution', 'HealthInstitutionSpecialties',
+    'OperationalSector', 'DomiciliaryUnit', 'AlternativePersonID',
+    'MedicalSpecialty', 'HealthInstitution', 'HealthInstitutionSpecialties',
     'HealthInstitutionOperationalSector', 'PatientData']
 
 
@@ -43,6 +43,15 @@ class DomiciliaryUnit(SyncUUIDMixin):
     __name__ = 'gnuhealth.du'
     __metaclass__ = PoolMeta
 
+
+class AlternativePersonID (SyncUUIDMixin):
+    __name__ ='gnuhealth.person_alternative_identification' 
+    __metaclass__ = PoolMeta
+
+class MedicalSpecialty(SyncMixin):
+    __name__ = 'gnuhealth.specialty'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'code'
 
 class HealthInstitution(SyncMixin):
     __name__ = 'gnuhealth.institution'

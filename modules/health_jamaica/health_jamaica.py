@@ -32,6 +32,7 @@ from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
+from trytond.config import CONFIG
 
 from .tryton_utils import (negate_clause, replace_clause_column,
                            make_selection_display, get_timezone)
@@ -52,6 +53,8 @@ JAMAICA_ID=89
 JAMAICA = lambda : Pool().get('country.country')(JAMAICA_ID)
 SEX_OPTIONS = [('m', 'Male'), ('f', 'Female'), ('u', 'Unknown')]
 
+SYNC_ID=CONFIG.get('synchronisation_id',1)
+# Default sync ID to 1 so it doesn't think it's the master
 
 class OccupationalGroup(ModelSQL, ModelView):
     '''Occupational Group'''
@@ -236,9 +239,13 @@ class PartyPatient (ModelSQL, ModelView):
     @classmethod
     def validate(cls, parties):
         super(PartyPatient, cls).validate(parties)
-        for party in parties:
-            party.check_party_warning()
-            party.check_dob()
+        # since these validations only matter for regular users of the 
+        # system, we will not perform the checks on the master instance
+        # if the user's name is syncman
+        if SYNC_ID>0:
+            for party in parties:
+                party.check_party_warning()
+                party.check_dob()
 
     @classmethod
     def write(cls, *args):
@@ -908,7 +915,7 @@ class Appointment(ModelSQL, ModelView):
 
                 others = cls.search(search_terms)
             
-            if others: # pop up the warning
+            if others and SYNC_ID>0: # pop up the warning but not during sync
                 # setup warning params
                 warning_code = 'healthjm.duplicate_appointment_warning.w_{}_{}'.format(
                                 appt.patient.id, appt.appointment_date.strftime('%s'))
