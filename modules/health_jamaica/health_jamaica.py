@@ -242,7 +242,6 @@ class PartyPatient (ModelSQL, ModelView):
         # since these validations only matter for regular users of the 
         # system, we will not perform the checks on the master instance
         # if the user's name is syncman
-        print("{}\nsynchronisation_id = {}\n{}".format('#'*80,SYNC_ID,'_'*80))
         if SYNC_ID>0:
             for party in parties:
                 party.check_party_warning()
