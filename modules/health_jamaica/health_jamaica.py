@@ -53,7 +53,7 @@ JAMAICA_ID=89
 JAMAICA = lambda : Pool().get('country.country')(JAMAICA_ID)
 SEX_OPTIONS = [('m', 'Male'), ('f', 'Female'), ('u', 'Unknown')]
 
-SYNC_ID=CONFIG.get('synchronisation_id',1)
+SYNC_ID=int(CONFIG.get('synchronisation_id',1))
 # Default sync ID to 1 so it doesn't think it's the master
 
 class OccupationalGroup(ModelSQL, ModelView):
