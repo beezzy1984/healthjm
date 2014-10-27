@@ -26,6 +26,7 @@ import string
 import random
 import hashlib
 import re
+import six
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
@@ -56,6 +57,9 @@ SEX_OPTIONS = [('m', 'Male'), ('f', 'Female'), ('u', 'Unknown')]
 SYNC_ID=int(CONFIG.get('synchronisation_id',1))
 # Default sync ID to 1 so it doesn't think it's the master
 
+NNre = re.compile('(%?)NN-(.*)', re.I)
+
+
 class OccupationalGroup(ModelSQL, ModelView):
     '''Occupational Group'''
     __name__ = 'gnuhealth.occupation'
@@ -82,6 +86,8 @@ class PartyPatient (ModelSQL, ModelView):
         'UPI',
         help='Universal Person Indentifier',
         states=_STATES, depends=_DEPENDS, readonly=True)
+    upi = fields.Function(fields.Char('UPI', help='Universal Person Identifier'),
+                          'get_upi_display', searcher='search_upi')
     name = fields.Char('Name', required=True, 
         states={'readonly':Bool(Eval('is_person'))},
         )
@@ -147,6 +153,25 @@ class PartyPatient (ModelSQL, ModelView):
     def get_rec_name(self, name):
         # simplified since we generate the person name and all others are okay
         return self.name
+
+    def get_upi_display(self, name):
+        if self.party_warning_ack:
+            return self.ref
+        else:
+            return u'NN-{}'.format(self.ref)
+
+    @classmethod
+    def search_upi(cls, field_name, clause):
+        fld, operator, operand = clause
+        if (isinstance(operand, six.string_types) and
+            NNre.match(operand)):
+            # searching for NN- records, so auto-append verified=False
+            operand = u''.join(NNre.split(operand))
+            if operand == u'%%': operand = '%'
+            return ['AND', (('ref',operator, operand),
+                            ('party_warning_ack','=', False))]
+        else:
+            return [replace_clause_column(clause, 'ref')]
 
     @classmethod
     def __setup__(cls):
@@ -243,7 +268,7 @@ class PartyPatient (ModelSQL, ModelView):
         # system, we will not perform the checks if the transaction's user
         # id is 0. The sync-engine sets the user to 0 on both ends of the 
         # connection. All regular users get their user ID in this space
-        
+
         t = Transaction()
         if t.user>0:
             for party in parties:
@@ -416,6 +441,9 @@ class PatientData(ModelSQL, ModelView):
                ]
         # print(repr(cond))
         return cond
+
+    def get_patient_puid(self, name):
+        return self.name.get_upi_display()
 
     # Get the patient age in the following format : 'YEARS MONTHS DAYS'
     # It will calculate the age of the patient while the patient is alive.

@@ -77,4 +77,8 @@
         <page string="Contact" id="general" />
     </xpath>
 
+    <xpath expr="/form/field[@name=&quot;ref&quot;]" position="replace">
+        <field name="upi" />
+    </xpath>
+
 </data>

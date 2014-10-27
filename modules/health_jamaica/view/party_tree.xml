@@ -11,4 +11,8 @@
     <xpath expr="/tree/field[@name=&quot;active&quot;]" position="replace" />
     <xpath expr="/tree/field[@name=&quot;lang&quot;]" position="replace" />
     <xpath expr="/tree/field[@name=&quot;vat_code&quot;]" position="replace" />
+
+    <xpath expr="/tree/field[@name=&quot;ref&quot;]" position="replace">
+        <field name="upi"/>
+    </xpath>    
 </data>
