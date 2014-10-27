@@ -219,9 +219,9 @@ class PartyPatient (ModelSQL, ModelView):
                 values['ref'] = cls.generate_upc()
                 if 'is_person' in values and not values['is_person']:
                     values['ref'] = 'NP-' + values['ref']
-                elif (values.get('is_person', False) and 
-                      values.get('unidentified', False)):
-                    values['ref'] = 'NN-' + values.get('ref')
+                # elif (values.get('is_person', False) and 
+                #       values.get('unidentified', False)):
+                #     values['ref'] = 'NN-' + values.get('ref')
 
             if not values.get('code'):
                 config = Configuration(1)
@@ -242,22 +242,28 @@ class PartyPatient (ModelSQL, ModelView):
         # since these validations only matter for regular users of the 
         # system, we will not perform the checks on the master instance
         # if the user's name is syncman
+        # import pdb; pdb.set_trace()
+        t = Transaction()
+        (open('/tmp/try-x-file.txt', 'wt')).writelines([repr(t.context),'\n',
+                                                       repr(t.user),'\n',
+                                                       '\n\n','*'*80,'\n',
+                                                       repr(dir(t)),'\n'])
         if SYNC_ID>0:
             for party in parties:
                 party.check_party_warning()
                 party.check_dob()
 
-    @classmethod
-    def write(cls, *args):
-        regex = re.compile(u'NN-([A-Z]{3}\d{3}[A-Z]{3})')
-        actions = iter(args)
-        for parties, vals in zip(actions, actions):
-            if vals.get('party_warning_ack'):
-                for party in parties:
-                    if regex.match(party.ref):
-                        # remove the NN from the UPI
-                        vals['ref'] = ''.join(regex.split(party.ref))
-        return super(PartyPatient, cls).write(*args)
+    # @classmethod
+    # def write(cls, *args):
+    #     regex = re.compile(u'NN-([A-Z]{3}\d{3}[A-Z]{3})')
+    #     actions = iter(args)
+    #     for parties, vals in zip(actions, actions):
+    #         if vals.get('party_warning_ack'):
+    #             for party in parties:
+    #                 if regex.match(party.ref):
+    #                     # remove the NN from the UPI
+    #                     vals['ref'] = ''.join(regex.split(party.ref))
+    #     return super(PartyPatient, cls).write(*args)
 
     def check_party_warning(self):
         '''validates that a party being entered as verified has an alt-id
