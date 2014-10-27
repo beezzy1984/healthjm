@@ -240,15 +240,12 @@ class PartyPatient (ModelSQL, ModelView):
     def validate(cls, parties):
         super(PartyPatient, cls).validate(parties)
         # since these validations only matter for regular users of the 
-        # system, we will not perform the checks on the master instance
-        # if the user's name is syncman
-        # import pdb; pdb.set_trace()
+        # system, we will not perform the checks if the transaction's user
+        # id is 0. The sync-engine sets the user to 0 on both ends of the 
+        # connection. All regular users get their user ID in this space
+        
         t = Transaction()
-        (open('/tmp/try-x-file.txt', 'wt')).writelines([repr(t.context),'\n',
-                                                       repr(t.user),'\n',
-                                                       '\n\n','*'*80,'\n',
-                                                       repr(dir(t)),'\n'])
-        if SYNC_ID>0:
+        if t.user>0:
             for party in parties:
                 party.check_party_warning()
                 party.check_dob()
