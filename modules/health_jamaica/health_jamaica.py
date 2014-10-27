@@ -443,7 +443,7 @@ class PatientData(ModelSQL, ModelView):
         return cond
 
     def get_patient_puid(self, name):
-        return self.name.get_upi_display()
+        return self.name.get_upi_display('upi')
 
     # Get the patient age in the following format : 'YEARS MONTHS DAYS'
     # It will calculate the age of the patient while the patient is alive.
