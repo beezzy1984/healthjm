@@ -21,6 +21,12 @@ class Party(SyncMixin):
     __metaclass__ = PoolMeta
     unique_id_column = 'ref'
 
+    def get_wire_value(self):
+        values = super(Party, self).get_wire_value()
+        if 'internal_user' in values:
+            del(values['internal_user'])
+        return values
+
 
 class PartyAddress(SyncUUIDMixin):
     __name__ = 'party.address'

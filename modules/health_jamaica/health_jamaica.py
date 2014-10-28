@@ -145,6 +145,15 @@ class PartyPatient (ModelSQL, ModelView):
     insurance = fields.One2Many('gnuhealth.insurance', 'name', 'Insurance',
         help="Insurance Plans associated to this party")
     du = fields.Many2One('gnuhealth.du', 'Address')
+    internal_user = fields.Many2One(
+        'res.user', 'Internal User',
+        help='In order for this health professional to use the system, an'
+        ' internal user account must be assigned. This health professional'
+        ' will have a user account on this instance only.',
+        states={
+            'invisible': Not(Bool(Eval('is_healthprof'))),
+            'required': False,
+            })
     medical_record_num = fields.Function(fields.Char('Medical Record Num.'),
         'get_alt_ids', searcher='search_alt_ids')
     alt_ids = fields.Function(fields.Char('Alternate IDs'), 'get_alt_ids',
@@ -155,7 +164,7 @@ class PartyPatient (ModelSQL, ModelView):
         return self.name
 
     def get_upi_display(self, name):
-        if self.party_warning_ack:
+        if self.party_warning_ack or not self.is_patient:
             return self.ref
         else:
             return u'NN-{}'.format(self.ref)
