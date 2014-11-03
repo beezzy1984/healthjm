@@ -535,9 +535,11 @@ class AlternativePersonID (ModelSQL, ModelView):
    
     issuing_institution = fields.Many2One('gnuhealth.institution', 'Issued By',
         help='Institution that assigned the medical record number',
-        states={'required':Eval('alternative_id_type') == 'medical_record'})
+        states={'required':Eval('alternative_id_type') == 'medical_record'},
+        depends=['alternative_id_type'])
     expiry_date = fields.Date('Expiry Date',
         states={'required':Eval('alternative_id_type') == 'passport'})
+    issue_date = fields.Date('Date Issued')
 
     @classmethod
     def __setup__(cls):
@@ -557,7 +559,8 @@ class AlternativePersonID (ModelSQL, ModelView):
         cls._error_messages.update({
             'invalid_trn':'Invalid format for TRN',
             'invalid_medical_record': 'Invalid format for medical record number',
-            'invalid_format':'Invalid format'
+            'invalid_format':'Invalid format',
+            'mismatched_issue_expiry':'Issue date cannot be after the expiry date'
         })
         cls.format_test = {
             'trn':re.compile('1\d{8}'),
@@ -570,17 +573,27 @@ class AlternativePersonID (ModelSQL, ModelView):
         #     if selection not in cls.alternative_id_type.selection:
         #         cls.alternative_id_type.selection.append(selection)
 
-    # @fields.depends('alternative_id_type')
-    # def on_change_with_issuedby(self, *arg, **kwarg):
-    #     print(('*'*20) + " on_change_with_issuedby " + ('*'*20) )
-    #     print(repr(self.alternative_id_type))
-    #     return ''
+    @fields.depends('alternative_id_type')
+    def on_change_with_issuing_institution(self, *a, **k):
+        '''set this institution as the issuing instution whenever
+            medical record selected as the ID type'''
+
+        if self.alternative_id_type == 'medical_record':
+            institution = Pool().get('gnuhealth.institution').get_institution()
+            print('We have institution %s'%(repr(institution)))
+            if institution:
+                return institution
+
+        return None
 
     @classmethod
     def validate(cls, records):
         super(AlternativePersonID, cls).validate(records)
         for alternative_id in records:
             alternative_id.check_format()
+            if (alternative_id.expiry_date and alternative_id.issue_date and
+                alternative_id.issue_date > alternative_id.expiry_date):
+                    raise_user_error('mismatched_issue_expiry')
 
     def check_format(self):
         format_tester = self.format_test.get(self.alternative_id_type, False)
@@ -747,6 +760,14 @@ class DomiciliaryUnit(ModelSQL, ModelView):
         depends=['address_post_office'], help="Select District/Community, Jamaica only")
     desc = fields.Char('Additional Description',
         help="Landmark or additional directions")
+    # address_district = fields.Char(
+    #     'District', help="Neighborhood, Village, Barrio....",
+    #     states={'invisible':Eval('address_country')==89})
+    # address_municipality = fields.Char(
+    #     'Municipality', help="Municipality, Township, county ..",
+    #     states={'invisible':Eval('address_country')==89})
+    # address_zip = fields.Char('Zip Code',
+    #     states={'invisible':Eval('address_country')==89})
     city_town = fields.Function(fields.Char('City/Town/P.O.'), 'get_city_town')
 
     full_address = fields.Function(fields.Text('Full Address'),
@@ -792,34 +813,6 @@ class DomiciliaryUnit(ModelSQL, ModelView):
             addr.append(u' '.join(line))
             return (u'\r\n').join(addr)
 
-    # @fields.depends('address_subdivision')
-    # def on_change_with_name(self, *arg, **kwarg):
-    #     ''' generates domunit code as follows :
-    #     PARISHCODE-{RANDOM_HEX_DIGITSx8}.
-    #     The parish code is taken directly from the parish when selected or 
-    #     when a post office is selected. The RANDOM_HEX_DIGITSx8 is the
-    #     first 8 chars from the SHA1 hash of [self.desc, self.post_office.code,
-    #                 self.address_district_community.name,
-    #                 self.address_street, self.address_street_num,
-    #                 self.address_street_bis]) #, str(time.time())])
-    #     separated by semi-colon (;)
-    #     '''
-    #     codelist = []
-    #     if self.address_subdivision:
-    #         codelist.append(self.address_subdivision.code)
-    #     else :
-    #         return ''
-
-    #     hashlist = filter(None, [self.desc, 
-    #                 self.address_post_office and self.address_post_office.code or '',
-    #                 self.address_district_community and self.address_district_community.name or '',
-    #                 self.address_street, self.address_street_num,
-    #                 self.address_street_bis]) #, str(time.time())])
-
-    #     codelist.append(hashlib.sha1(';'.join(hashlist)).hexdigest()[:8])
-
-    #     return '-'.join(codelist)
-
     @classmethod
     def generate_du_code(cls, prefix, *args):
         ''' generates domunit code as follows :
@@ -848,7 +841,7 @@ class DomiciliaryUnit(ModelSQL, ModelView):
                 state_code = values.get('address_subdivision')
                 if state_code:
                     state_code = (Pool().get('country.subdivision')(state_code)).code
-                values['name'] = cls.generate_du_code(state_code,
+                values['name'] = cls.generate_du_code(state_code, datetime.now(),
                     *[values.get(r) for r in ('desc','address_post_office',
                                               'address_district_community',
                                               'address_street',
