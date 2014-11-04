@@ -36,7 +36,8 @@ from trytond.transaction import Transaction
 from trytond.config import CONFIG
 
 from .tryton_utils import (negate_clause, replace_clause_column,
-                           make_selection_display, get_timezone)
+                           make_selection_display, get_timezone,
+                           is_not_synchro)
 
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'HealthInstitution',
@@ -278,8 +279,7 @@ class PartyPatient (ModelSQL, ModelView):
         # id is 0. The sync-engine sets the user to 0 on both ends of the 
         # connection. All regular users get their user ID in this space
 
-        t = Transaction()
-        if t.user>0:
+        if is_not_synchro():
             for party in parties:
                 party.check_party_warning()
                 party.check_dob()
@@ -948,17 +948,30 @@ class Appointment(ModelSQL, ModelView):
 
                 others = cls.search(search_terms)
             
-            if others and SYNC_ID>0: # pop up the warning but not during sync
+            if others and is_not_synchro(): # pop up the warning but not during sync
                 # setup warning params
+                other_specialty = others[0].speciality.name
                 warning_code = 'healthjm.duplicate_appointment_warning.w_{}_{}'.format(
                                 appt.patient.id, appt.appointment_date.strftime('%s'))
-                warning_msg = '''Possible Duplicate Appointment\n
-{} {} already has an appointment for {}.
-Are you sure you want to create another one?'''.format(
-                                   appt.patient.name.firstname,
-                                   appt.patient.name.lastname,
-                                   appt.appointment_date.strftime('%b %d'))
-                cls.raise_user_warning(warning_code, warning_msg)
+                warning_msg = ['Possible Duplicate Appointment\n\n',
+                                appt.patient.name.firstname,' ',
+                                appt.patient.name.lastname]
+                use_an = False
+                if other_specialty == appt.speciality.name:
+                    warning_msg.append(' already has')
+                else:
+                    warning_msg.append(' has')
+
+                if re.match('^[aeiou].+', other_specialty, re.I):
+                    warning_msg.append(' an ')
+                else:
+                    warning_msg.append(' a ')
+                warning_msg.extend([other_specialty, ' appointment for ',
+                                   appt.appointment_date.strftime('%b %d'),
+                                  '\nAre you sure you need this ',
+                                  appt.speciality.name, ' one?'])
+                
+                cls.raise_user_warning(warning_code, u''.join(warning_msg))
 
 
 class PathologyGroup(ModelSQL, ModelView):
@@ -1033,9 +1046,22 @@ class PatientEvaluation(ModelSQL, ModelView):
 
     visit_type_display = fields.Function(fields.Char('Visit Type'),
                                          'get_selection_display')
+    upi = fields.Function(fields.Char('UPI'), 'get_person_patient_field')
+    dob = fields.Function(fields.Date('DOB'), 'get_person_patient_field')
+    patient_age = fields.Function(fields.Char('Age'), 'get_patient_age')
 
     def get_selection_display(self, fn):
         return make_selection_display()(self,'visit_type')
+
+    def get_person_patient_field(self, field_name):
+        print("field name = {}.".format(str(field_name)))
+        if field_name in ['upi', 'dob']:
+            print('field value = {}'.format(str(getattr(self.patient.name, field_name))))
+            return getattr(self.patient.name, field_name)
+        return ''
+
+    def get_patient_age(self, fn):
+        return self.patient.patient_age(fn)
 
     @fields.depends('patient', 'evaluation_start', 'institution')
     def on_change_with_first_visit_this_year(self, *arg, **kwarg):

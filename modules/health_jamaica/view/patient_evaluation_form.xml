@@ -11,4 +11,18 @@
 			<label name="first_visit_this_year" />
 			<field name="first_visit_this_year" />
 	</xpath>
+
+	<xpath expr="/form/notebook/page[@id=&quot;page_patient_evaluation_main&quot;]/group[@id=&quot;evaluation_header&quot;]/label[@name=&quot;patient&quot;]" position="replace" />
+	<xpath expr="/form/notebook/page[@id=&quot;page_patient_evaluation_main&quot;]/group[@id=&quot;evaluation_header&quot;]/field[@name=&quot;patient&quot;]" position="replace" />
+	<xpath expr="/form/notebook" position="before">
+		<group string="Patient" col="9">
+            <field name="patient" colspan="3"/>
+            <label name="upi" />
+            <field name="upi" width="80"/>
+            <label name="patient_age" />
+            <field name="patient_age" width="40"/>
+            <label name="dob" />
+            <field name="dob" />
+		</group>
+	</xpath>
 </data>
