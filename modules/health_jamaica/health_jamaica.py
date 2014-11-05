@@ -1046,22 +1046,26 @@ class PatientEvaluation(ModelSQL, ModelView):
 
     visit_type_display = fields.Function(fields.Char('Visit Type'),
                                          'get_selection_display')
-    upi = fields.Function(fields.Char('UPI'), 'get_person_patient_field')
-    dob = fields.Function(fields.Date('DOB'), 'get_person_patient_field')
-    patient_age = fields.Function(fields.Char('Age'), 'get_patient_age')
+    upi = fields.Function(fields.Char('UPI'), getter='get_person_patient_field')
+    sex_display = fields.Function(fields.Char('Sex'), 'get_person_patient_field')
+    age = fields.Function(fields.Char('Age'), 'get_person_patient_field')
 
     def get_selection_display(self, fn):
         return make_selection_display()(self,'visit_type')
 
-    def get_person_patient_field(self, field_name):
-        print("field name = {}.".format(str(field_name)))
-        if field_name in ['upi', 'dob']:
-            print('field value = {}'.format(str(getattr(self.patient.name, field_name))))
-            return getattr(self.patient.name, field_name)
+    def get_person_patient_field(self, name):
+        print("field name = {}.".format(str(name)))
+        if name in ['upi', 'sex_display']:
+            print('field value = {}'.format(str(getattr(self.patient.name, name))))
+            return getattr(self.patient.name, name)
+        if name in ['age']:
+            return getattr(self.patient, name)
         return ''
 
-    def get_patient_age(self, fn):
-        return self.patient.patient_age(fn)
+    def get_patient_age(self, name):
+        if self.patient:
+            print('Patient to get age for : %s'%(repr(self.patient)))
+            return self.patient.patient_age(name)
 
     @fields.depends('patient', 'evaluation_start', 'institution')
     def on_change_with_first_visit_this_year(self, *arg, **kwarg):
@@ -1077,7 +1081,11 @@ class PatientEvaluation(ModelSQL, ModelView):
 
         return True
 
-
+    @fields.depends('patient')
+    def on_change_patient(self, *arg, **kwarg):
+        return {'upi':self.patient.puid,
+                'sex_display':self.patient.name.sex_display,
+                'age':self.patient.age}
 
 class SignsAndSymptoms(ModelSQL, ModelView):
     'Evaluation Signs and Symptoms'

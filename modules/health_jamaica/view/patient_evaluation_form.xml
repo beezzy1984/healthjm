@@ -19,10 +19,10 @@
             <field name="patient" colspan="3"/>
             <label name="upi" />
             <field name="upi" width="80"/>
-            <label name="patient_age" />
-            <field name="patient_age" width="40"/>
-            <label name="dob" />
-            <field name="dob" />
+            <label name="age" />
+            <field name="age" width="40"/>
+            <label name="sex_display" />
+            <field name="sex_display" />
 		</group>
 	</xpath>
 </data>
