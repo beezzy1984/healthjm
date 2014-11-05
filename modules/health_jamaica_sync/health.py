@@ -19,7 +19,7 @@ __all__ = ['Party', 'PartyAddress', 'OperationalArea',
 class Party(SyncMixin):
     __name__ = 'party.party'
     __metaclass__ = PoolMeta
-    unique_id_column = 'ref'
+    unique_id_column = 'code'
 
     def get_wire_value(self):
         values = super(Party, self).get_wire_value()

@@ -27,6 +27,7 @@ import random
 import hashlib
 import re
 import six
+import uuid
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
@@ -53,6 +54,7 @@ _DEPENDS = ['is_person']
 
 JAMAICA_ID=89
 JAMAICA = lambda : Pool().get('country.country')(JAMAICA_ID)
+ThisInstitution = lambda : Pool().get('gnuhealth.institution').get_institution()
 SEX_OPTIONS = [('m', 'Male'), ('f', 'Female'), ('u', 'Unknown')]
 
 SYNC_ID=int(CONFIG.get('synchronisation_id',1))
@@ -262,10 +264,15 @@ class PartyPatient (ModelSQL, ModelView):
                 config = Configuration(1)
                 # Use the company name . Initially, use the name
                 # since the company hasn't been created yet.
-                prefix = Transaction().context.get('company.rec_name') \
-                    or values['name']
-                values['code'] = str(prefix) + '-' + \
-                    Sequence.get_id(config.party_sequence.id)
+                institution_id = ThisInstitution()
+                if institution_id:
+                    institution = Pool().get('gnuhealth.institution')(institution_id)
+                    suffix = institution.code
+                else:                    
+                    suffix = Transaction().context.get('company.rec_name') \
+                        or values['name']
+                values['code'] = '-'.join([str(x) for x in 
+                                          (uuid.uuid4(), suffix)])
 
             values['code_length'] = len(values['code'])
             values.setdefault('addresses', None)
@@ -311,15 +318,21 @@ class PartyPatient (ModelSQL, ModelView):
             self.raise_user_error('future_dob_error')
 
     def get_alt_ids(self, field_name):
+
+        here = ThisInstitution()
         if (field_name == 'medical_record_num'):
             for altid in self.alternative_ids:
-                if altid.alternative_id_type == 'medical_record':
+                if (altid.alternative_id_type == 'medical_record' and
+                    (altid.issuing_institution and 
+                     altid.issuing_institution.id==here)):
                     return altid.code
             return '--'
         else:
             altids = []
             for altid in self.alternative_ids:
-                if altid.alternative_id_type != 'medical_record':
+                if (altid.alternative_id_type != 'medical_record' or
+                    (altid.issuing_institution and
+                     altid.issuing_institution.id != here)):
                     altids.append('-'.join([altid.alternative_id_type,altid.code]))
             return ', '.join(altids)
 
