@@ -8,6 +8,7 @@ def register():
         Sync,
         Party,
         PartyAddress,
+        OccupationalGroup,
         OperationalArea,
         OperationalSector,
         DomiciliaryUnit,
