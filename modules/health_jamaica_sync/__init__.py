@@ -16,7 +16,7 @@ def register():
         HealthInstitution,
         HealthInstitutionSpecialties,
         HealthInstitutionOperationalSector,
-        AlternativePersonID,
+        # AlternativePersonID,
         #Appointment, 
         #DiagnosticHypothesis, 
         #HealthProfessional, 
