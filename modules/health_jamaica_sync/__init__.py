@@ -6,6 +6,10 @@ from .health import *
 def register():
     Pool.register(
         Sync,
+        Country,
+        CountrySubdivision,
+        PostOffice,
+        DistrictCommunity,
         Party,
         PartyAddress,
         OccupationalGroup,

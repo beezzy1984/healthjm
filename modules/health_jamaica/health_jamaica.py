@@ -635,7 +635,7 @@ class PostOffice(ModelSQL, ModelView):
         super(PostOffice, cls).__setup__()
         cls._sql_constraints = [
             ('code_uniq', 'UNIQUE(code)',
-                'The Post Office code be unique !'),
+                'The Post Office code be unique.'),
         ]
 
     @classmethod
@@ -661,6 +661,7 @@ class DistrictCommunity(ModelSQL, ModelView):
     'Country District Community'
     __name__ = 'country.district_community'
     
+    code = fields.Char('Code', required=True, size=10)
     name = fields.Char('District Community', required=True,
         help="District Communities")
     post_office = fields.Many2One('country.post_office', 'Post Office', 
@@ -671,7 +672,9 @@ class DistrictCommunity(ModelSQL, ModelView):
         super(DistrictCommunity, cls).__setup__()
         cls._sql_constraints = [
             ('name_per_po_uniq', 'UNIQUE(name, post_office)',
-                'The District Community must be unique for each post office!'),
+                'The District Community must be unique for each post office.'),
+            ('code_uniq', 'UNIQUE(code)',
+                'The Community code be unique.'),
         ]
 
 

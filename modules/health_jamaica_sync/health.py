@@ -13,7 +13,8 @@ from trytond.pool import PoolMeta
 __all__ = ['Party', 'PartyAddress', 'OccupationalGroup', 'OperationalArea',
     'OperationalSector', 'DomiciliaryUnit', 'AlternativePersonID',
     'MedicalSpecialty', 'HealthInstitution', 'HealthInstitutionSpecialties',
-    'HealthInstitutionOperationalSector', 'PatientData']
+    'HealthInstitutionOperationalSector', 'PatientData', 'Country',
+    'CountrySubdivision', 'PostOffice', 'DistrictCommunity']
 
 
 class Party(SyncMixin):
@@ -32,6 +33,30 @@ class PartyAddress(SyncUUIDMixin):
     __name__ = 'party.address'
     __metaclass__ = PoolMeta
 
+
+class Country(SyncMixin):
+    __name__ = 'country.country'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'code'
+    sync_mode = SyncMode.none
+
+class CountrySubdivision(SyncMixin):
+    __name__ = 'country.subdivision'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'code'
+    sync_mode = SyncMode.none
+
+class PostOffice(SyncMixin):
+    __name__ = 'country.post_office'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'code'
+    sync_mode = SyncMode.update
+
+class DistrictCommunity(SyncMixin):
+    __name__ = 'country.district_community'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'code'
+    sync_mode = SyncMode.update
 
 class OccupationalGroup(SyncMixin):
     '''Occupational Group'''
