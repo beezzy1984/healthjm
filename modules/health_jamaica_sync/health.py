@@ -51,13 +51,13 @@ class PostOffice(SyncMixin):
     __name__ = 'country.post_office'
     __metaclass__ = PoolMeta
     unique_id_column = 'code'
-    sync_mode = SyncMode.update
+    sync_mode = SyncMode.none
 
 class DistrictCommunity(SyncMixin):
     __name__ = 'country.district_community'
     __metaclass__ = PoolMeta
     unique_id_column = 'code'
-    sync_mode = SyncMode.update
+    sync_mode = SyncMode.none
 
 class OccupationalGroup(SyncMixin):
     '''Occupational Group'''
