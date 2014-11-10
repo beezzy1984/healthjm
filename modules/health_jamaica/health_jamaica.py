@@ -256,9 +256,6 @@ class PartyPatient (ModelSQL, ModelView):
                 values['ref'] = cls.generate_upc()
                 if 'is_person' in values and not values['is_person']:
                     values['ref'] = 'NP-' + values['ref']
-                # elif (values.get('is_person', False) and 
-                #       values.get('unidentified', False)):
-                #     values['ref'] = 'NN-' + values.get('ref')
 
             if not values.get('code'):
                 config = Configuration(1)
@@ -550,8 +547,7 @@ class AlternativePersonID (ModelSQL, ModelView):
         help='Institution that assigned the medical record number',
         states={'required':Eval('alternative_id_type') == 'medical_record'},
         depends=['alternative_id_type'])
-    expiry_date = fields.Date('Expiry Date',
-        states={'required':Eval('alternative_id_type') == 'passport'})
+    expiry_date = fields.Date('Expiry Date')
     issue_date = fields.Date('Date Issued')
 
     @classmethod
@@ -559,32 +555,40 @@ class AlternativePersonID (ModelSQL, ModelView):
         super(AlternativePersonID, cls).__setup__()
         selections = [
                 ('trn','TRN (Taxpayer Registration Number)'),
-                ('medical_record', 'Medical Record Number'),
+                ('medical_record', 'Medical Record'),
                 ('pathID','PATH ID'),
                 ('gojhcard','GOJ Health Card'),
                 ('votersid','GOJ Voter\'s ID'),
                 ('birthreg', 'Birth Registration ID'),
                 ('ninnum', 'NIN #'),
-                ('passport', 'Passport Number'),
+                ('passport', 'Passport'),
+                ('jm_license', 'Drivers License (JM)'),
+                ('nonjm_license', 'Drivers License (non-JM)'),
                 ('other', 'Other')
             ]
         cls.alternative_id_type.selection = selections[:]
         cls._error_messages.update({
             'invalid_trn':'Invalid format for TRN',
+            'invalid_jm_license':'Invalid format for Jamaican Drivers License.\n Numbers only please.',
             'invalid_medical_record': 'Invalid format for medical record number',
             'invalid_format':'Invalid format',
-            'mismatched_issue_expiry':'Issue date cannot be after the expiry date'
+            'mismatched_issue_expiry':'Issue date cannot be after the expiry date',
+            'expiry_date_required':'An expiry date is required for this Identification type'
         })
         cls.format_test = {
-            'trn':re.compile('1\d{8}'),
+            'trn':re.compile('^1\d{8}$'),
             'medical_record': re.compile('\d{6}[a-z]?', re.I),
-            'pathID':re.compile('\d{8}'),
-            'gojhcard':re.compile('\d{10}'),
-            'nunnum':re.compile('\d{9}')
+            'pathID':re.compile('^\d{8}$'),
+            'gojhcard':re.compile('^\d{10}$'),
+            'nunnum':re.compile('^\d{9}$')
         }
+        cls.format_test['jm_license'] = cls.format_test['trn']
+        cls.expiry_required = ('passport', 'jm_license', 'nonjm_license')
         # for selection in selections:
         #     if selection not in cls.alternative_id_type.selection:
         #         cls.alternative_id_type.selection.append(selection)
+
+        # cls.get_altid_type = lambda x : dict(selections).get(x,'')
 
     @fields.depends('alternative_id_type')
     def on_change_with_issuing_institution(self, *a, **k):
@@ -607,6 +611,10 @@ class AlternativePersonID (ModelSQL, ModelView):
             if (alternative_id.expiry_date and alternative_id.issue_date and
                 alternative_id.issue_date > alternative_id.expiry_date):
                     raise_user_error('mismatched_issue_expiry')
+            if (not alternative_id.expiry_date and 
+                alternative_id.alternative_id_type in cls.expiry_required):
+                    raise_user_error('expiry_date_required')
+
 
     def check_format(self):
         format_tester = self.format_test.get(self.alternative_id_type, False)

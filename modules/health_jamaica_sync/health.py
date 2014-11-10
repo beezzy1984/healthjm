@@ -21,6 +21,7 @@ class Party(SyncMixin):
     __name__ = 'party.party'
     __metaclass__ = PoolMeta
     unique_id_column = 'code'
+    sync_mode = SyncMode.push_update
 
     def get_wire_value(self):
         values = super(Party, self).get_wire_value()
@@ -80,6 +81,7 @@ class OperationalSector(SyncMixin):
 class DomiciliaryUnit(SyncUUIDMixin):
     __name__ = 'gnuhealth.du'
     __metaclass__ = PoolMeta
+    sync_mode = SyncMode.push_update
 
 
 class AlternativePersonID (SyncUUIDMixin):
@@ -90,19 +92,23 @@ class MedicalSpecialty(SyncMixin):
     __name__ = 'gnuhealth.specialty'
     __metaclass__ = PoolMeta
     unique_id_column = 'code'
+    sync_mode = SyncMode.none
 
 class HealthInstitution(SyncMixin):
     __name__ = 'gnuhealth.institution'
     __metaclass__ = PoolMeta
     unique_id_column = 'code'
+    sync_mode = SyncMode.update
 
 class HealthInstitutionSpecialties(SyncUUIDMixin):
     __name__ = 'gnuhealth.institution.specialties'
     __metaclass__ = PoolMeta
+    sync_mode = SyncMode.update
 
 class HealthInstitutionOperationalSector(SyncUUIDMixin):
     __name__ = 'gnuhealth.institution.operationalsector'
     __metaclass__ = PoolMeta
+    sync_mode = SyncMode.update
 
 class HealthProfessional(SyncMixin):
     __name__ = 'gnuhealth.healthprofessional'
@@ -123,11 +129,13 @@ class DiagnosticHypothesis(SyncUUIDMixin):
 class HospitalUnit(SyncUUIDMixin):
     __name__ = 'gnuhealth.hospital.unit'
     __metaclass__ = PoolMeta
+    sync_mode = SyncMode.update
 
 
 class HospitalWard(SyncUUIDMixin):
     __name__ = 'gnuhealth.hospital.ward'
     __metaclass__ = PoolMeta
+    sync_mode = SyncMode.update
 
 
 class HealthProfessionalSpecialties(SyncUUIDMixin):
