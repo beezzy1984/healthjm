@@ -997,6 +997,22 @@ class Appointment(ModelSQL, ModelView):
                 
                 cls.raise_user_warning(warning_code, u''.join(warning_msg))
 
+# class PathologyCategory(ModelSQL, ModelView):
+#     'Disease Categories'
+#     __name__ = 'gnuhealth.pathology.category'
+#     childs = fields.One2Many(
+#         'gnuhealth.pathology.category', 'parent', 'Sub-Category')
+#     code = fields.Char('Code', required=True, translate=False)
+
+#     @classmethod
+#     def __setup__(cls):
+#         super(PathologyCategory, cls).__setup__()
+#         cls._sql_constraints = [
+#             ('name_uniq', 'UNIQUE(name)', 'The category name must be unique'),
+#             ('code_uniq', 'UNIQUE(code)', 'The category code must be unique'),
+#         ]
+
+
 
 class PathologyGroup(ModelSQL, ModelView):
     'Pathology Groups'

@@ -3,18 +3,15 @@ from tryton_synchronisation import SyncMixin, SyncUUIDMixin, SyncMode
 from trytond.model import ModelSQL
 from trytond.pool import PoolMeta
 
-#__all__ = ['Party', 'Country', 'Subdivision', 'Appointment', 
-#    'DiagnosticHypothesis', 'DomiciliaryUnit', 'HealthProfessional', 
-#    'HospitalUnit', 'HospitalWard', 'HealthProfessionalSpecialties', 
-#    'OperationalArea', 'OperationalSector', 'Pathology', 'PathologyCategory', 
-#    'PathologyGroup', 'PatientData', 'PatientDiseaseInfo', 'PatientEvaluation', 
-#    'PatientVaccination', 'SecondaryCondition', 'SignsAndSymptoms']
-
 __all__ = ['Party', 'PartyAddress', 'OccupationalGroup', 'OperationalArea',
     'OperationalSector', 'DomiciliaryUnit', 'AlternativePersonID',
     'MedicalSpecialty', 'HealthInstitution', 'HealthInstitutionSpecialties',
+    'HospitalUnit', 'HospitalWard', 'HealthProfessional', 'HealthProfessionalSpecialties',
+    'PathologyCategory', 'PathologyGroup', 'Pathology', 'DiseaseMembers',
     'HealthInstitutionOperationalSector', 'PatientData', 'Country',
-    'CountrySubdivision', 'PostOffice', 'DistrictCommunity']
+    'CountrySubdivision', 'PostOffice', 'DistrictCommunity', 'ProcedureCode',
+    'Appointment', 'PatientDiseaseInfo', 'Directions', 'PatientEvaluation',
+    'SecondaryCondition', 'SignsAndSymptoms', 'DiagnosticHypothesis']
 
 
 class Party(SyncMixin):
@@ -114,11 +111,48 @@ class HealthProfessional(SyncMixin):
     __name__ = 'gnuhealth.healthprofessional'
     __metaclass__ = PoolMeta
     unique_id_column = 'puid'
+    sync_mode = SyncMode.full
+
+
+class HealthProfessionalSpecialties(SyncUUIDMixin):
+    __name__ = 'gnuhealth.hp_specialty'
+    __metaclass__ = PoolMeta
 
 
 class Appointment(SyncUUIDMixin):
     __name__ = 'gnuhealth.appointment'
     __metaclass__ = PoolMeta
+
+class PathologyCategory(SyncMixin):
+    __name__ = 'gnuhealth.pathology.category'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'name'
+    sync_mode = SyncMode.update
+
+class PathologyGroup(SyncMixin):
+    __name__ = 'gnuhealth.pathology.group'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'code'
+    sync_mode = SyncMode.update
+
+class Pathology(SyncMixin):
+    __name__ = 'gnuhealth.pathology'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'code'
+    sync_mode = SyncMode.none
+
+
+class DiseaseMembers(SyncUUIDMixin):
+    __name__ = 'gnuhealth.disease_group.members'
+    __metaclass__ = PoolMeta
+    sync_mode = SyncMode.update
+
+
+class ProcedureCode(SyncMixin):
+    __name__ = 'gnuhealth.procedure'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'name'
+    sync_mode = SyncMode.none
 
 
 class DiagnosticHypothesis(SyncUUIDMixin):
@@ -138,11 +172,6 @@ class HospitalWard(SyncUUIDMixin):
     sync_mode = SyncMode.update
 
 
-class HealthProfessionalSpecialties(SyncUUIDMixin):
-    __name__ = 'gnuhealth.hp_specialty'
-    __metaclass__ = PoolMeta
-
-
 class PatientData(SyncMixin):
     __name__ = 'gnuhealth.patient'
     __metaclass__ = PoolMeta
@@ -154,16 +183,6 @@ class PatientDiseaseInfo(SyncUUIDMixin):
     __metaclass__ = PoolMeta
 
 
-class PatientEvaluation(SyncUUIDMixin):
-    __name__ = 'gnuhealth.patient.evaluation'
-    __metaclass__ = PoolMeta
-
-
-class PatientVaccination(SyncUUIDMixin):
-    __name__ = 'gnuhealth.vaccination'
-    __metaclass__ = PoolMeta
-
-
 class SecondaryCondition(SyncUUIDMixin):
     __name__ = 'gnuhealth.secondary_condition'
     __metaclass__ = PoolMeta
@@ -171,4 +190,20 @@ class SecondaryCondition(SyncUUIDMixin):
 
 class SignsAndSymptoms(SyncUUIDMixin):
     __name__ = 'gnuhealth.signs_and_symptoms'
+    __metaclass__ = PoolMeta
+
+
+class Directions(SyncUUIDMixin):
+    __name__ = 'gnuhealth.directions'
+    __metaclass__ = PoolMeta
+    sync_mode = SyncMode.full
+
+
+class PatientEvaluation(SyncUUIDMixin):
+    __name__ = 'gnuhealth.patient.evaluation'
+    __metaclass__ = PoolMeta
+
+
+class PatientVaccination(SyncUUIDMixin):
+    __name__ = 'gnuhealth.vaccination'
     __metaclass__ = PoolMeta
