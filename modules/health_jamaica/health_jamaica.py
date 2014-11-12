@@ -1127,6 +1127,19 @@ class PatientEvaluation(ModelSQL, ModelView):
                 'sex_display':self.patient.name.sex_display,
                 'age':self.patient.age}
 
+    @classmethod
+    def write(cls, evaluations, vals):
+        # Don't allow to write the record if the evaluation has been done
+        if is_not_synchro():
+            for ev in evaluations:
+                if ev.state == 'done':
+                    cls.raise_user_error(
+                        "This evaluation is in a Done state.\n"
+                        "You can no longer modify it.")
+        return super(PatientEvaluation, cls).write(evaluations, vals)
+
+
+
 class SignsAndSymptoms(ModelSQL, ModelView):
     'Evaluation Signs and Symptoms'
     __name__ = 'gnuhealth.signs_and_symptoms'
