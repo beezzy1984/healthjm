@@ -67,12 +67,14 @@ class OperationalArea(SyncMixin):
     __name__ = 'gnuhealth.operational_area'
     __metaclass__ = PoolMeta
     unique_id_column = 'name'
+    sync_mode = SyncMode.none
 
 
 class OperationalSector(SyncMixin):
     __name__ = 'gnuhealth.operational_sector'
     __metaclass__ = PoolMeta
     unique_id_column = 'name'
+    sync_mode = SyncMode.none
 
 
 class DomiciliaryUnit(SyncUUIDMixin):
@@ -106,6 +108,7 @@ class HealthInstitutionOperationalSector(SyncUUIDMixin):
     __name__ = 'gnuhealth.institution.operationalsector'
     __metaclass__ = PoolMeta
     sync_mode = SyncMode.update
+
 
 class HealthProfessional(SyncMixin):
     __name__ = 'gnuhealth.healthprofessional'
