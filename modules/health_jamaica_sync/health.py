@@ -110,10 +110,9 @@ class HealthInstitutionOperationalSector(SyncUUIDMixin):
     sync_mode = SyncMode.update
 
 
-class HealthProfessional(SyncMixin):
+class HealthProfessional(SyncUUIDMixin):
     __name__ = 'gnuhealth.healthprofessional'
     __metaclass__ = PoolMeta
-    unique_id_column = 'puid'
     sync_mode = SyncMode.full
 
 
