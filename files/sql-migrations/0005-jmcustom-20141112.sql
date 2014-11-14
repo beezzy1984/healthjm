@@ -89,3 +89,4 @@ ALTER table "gnuhealth_diagnostic_hypothesis"
 	ALTER uuid SET not null,
 	ADD CONSTRAINT "gnuhealth_diagnostic_hypothesis_uuid_unique" 
 		UNIQUE(uuid);
+

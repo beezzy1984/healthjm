@@ -914,8 +914,7 @@ class HealthProfessional(ModelSQL, ModelView):
     __name__ = 'gnuhealth.healthprofessional'
 
     def get_rec_name(self, name):
-        if self.name:
-            return self.name.name
+        return self.name.name
 
 
 class Appointment(ModelSQL, ModelView):
