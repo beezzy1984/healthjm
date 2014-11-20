@@ -4,11 +4,12 @@ from trytond.wizard import (Wizard, StateView, StateTransition, Button,
                             StateAction)
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
-from trytond.pyson import Eval
+from trytond.pyson import Eval, Not, Bool, PYSONEncoder
 
 from .reports import DailyPatientRegister
 
-__all__ = ['PatientRegisterModel', 'PatientRegisterWizard']
+__all__ = ['PatientRegisterModel', 'PatientRegisterWizard', 
+           'OpenAppointmentReportStart', 'OpenAppointmentReport']
 
 
 class PatientRegisterModel(ModelView):
@@ -88,3 +89,31 @@ class PatientRegisterWizard(Wizard):
             return 'start'
 
         return action, data
+
+
+class OpenAppointmentReportStart(ModelView):
+    'Open Appointment Report'
+    __name__ = 'gnuhealth.appointment.report.open.start'
+    specialty = fields.Many2One('gnuhealth.specialty', 'Specialty',
+                                states={'required':Not(Bool(Eval('healthprof')))})
+    healthprof = fields.Many2One('gnuhealth.healthprofessional', 'Health Professional',
+        required=False, states={'required':Not(Bool(Eval('specialty')))})
+
+
+class OpenAppointmentReport(Wizard):
+    'Open Appointment Report'
+    __name__ = 'gnuhealth.appointment.report.open'
+
+    def do_open_(self, action):
+        action_dict = {'date_start': self.start.date_start,
+            'date_end': self.start.date_end }
+        if self.start.healthprof:
+            action_dict['healthprof'] = self.start.healthprof.id
+            action['name'] += ' - {}'.format(self.start.healthprof.name.name)
+            
+        if self.start.specialty:
+            action_dict['specialty'] = self.start.specialty.id
+            action['name'] += ' - {}'.format(self.start.specialty.name)
+
+        action['pyson_context'] = PYSONEncoder().encode(action_dict)
+        return action, {}

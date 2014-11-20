@@ -46,10 +46,12 @@ def register():
         PatientEvaluation,
         SignsAndSymptoms,
         PatientRegisterModel,
+        OpenAppointmentReportStart,
         module='health_jamaica', type_='model')
 
     Pool.register(
         PatientRegisterWizard,
+        OpenAppointmentReport,
         module='health_jamaica', type_='wizard'
     )
 
