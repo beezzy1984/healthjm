@@ -8,61 +8,64 @@ from trytond.model import ModelView, ModelStorage, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder
 from trytond.transaction import Transaction
+from trytond.rpc import RPC
 
 from ..health_jamaica.health_jamaica import (SEX_OPTIONS)
 
 __all__ = ('RemoteParty',)
-
+RO = {'readonly':True}
 
 class RemoteParty(ModelView, ModelStorage):
     'Party'
     __name__ = 'party.party.remote'
-    upi = fields.Char('UPI')
-    name = fields.Char('Name')
+    upi = fields.Char('UPI', states=RO)
+    name = fields.Char('Name', states=RO)
     alt_ids = fields.Char('Alternate IDs')
-    father_name = fields.Char('Father\'s Name')
-    mother_maiden_name = fields.Char('Mother\'s Maiden Name')
-    marital_status = fields.Char('Marital status')
-    alias = fields.Char('Pet Name/Alias')
-    code = fields.Char('Code')
-    sex = fields.Selection([(None,'')] + SEX_OPTIONS, 'Sex')
-    dob = fields.Date('DoB', help='Date of Birth')
-    party_warning_ack = fields.Boolean('Party verified')
+    father_name = fields.Char('Father\'s Name', states=RO)
+    mother_maiden_name = fields.Char('Mother\'s Maiden Name', states=RO)
+    marital_status = fields.Char('Marital status', states=RO)
+    alias = fields.Char('Pet Name/Alias', states=RO)
+    code = fields.Char('Code', states=RO)
+    sex = fields.Selection([(None,'')] + SEX_OPTIONS, 'Sex', states=RO)
+    dob = fields.Date('DoB', help='Date of Birth', states=RO)
+    maiden_name = fields.Char('Maiden Name', states={'readonly':True,
+                                                    'invisible':Bool(Eval('sex') == 'm')})
 
+    
+    @classmethod
+    def __setup__(cls, *a, **k):
+        super(RemoteParty, cls).__setup__(*a, **k)
+        cls.__rpc__['fetch_remote_party'] = RPC(readonly=False)
+        if not hasattr(cls, '_xcache'):
+            cls._xcache = LRUDict(RECORD_CACHE_SIZE)
+        cls._target_model = Pool().get('party.party')
 
     @classmethod
     def read(cls, ids, fields_names=None):
-        print(('{}\n    ids={}\n    fields_names={}').format('*'*80,
-            repr(ids), repr(fields_names)))
-        # transaction = Transaction()
-        # cache = transaction.cursor.get_cache(transaction.context)
-        # cache_key = cls.__name__
         ret = []
         for iid in ids:
-            data = cls.tcache.get(iid)
-            print('fetching ID:{} as {}'.format(iid, repr(data)))
+            data = cls._xcache.get(iid)
+            print('fetching ID:{} as {}'.format(iid, repr(data)))            
             if data:
+                # if fields_names is None:
                 ret.append(data)
-        print('\n\n return = {}\n{}'.format(repr(ret), '#'*79))
-        import pdb; pdb.set_trace()
+                # else:
+                #     ret.append(dict([(x,data.get(x)) for x in fields_names]))
+
         return ret
-        # return cls.search_master(domain, offset, limit, order) 
-                     # fields_names=['name', 'medical_record_num', 'alt_ids', 'upi',
-                     # 'is_patient', 'is_healthprof', 'is_institution'])
 
     @classmethod
     def search(cls, domain, offset=0, limit=None, order=None, count=False,
             query=False):
-        Party = Pool().get('party.party')
-        if not hasattr(cls, 'tcache'):
-            cls.tcache = LRUDict(RECORD_CACHE_SIZE)
+        Party = cls._target_model
+        cache = cls._xcache
 
         keymap={'name':'rec_name',}
         extra_fields = {'code_readonly':True,
         '_timestamp':lambda x:time.mktime(x['create_date'].timetuple()),
         'last_synchronisation':None}
 
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         if domain:
             result2 = Party.search_master(domain, offset, limit, order,
                                     fields_names=['name', 'alt_ids', 'upi',
@@ -100,12 +103,20 @@ class RemoteParty(ModelView, ModelStorage):
                         data[k] = v(data)
                     else:
                         data[k] = v
-                cls.tcache.setdefault(data['id'], {}).update(data)
+                cls._xcache.setdefault(data['id'], {}).update(data)
 
             print ('/'*79)
             print ('MASTER = {}\n{}'.format(repr(result2), '\\'*79))
             return result2_return
         return []
+
+    @classmethod
+    def fetch_remote_party(cls, ids):
+        codes = filter(None, [c.get('code') for c in cls.read(ids, ['code']) ])
+        print("Codes to sync = {}".format(repr(codes)))
+        cls._target_model.pull_master_record(codes)
+        # import pdb; pdb.set_trace()
+        return 'switch tree'
 
 # cache[cls.__name__] = LRUDict(RECORD_CACHE_SIZE)
 

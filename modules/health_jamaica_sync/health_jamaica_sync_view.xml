@@ -15,17 +15,17 @@
 			<field name="view" ref="remote_party_tree" />
 			<field name="act_window" ref="act_party_remote" />
 		</record>
-<!-- 		<record model="ir.ui.view" id="remote_party_form">
+		<record model="ir.ui.view" id="remote_party_form">
 			<field name="model">party.party.remote</field>
 			<field name="type">form</field>
 			<field name="name">party_form_remote</field>
 		</record>
-		<record model="ir.action.act_window.view" id="act_party_remote_tree">
+		<record model="ir.action.act_window.view" id="act_party_remote_form">
 			<field name="sequence" eval="20" />
 			<field name="view" ref="remote_party_form" />
 			<field name="act_window" ref="act_party_remote" />
-		</record> -->
+		</record>
 		<menuitem action="act_party_remote" id="sync_menu_remote_party"
-			parent="health.gnuhealth_patients_menu" icon="gnuhealth-list" sequence="120" />
+			parent="party.menu_party_form" icon="gnuhealth-demography" sequence="3" />
 	</data>
 </tryton>
