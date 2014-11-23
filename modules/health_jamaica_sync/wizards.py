@@ -46,8 +46,7 @@ class RemoteParty(ModelView, ModelStorage):
     def read(cls, ids, fields_names=None):
         ret = []
         for iid in ids:
-            data = cls._xcache.get(iid)
-            print('fetching ID:{} as {}'.format(iid, repr(data)))            
+            data = cls._xcache.get(iid)          
             if data:
                 # if fields_names is None:
                 ret.append(data)
@@ -112,9 +111,13 @@ class RemoteParty(ModelView, ModelStorage):
 
     @classmethod
     def fetch_remote_party(cls, ids):
+
         codes = filter(None, [c.get('code') for c in cls.read(ids, ['code']) ])
-        print("Codes to sync = {}".format(repr(codes)))
         cls._target_model.pull_master_record(codes)
+        
+        from celery_synchronisation import synchronise_new, synchronise_push_all
+        synchronise_new.apply_async()
+        synchronise_push_all.apply_async()
         return 'switch tree'
 
 # cache[cls.__name__] = LRUDict(RECORD_CACHE_SIZE)
