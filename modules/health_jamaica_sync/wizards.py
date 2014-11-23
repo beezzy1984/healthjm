@@ -9,8 +9,9 @@ from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder
 from trytond.transaction import Transaction
 from trytond.rpc import RPC
+from trytond.config import CONFIG
 
-from ..health_jamaica.health_jamaica import (SEX_OPTIONS)
+from ..health_jamaica.health_jamaica import (SEX_OPTIONS, MARITAL_STATUSES)
 
 __all__ = ('RemoteParty',)
 RO = {'readonly':True}
@@ -20,10 +21,11 @@ class RemoteParty(ModelView, ModelStorage):
     __name__ = 'party.party.remote'
     upi = fields.Char('UPI', states=RO)
     name = fields.Char('Name', states=RO)
-    alt_ids = fields.Char('Alternate IDs')
+    alt_ids = fields.Char('Alternate IDs', states=RO)
     father_name = fields.Char('Father\'s Name', states=RO)
     mother_maiden_name = fields.Char('Mother\'s Maiden Name', states=RO)
-    marital_status = fields.Char('Marital status', states=RO)
+    marital_status = fields.Selection([(None, '')]+MARITAL_STATUSES,
+                                      'Marital status', states=RO)
     alias = fields.Char('Pet Name/Alias', states=RO)
     code = fields.Char('Code', states=RO)
     sex = fields.Selection([(None,'')] + SEX_OPTIONS, 'Sex', states=RO)
@@ -64,10 +66,11 @@ class RemoteParty(ModelView, ModelStorage):
         extra_fields = {'code_readonly':True,
         '_timestamp':lambda x:time.mktime(x['create_date'].timetuple()),
         'last_synchronisation':None}
-
-        # import pdb; pdb.set_trace()
         if domain:
-            result2 = Party.search_master(domain, offset, limit, order,
+            dplus = [('synchronised_instances','bitunset',
+                      int(CONFIG['synchronisation_id']))]
+            result2 = Party.search_master(dplus + domain, offset, 
+                                          100 if limit>100 else limit, order,
                                     fields_names=['name', 'alt_ids', 'upi',
                                                   # 'is_patient', 'is_healthprof', 'is_institution',
                                                   'sex', 'father_name', 'mother_maiden_name',
@@ -104,9 +107,6 @@ class RemoteParty(ModelView, ModelStorage):
                     else:
                         data[k] = v
                 cls._xcache.setdefault(data['id'], {}).update(data)
-
-            print ('/'*79)
-            print ('MASTER = {}\n{}'.format(repr(result2), '\\'*79))
             return result2_return
         return []
 
@@ -115,7 +115,6 @@ class RemoteParty(ModelView, ModelStorage):
         codes = filter(None, [c.get('code') for c in cls.read(ids, ['code']) ])
         print("Codes to sync = {}".format(repr(codes)))
         cls._target_model.pull_master_record(codes)
-        # import pdb; pdb.set_trace()
         return 'switch tree'
 
 # cache[cls.__name__] = LRUDict(RECORD_CACHE_SIZE)

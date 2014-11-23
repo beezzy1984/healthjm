@@ -56,6 +56,28 @@ JAMAICA_ID=89
 JAMAICA = lambda : Pool().get('country.country')(JAMAICA_ID)
 ThisInstitution = lambda : Pool().get('gnuhealth.institution').get_institution()
 SEX_OPTIONS = [('m', 'Male'), ('f', 'Female'), ('u', 'Unknown')]
+MARITAL_STATUSES = [
+        ('s', 'Single'),
+        ('m', 'Married'),
+        ('c', 'Living with partner'),
+        ('v', 'Visiting'),
+        ('w', 'Widowed'),
+        ('d', 'Divorced'),
+        ('x', 'Separated'),
+        ('n', 'Not Applicable'),
+        ('u', 'Unknown')]
+ALTERNATIVE_ID_TYPES = [
+        ('trn','TRN'),
+        ('medical_record', 'Medical Record'),
+        ('pathID','PATH ID'),
+        ('gojhcard','GOJ Health Card'),
+        ('votersid','GOJ Voter\'s ID'),
+        ('birthreg', 'Birth Registration ID'),
+        ('ninnum', 'NIN #'),
+        ('passport', 'Passport'),
+        ('jm_license', 'Drivers License (JM)'),
+        ('nonjm_license', 'Drivers License (non-JM)'),
+        ('other', 'Other')]
 
 SYNC_ID=int(CONFIG.get('synchronisation_id',1))
 # Default sync ID to 1 so it doesn't think it's the master
@@ -118,18 +140,8 @@ class PartyPatient (ModelSQL, ModelView):
         ('III', 'III - The Third'),
         ], 'Suffix', states=_STATES, depends=_DEPENDS)
 
-    marital_status = fields.Selection([
-        (None, ''),
-        ('s', 'Single'),
-        ('m', 'Married'),
-        ('c', 'Living with partner'),
-        ('v', 'Visiting'),
-        ('w', 'Widowed'),
-        ('d', 'Divorced'),
-        ('x', 'Separated'),
-        ('n', 'Not Applicable'),
-        ('u', 'Unknown'),
-        ], 'Marital Status', sort=False)
+    marital_status = fields.Selection([(None, '')]+MARITAL_STATUSES,
+                                      'Marital Status', sort=False)
 
     # gender vs sex: According to the AMA Manual of Style :
     # Gender refers to the psychological/societal aspects of being male or female,
@@ -317,6 +329,7 @@ class PartyPatient (ModelSQL, ModelView):
     def get_alt_ids(self, field_name):
 
         here = ThisInstitution()
+        id_type_map = dict(ALTERNATIVE_ID_TYPES)
         if (field_name == 'medical_record_num'):
             for altid in self.alternative_ids:
                 if (altid.alternative_id_type == 'medical_record' and
@@ -327,11 +340,15 @@ class PartyPatient (ModelSQL, ModelView):
         else:
             altids = []
             for altid in self.alternative_ids:
-                if (altid.alternative_id_type != 'medical_record' or
-                    (altid.issuing_institution and
-                     altid.issuing_institution.id != here)):
-                    altids.append('-'.join([altid.alternative_id_type,altid.code]))
-            return ', '.join(altids)
+                if (altid.alternative_id_type == 'medical_record' and
+                    altid.issuing_institution and
+                    altid.issuing_institution.id == here):
+                    continue
+                else:
+                    a_type = id_type_map.get(altid.alternative_id_type, 
+                                             altid.alternative_id_type)
+                    altids.append('{} {}'.format(a_type, altid.code))
+            return '; '.join(altids)
 
 
     @classmethod
@@ -553,20 +570,8 @@ class AlternativePersonID (ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(AlternativePersonID, cls).__setup__()
-        selections = [
-                ('trn','TRN (Taxpayer Registration Number)'),
-                ('medical_record', 'Medical Record'),
-                ('pathID','PATH ID'),
-                ('gojhcard','GOJ Health Card'),
-                ('votersid','GOJ Voter\'s ID'),
-                ('birthreg', 'Birth Registration ID'),
-                ('ninnum', 'NIN #'),
-                ('passport', 'Passport'),
-                ('jm_license', 'Drivers License (JM)'),
-                ('nonjm_license', 'Drivers License (non-JM)'),
-                ('other', 'Other')
-            ]
-        cls.alternative_id_type.selection = selections[:]
+        
+        cls.alternative_id_type.selection = ALTERNATIVE_ID_TYPES[:]
         cls._error_messages.update({
             'invalid_trn':'Invalid format for TRN',
             'invalid_jm_license':'Invalid format for Jamaican Drivers License.\n Numbers only please.',
