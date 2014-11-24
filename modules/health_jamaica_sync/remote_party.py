@@ -10,6 +10,7 @@ from trytond.pool import Pool
 from trytond.pyson import Eval, Bool
 
 from ..health_jamaica.health_jamaica import (SEX_OPTIONS, MARITAL_STATUSES)
+from tryton_synchronisation import UUID
 
 __all__ = ('RemoteParty',)
 RO = {'readonly':True}
@@ -30,6 +31,8 @@ class RemoteParty(ModelView, ModelStorage):
     dob = fields.Date('DoB', help='Date of Birth', states=RO)
     maiden_name = fields.Char('Maiden Name', states={'readonly':True,
                                                     'invisible':Bool(Eval('sex') == 'm')})
+    du_code = UUID('DU_uuid')
+    du_address = fields.Text('Address', states=RO)
 
     
     @classmethod
@@ -39,6 +42,7 @@ class RemoteParty(ModelView, ModelStorage):
         if not hasattr(cls, '_xcache'):
             cls._xcache = LRUDict(RECORD_CACHE_SIZE)
         cls._target_model = Pool().get('party.party')
+        cls._du_model = Pool().get('gnuhealth.du')
 
     @classmethod
     def read(cls, ids, fields_names=None):
@@ -58,11 +62,12 @@ class RemoteParty(ModelView, ModelStorage):
             query=False):
         Party = cls._target_model
         cache = cls._xcache
-
-        keymap={'name':'rec_name',}
+        keymap={'name':'rec_name', 'du.full_address':'du_address',
+                'du.uuid':'du_code'}
         extra_fields = {'code_readonly':True,
         '_timestamp':lambda x:time.mktime(x['create_date'].timetuple()),
         'last_synchronisation':None}
+        
         if domain:
             dplus = [('synchronised_instances','bitunset',
                       int(CONFIG['synchronisation_id']))]
@@ -72,7 +77,8 @@ class RemoteParty(ModelView, ModelStorage):
                                                   # 'is_patient', 'is_healthprof', 'is_institution',
                                                   'sex', 'father_name', 'mother_maiden_name',
                                                   'dob','party_warning_ack', 'maiden_name',
-                                                  'marital_status',
+                                                  'marital_status', 'du.uuid',
+                                                  'du.full_address',
                                                   'alias','create_date', 'id',
                                                   'activation_date', 'write_date'])
                                     # fields_names=['code', 'create_date', 
@@ -103,25 +109,29 @@ class RemoteParty(ModelView, ModelStorage):
                         data[k] = v(data)
                     else:
                         data[k] = v
+
                 cls._xcache.setdefault(data['id'], {}).update(data)
             return result2_return
         return []
 
     @classmethod
     def fetch_remote_party(cls, ids):
+        party_codes, du_codes = [],[]
+        for c in cls.read(ids, ['code', 'du_code']):
+            if c.get('code'):
+                party_codes.append(c['code'])
+            if c.get('du_code'):
+                du_codes.append(c['du_code'])
 
-        codes = filter(None, [c.get('code') for c in cls.read(ids, ['code']) ])
-        cls._target_model.pull_master_record(codes)
+        if du_codes:
+            cls._du_model.pull_master_record(du_codes)
+        if party_codes:
+            cls._target_model.pull_master_record(party_codes)
         
-        from celery_synchronisation import synchronise_new, synchronise_push_all
-        synchronise_new.apply_async()
-        synchronise_push_all.apply_async()
+        if du_codes or party_codes:
+            from celery_synchronisation import synchronise_new, synchronise_push_all
+            synchronise_new.apply_async()
+            synchronise_push_all.apply_async()
+
         return 'switch tree'
 
-# cache[cls.__name__] = LRUDict(RECORD_CACHE_SIZE)
-
-# 'code', 'create_date', 'citizenship', 'alternative_identification', 'sex', 'insurance_company_type', 'internal_user', 'father_name', 'activation_date', 'vat_number', 'education', 'id', 'occupation', 'create_uid', 'du', 'is_patient', 'is_insurance_company', 'code_length', 'residence', 'mother_maiden_name', 'vat_country', 'firstname', 'maiden_name', 'middlename', 'lastname', 'ethnic_group', 'last_synchronisation', 'active', 'write_uid', 'lang', 'unidentified', 'name', 'dob', 'ref', 'marital_status', 'synchronised_instances', 'is_healthprof', 'is_pharmacy', 'alias', 'suffix', 'is_institution', 'write_date', 'is_person', 'party_warning_ack'
-
-    # @classmethod
-    # def search_master(cls, domain, offset=0, limit=None, order=None,
-    #         fields_names=None)

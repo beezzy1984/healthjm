@@ -28,7 +28,10 @@
 		<label name="mother_maiden_name" />
 		<field name="mother_maiden_name" colspan="2" />
 	</group>
-
+	<newline />
+	<group id="remote_party_address" string="Address">
+		<field name="du_address" expand="1" />
+	</group>
 	<newline />
 	<group col="10" id="remote_party_button_space">
 		<separator colspan="8"	/>
