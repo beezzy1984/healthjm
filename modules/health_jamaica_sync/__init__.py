@@ -1,7 +1,7 @@
 from trytond.pool import Pool
 from .celerytools import *
 from .health import *
-from .wizards import *
+from .remote_party import RemoteParty
 
 
 def register():
