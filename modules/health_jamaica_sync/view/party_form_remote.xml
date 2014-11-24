@@ -10,7 +10,7 @@
 		<field name="upi" />
 	</group>
 	<newline />
-	<separator 	/>
+	<separator id="remote_party_name_separator" />
 	<newline />
 	<group col="12" id="remote_party_ident_other">
 		<label name="alias" colspan="1" />
@@ -30,11 +30,11 @@
 	</group>
 	<newline />
 	<group id="remote_party_address" string="Address">
-		<field name="du_address" expand="1" />
+		<field name="du_address" />
 	</group>
 	<newline />
 	<group col="10" id="remote_party_button_space">
-		<separator colspan="8"	/>
-		<button string="Import Party" name="fetch_remote_party" colspan="2" xalign="1.0" xexpand="0" />
+		<separator colspan="8" id="remote_party_button_push_separator" />
+		<button string="Import Party" name="fetch_remote_party" colspan="2" />
 	</group>
 </form>
