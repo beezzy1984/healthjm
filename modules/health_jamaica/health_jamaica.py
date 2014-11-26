@@ -901,6 +901,23 @@ class HealthInstitution(ModelSQL, ModelView):
         states={'required': False, 'readonly': False})
 
 
+class HealthInstitutionSpecialties(ModelSQL, ModelView):
+    'Health Institution Specialties'
+    __name__ = 'gnuhealth.institution.specialties'
+
+    is_main_specialty = fields.Boolean('Main Specialty',
+                                       help="Check if this is the main specialty"\
+                                       " e.g. in the case of specialized hospital"\
+                                       " or an area in which this institution excels.")
+
+    @classmethod
+    def __setup__(cls):
+        super(HealthInstitutionSpecialties, cls).__setup__()
+        cls._sql_constraints += [
+            ('name_is_main_uniq', 'UNIQUE(name, is_main_specialty)',
+                'This institution already has a main specialty.'),
+        ]
+
 class Insurance(ModelSQL, ModelView):
     'Insurance'
     __name__ = 'gnuhealth.insurance' #database table, tryton translates this into gnuhealth_insurance
@@ -918,8 +935,49 @@ class HealthProfessional(ModelSQL, ModelView):
     'Health Professional'
     __name__ = 'gnuhealth.healthprofessional'
 
+    main_specialty = fields.Function(fields.Char('Main Specialty'),
+                                     'get_main_specialty',
+                                     'set_main_specialty',
+                                     'search_main_specialty')
+
     def get_rec_name(self, name):
         return self.name.name
+
+    def get_main_specialty(self, name):
+        mss = self.specialties.find([('is_main_specialty', '=',True)])
+        if mss:
+            return mss[0]
+        return None
+
+    def search_main_specialty(cls, name, clause):
+        HPS = Pool().get('gnuhealth.hp_specialty')
+        cx = Transaction().context
+        ids = [x['name'] for x in 
+                HPS.search_read([replace_clause_column(clause, 'specialty')],
+                                0,None, None,['name'], cx)]
+        return [('id', 'in', ids)]
+
+    def set_main_specialty(cls, ids, name, value):
+        import pdb; pdb.set_trace()
+        # how do we clear out all the values for all the specified 
+        # instances and just set the one for the one specified
+
+
+class HealthProfessionalSpecialties(ModelSQL, ModelView):
+    'Health Professional Specialties'
+    __name__ = 'gnuhealth.hp_specialty'
+    is_main_specialty = fields.Boolean('Main Specialty',
+                                       help="Check if this is the main specialty"\
+                                       " i.e. in the case of specialty doctor"\
+                                       " or an area in which this professional excels.")
+
+    @classmethod
+    def __setup__(cls):
+        super(HealthProfessionalSpecialties, cls).__setup__()
+        cls._sql_constraints += [
+            ('name_is_main_uniq', 'UNIQUE(name, is_main_specialty)',
+                'This health professional already has a main specialty.'),
+        ]    
 
 
 class Appointment(ModelSQL, ModelView):
