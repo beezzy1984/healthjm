@@ -44,7 +44,7 @@ __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'HealthInstitution',
     'Insurance', 'PartyAddress', 'HealthProfessional', 'Appointment', 
     'DiagnosticHypothesis', 'PathologyGroup', 'PatientEvaluation',
-    'SignsAndSymptoms', 'OccupationalGroup']
+    'SignsAndSymptoms', 'OccupationalGroup', 'HealthProfessionalSpecialties']
 __metaclass__ = PoolMeta
 
 _STATES = {
@@ -944,7 +944,7 @@ class HealthProfessional(ModelSQL, ModelView):
         return self.name.name
 
     def get_main_specialty(self, name):
-        mss = self.specialties.find([('is_main_specialty', '=',True)])
+        mss = [x for x in self.specialties if x.is_main_specialty]
         if mss:
             return mss[0]
         return None
@@ -977,7 +977,7 @@ class HealthProfessionalSpecialties(ModelSQL, ModelView):
         cls._sql_constraints += [
             ('name_is_main_uniq', 'UNIQUE(name, is_main_specialty)',
                 'This health professional already has a main specialty.'),
-        ]    
+        ]
 
 
 class Appointment(ModelSQL, ModelView):

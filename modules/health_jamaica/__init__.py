@@ -47,6 +47,7 @@ def register():
         SignsAndSymptoms,
         PatientRegisterModel,
         OpenAppointmentReportStart,
+        HealthProfessionalSpecialties,
         module='health_jamaica', type_='model')
 
     Pool.register(
