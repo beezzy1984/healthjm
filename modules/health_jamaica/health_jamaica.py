@@ -44,7 +44,8 @@ __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'HealthInstitution',
     'Insurance', 'PartyAddress', 'HealthProfessional', 'Appointment', 
     'DiagnosticHypothesis', 'PathologyGroup', 'PatientEvaluation',
-    'SignsAndSymptoms', 'OccupationalGroup', 'HealthProfessionalSpecialties']
+    'SignsAndSymptoms', 'OccupationalGroup', 'HealthProfessionalSpecialties',
+    'HealthInstitutionSpecialties']
 __metaclass__ = PoolMeta
 
 _STATES = {
@@ -893,12 +894,51 @@ class HealthInstitution(ModelSQL, ModelView):
     'Health Institution'
     __name__ = 'gnuhealth.institution'
 
-    main_specialty = fields.Many2One('gnuhealth.institution.specialties',
-        'Specialty',
-        domain=[('name', '=', Eval('active_id'))], depends=['specialties'], 
+    main_specialty = fields.Function(
+                        fields.Many2One('gnuhealth.institution.specialties',
+                            'Specialty',
+                            domain=[('name', '=', 
+                                     Eval('active_id'))], 
+                            depends=['specialties'], 
         help="Choose the speciality in the case of Specialized Hospitals" \
-            " or where this center excels", 
-        states={'required': False, 'readonly': False})
+            " or where this center excels",
+        # Allow to select the institution specialty only if the record already
+        # exists
+        states={'required': And(Eval('institution_type') == 'specialized',
+            Eval('id', 0) > 0),
+            'readonly': Eval('id', 0) < 0}),
+                        'get_main_specialty',
+                        'set_main_specialty',
+                        'search_main_specialty'
+    )
+
+    def get_main_specialty(self, name):
+        mss = [x for x in self.specialties if x.is_main_specialty]
+        if mss:
+            return mss[0].id
+        return None
+
+    @classmethod
+    def search_main_specialty(cls, name, clause):
+        return ['AND',[
+            ('specialties.is_main_specialty','=',True),
+            replace_clause_column(clause, 'specialties.specialty.id')
+        ]]
+
+    @classmethod
+    def set_main_specialty(cls, instances, field_name, value):
+        for i in instances:
+            turnoff,turnon = [],[]
+            for spec in i.specialties:
+                if spec.id == value:
+                    turnon.append(spec)
+                elif spec.is_main_specialty:
+                    turnoff.append(spec)
+        HIS = Pool().get('gnuhealth.institution.specialties')
+        if turnoff:
+            HIS.write(turnoff,{'is_main_specialty':None})
+        if turnon:
+            HIS.write(turnon, {'is_main_specialty':True})
 
 
 class HealthInstitutionSpecialties(ModelSQL, ModelView):
@@ -909,14 +949,10 @@ class HealthInstitutionSpecialties(ModelSQL, ModelView):
                                        help="Check if this is the main specialty"\
                                        " e.g. in the case of specialized hospital"\
                                        " or an area in which this institution excels.")
+    @staticmethod
+    def default_is_main_specialty():
+        return False
 
-    @classmethod
-    def __setup__(cls):
-        super(HealthInstitutionSpecialties, cls).__setup__()
-        cls._sql_constraints += [
-            ('name_is_main_uniq', 'UNIQUE(name, is_main_specialty)',
-                'This institution already has a main specialty.'),
-        ]
 
 class Insurance(ModelSQL, ModelView):
     'Insurance'
@@ -970,7 +1006,7 @@ class HealthProfessional(ModelSQL, ModelView):
                     turnoff.append(spec)
         HPS = Pool().get('gnuhealth.hp_specialty')
         if turnoff:
-            HPS.write(turnoff,{'is_main_specialty':False})
+            HPS.write(turnoff,{'is_main_specialty':None})
         if turnon:
             HPS.write(turnon, {'is_main_specialty':True})
 

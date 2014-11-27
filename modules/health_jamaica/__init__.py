@@ -48,6 +48,7 @@ def register():
         PatientRegisterModel,
         OpenAppointmentReportStart,
         HealthProfessionalSpecialties,
+        HealthInstitutionSpecialties,
         module='health_jamaica', type_='model')
 
     Pool.register(
