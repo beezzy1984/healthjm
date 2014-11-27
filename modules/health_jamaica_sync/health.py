@@ -97,12 +97,12 @@ class HealthInstitution(SyncMixin):
     __name__ = 'gnuhealth.institution'
     __metaclass__ = PoolMeta
     unique_id_column = 'code'
-    sync_mode = SyncMode.none
+    sync_mode = SyncMode.update
 
 class HealthInstitutionSpecialties(SyncUUIDMixin):
     __name__ = 'gnuhealth.institution.specialties'
     __metaclass__ = PoolMeta
-    sync_mode = SyncMode.none
+    sync_mode = SyncMode.update
 
 class HealthInstitutionOperationalSector(SyncUUIDMixin):
     __name__ = 'gnuhealth.institution.operationalsector'
