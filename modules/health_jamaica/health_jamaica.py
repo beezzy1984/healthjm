@@ -935,7 +935,10 @@ class HealthProfessional(ModelSQL, ModelView):
     'Health Professional'
     __name__ = 'gnuhealth.healthprofessional'
 
-    main_specialty = fields.Function(fields.Char('Main Specialty'),
+    main_specialty = fields.Function(fields.Many2One('gnuhealth.hp_specialty',
+                                                     'Main Specialty',
+                                                     domain=[('name', '=', 
+                                                              Eval('active_id'))]),
                                      'get_main_specialty',
                                      'set_main_specialty',
                                      'search_main_specialty')
@@ -946,21 +949,30 @@ class HealthProfessional(ModelSQL, ModelView):
     def get_main_specialty(self, name):
         mss = [x for x in self.specialties if x.is_main_specialty]
         if mss:
-            return mss[0]
+            return mss[0].id
         return None
 
+    @classmethod
     def search_main_specialty(cls, name, clause):
-        HPS = Pool().get('gnuhealth.hp_specialty')
-        cx = Transaction().context
-        ids = [x['name'] for x in 
-                HPS.search_read([replace_clause_column(clause, 'specialty')],
-                                0,None, None,['name'], cx)]
-        return [('id', 'in', ids)]
+        return ['AND',[
+            ('specialties.is_main_specialty','=',True),
+            replace_clause_column(clause, 'specialties.specialty.id')
+        ]]
 
-    def set_main_specialty(cls, ids, name, value):
-        import pdb; pdb.set_trace()
-        # how do we clear out all the values for all the specified 
-        # instances and just set the one for the one specified
+    @classmethod
+    def set_main_specialty(cls, instances, field_name, value):
+        for i in instances:
+            turnoff,turnon = [],[]
+            for spec in i.specialties:
+                if spec.id == value:
+                    turnon.append(spec)
+                elif spec.is_main_specialty:
+                    turnoff.append(spec)
+        HPS = Pool().get('gnuhealth.hp_specialty')
+        if turnoff:
+            HPS.write(turnoff,{'is_main_specialty':False})
+        if turnon:
+            HPS.write(turnon, {'is_main_specialty':True})
 
 
 class HealthProfessionalSpecialties(ModelSQL, ModelView):
@@ -978,6 +990,10 @@ class HealthProfessionalSpecialties(ModelSQL, ModelView):
             ('name_is_main_uniq', 'UNIQUE(name, is_main_specialty)',
                 'This health professional already has a main specialty.'),
         ]
+
+    @staticmethod
+    def default_is_main_specialty():
+        return False
 
 
 class Appointment(ModelSQL, ModelView):
