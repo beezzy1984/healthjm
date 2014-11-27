@@ -983,14 +983,6 @@ class HealthProfessionalSpecialties(ModelSQL, ModelView):
                                        " i.e. in the case of specialty doctor"\
                                        " or an area in which this professional excels.")
 
-    @classmethod
-    def __setup__(cls):
-        super(HealthProfessionalSpecialties, cls).__setup__()
-        cls._sql_constraints += [
-            ('name_is_main_uniq', 'UNIQUE(name, is_main_specialty)',
-                'This health professional already has a main specialty.'),
-        ]
-
     @staticmethod
     def default_is_main_specialty():
         return False
