@@ -2,7 +2,7 @@
 <tryton>
 	<data>
 		<record model="ir.action.act_window" id="act_party_remote">
-			<field name="name">Remote Parties</field>
+			<field name="name">Master Index</field>
 			<field name="res_model">party.party.remote</field>
 		</record>
 		<record model="ir.ui.view" id="remote_party_tree">

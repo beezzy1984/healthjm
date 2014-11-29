@@ -127,11 +127,18 @@ class RemoteParty(ModelView, ModelStorage):
             cls._du_model.pull_master_record(du_codes)
         if party_codes:
             cls._target_model.pull_master_record(party_codes)
-        
+
         if du_codes or party_codes:
-            from celery_synchronisation import synchronise_new, synchronise_push_all
-            synchronise_new.apply_async()
-            synchronise_push_all.apply_async()
+            import celery_synchronisation as cs
+            try:
+                import syncconf
+                cs.celery.config_from_object(syncconf)
+            except ImportError:
+                pass 
+                # no celery config, we probably can't make the call
+                # but we're gonna make the call anyways and hope it flies
+            cs.synchronise_new.apply_async()
+            cs.synchronise_push_all.apply_async()
 
         return 'switch tree'
 
