@@ -567,6 +567,7 @@ class AlternativePersonID (ModelSQL, ModelView):
         depends=['alternative_id_type'])
     expiry_date = fields.Date('Expiry Date')
     issue_date = fields.Date('Date Issued')
+    type_display = fields.Function(fields.Char('ID Type'), 'get_type_display')
 
     @classmethod
     def __setup__(cls):
@@ -577,9 +578,9 @@ class AlternativePersonID (ModelSQL, ModelView):
             'invalid_trn':'Invalid format for TRN',
             'invalid_jm_license':'Invalid format for Jamaican Drivers License.\n Numbers only please.',
             'invalid_medical_record': 'Invalid format for medical record number',
-            'invalid_format':'Invalid format',
-            'mismatched_issue_expiry':'Issue date cannot be after the expiry date',
-            'expiry_date_required':'An expiry date is required for this Identification type'
+            'invalid_format':'Invalid format for %s',
+            'mismatched_issue_expiry':'%s issue date cannot be after the expiry date',
+            'expiry_date_required':'An expiry date is required for %s'
         })
         cls.format_test = {
             'trn':re.compile('^1\d{8}$'),
@@ -595,6 +596,9 @@ class AlternativePersonID (ModelSQL, ModelView):
         #         cls.alternative_id_type.selection.append(selection)
 
         # cls.get_altid_type = lambda x : dict(selections).get(x,'')
+
+    def get_type_display(self, fn):
+        return make_selection_display()(self, 'alternative_id_type')
 
     @fields.depends('alternative_id_type')
     def on_change_with_issuing_institution(self, *a, **k):
@@ -616,10 +620,14 @@ class AlternativePersonID (ModelSQL, ModelView):
             alternative_id.check_format()
             if (alternative_id.expiry_date and alternative_id.issue_date and
                 alternative_id.issue_date > alternative_id.expiry_date):
-                    raise_user_error('mismatched_issue_expiry')
+                    alternative_id.raise_user_error(
+                                        'mismatched_issue_expiry',
+                                        (alternative_id.type_display,))
             if (not alternative_id.expiry_date and 
                 alternative_id.alternative_id_type in cls.expiry_required):
-                    raise_user_error('expiry_date_required')
+                    alternative_id.raise_user_error(
+                                        'expiry_date_required',
+                                        (alternative_id.type_display,))
 
 
     def check_format(self):
@@ -631,7 +639,7 @@ class AlternativePersonID (ModelSQL, ModelView):
                 error_msg = 'invalid_{}'.format(self.alternative_id_type)
                 if not self._error_messages.has_key(error_msg):
                     error_msg = 'invalid_format'
-                self.raise_user_error(error_msg)
+                self.raise_user_error(error_msg, (self.type_display,))
 
 
 class PostOffice(ModelSQL, ModelView):
