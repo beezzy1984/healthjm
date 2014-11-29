@@ -1,7 +1,6 @@
 from trytond.pool import Pool
 from .celerytools import *
 from .health import *
-from .remote_party import RemoteParty
 
 
 def register():
@@ -39,5 +38,4 @@ def register():
         SecondaryCondition, 
         SignsAndSymptoms,
         Directions,
-        RemoteParty,
         module='health_jamaica_sync', type_='model')

@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<tree string="Party/People">
+<tree string="Master Index">
 	<field name="upi" expand="1" />
 	<field name="name" expand="1" />
 	<field name="sex" expand="1" />
