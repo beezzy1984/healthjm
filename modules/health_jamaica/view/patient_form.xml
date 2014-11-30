@@ -3,8 +3,11 @@
     <xpath expr="//notebook/page[@id='misc_info_page']" position="replace_attributes">
         <page id="misc_info_page" string="Death Data" />
     </xpath>
-    <xpath expr="//group[@id=&quot;patient_main_info_3&quot;]/field[@name=&quot;sex&quot;]" position="replace">
+    <xpath expr="//group[@id=&quot;patient_main_info_3&quot;]/field[@name=&quot;sex&quot;]" position="before">
     	<field name="sex_display" width="60" />
+    </xpath>
+    <xpath expr="//group[@id=&quot;patient_main_info_3&quot;]/field[@name=&quot;sex&quot;]" position="replace_attributes">
+    	<field name="sex" invisible="1" />
     </xpath>
 </data>
 

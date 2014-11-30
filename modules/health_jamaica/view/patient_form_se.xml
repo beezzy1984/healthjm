@@ -1,12 +1,9 @@
 <?xml version="1.0"?>
 <data>
-    <xpath expr="//notebook/page[@id='misc_info_page']" position="replace_attributes">
-        <page id="misc_info_page" string="Death Data" />
-    </xpath>
     <xpath expr="//notebook/page[@id=&quot;page_ses_main&quot;]/group[@id=&quot;group_socioeconomics_work&quot;]" position="replace_attributes">
         <group col="8" id="group_socioecomics_work" />
     </xpath>
-    <xpath expr="//group/label[name='works_at_home']" position="before">
+    <xpath expr="//notebook/page[@id=&quot;page_ses_main&quot;]/group[@id=&quot;group_socioeconomics_work&quot;]/label[@name=&quot;works_at_home&quot;]" position="before">
         <label name="religion" />
         <field name="religion" />
     </xpath>

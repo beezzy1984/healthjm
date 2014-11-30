@@ -607,7 +607,6 @@ class AlternativePersonID (ModelSQL, ModelView):
 
         if self.alternative_id_type == 'medical_record':
             institution = Pool().get('gnuhealth.institution').get_institution()
-            print('We have institution %s'%(repr(institution)))
             if institution:
                 return institution
 
@@ -1208,9 +1207,7 @@ class PatientEvaluation(ModelSQL, ModelView):
         return make_selection_display()(self,'visit_type')
 
     def get_person_patient_field(self, name):
-        print("field name = {}.".format(str(name)))
         if name in ['upi', 'sex_display']:
-            print('field value = {}'.format(str(getattr(self.patient.name, name))))
             return getattr(self.patient.name, name)
         if name in ['age']:
             return getattr(self.patient, name)
@@ -1218,7 +1215,6 @@ class PatientEvaluation(ModelSQL, ModelView):
 
     def get_patient_age(self, name):
         if self.patient:
-            print('Patient to get age for : %s'%(repr(self.patient)))
             return self.patient.patient_age(name)
 
     @fields.depends('patient', 'evaluation_start', 'institution')
