@@ -32,8 +32,9 @@ class Party(SyncMixin):
             return super(Party, cls).get_to_synchronise(remote_sync_data)
         else:
             with Transaction().set_context(active_test=False) as t:
-                unsync_domain = [('synchronised', '=', False),
-                                ('is_healthprof','=',True)]
+                unsync_domain = ['AND',[('synchronised', '=', False),
+                                ['OR', [('is_healthprof','=',True),
+                                ('is_institution','=',True)]]]]
                 unsynced = cls.search(unsync_domain)
 
             return [r.get_wire_value() for r in unsynced]
@@ -111,6 +112,13 @@ class HealthInstitution(SyncMixin):
     unique_id_column = 'code'
     sync_mode = SyncMode.update
 
+    def get_wire_value(self):
+        values = super(HealthInstitution, self).get_wire_value()
+        if 'main_specialty' in values:
+            del(values['main_specialty'])
+        return values
+
+
 class HealthInstitutionSpecialties(SyncUUIDMixin):
     __name__ = 'gnuhealth.institution.specialties'
     __metaclass__ = PoolMeta
@@ -127,6 +135,12 @@ class HealthProfessional(SyncMixin):
     __metaclass__ = PoolMeta
     unique_id_column = 'puid'
     sync_mode = SyncMode.full
+
+    def get_wire_value(self):
+        values = super(HealthProfessional, self).get_wire_value()
+        if 'main_specialty' in values:
+            del(values['main_specialty'])
+        return values
 
 
 class HealthProfessionalSpecialties(SyncUUIDMixin):
