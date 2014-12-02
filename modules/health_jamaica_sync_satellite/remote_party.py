@@ -69,8 +69,7 @@ class RemoteParty(ModelView, ModelStorage):
         'last_synchronisation':None}
         
         if domain:
-            dplus = [('synchronised_instances','bitunset',
-                      int(CONFIG['synchronisation_id']))]
+            dplus = [('synchronised','=',False)]
             result2 = Party.search_master(dplus + domain, offset, 
                                           100 if limit>100 else limit, order,
                                     fields_names=['name', 'alt_ids', 'upi',

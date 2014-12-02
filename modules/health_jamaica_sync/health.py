@@ -2,7 +2,7 @@ import os
 from tryton_synchronisation import SyncMixin, SyncUUIDMixin, SyncMode
 from trytond.model import ModelSQL
 from trytond.pool import PoolMeta
-
+from trytond.transaction import Transaction
 __all__ = ['Party', 'PartyAddress', 'OccupationalGroup', 'OperationalArea',
     'OperationalSector', 'DomiciliaryUnit', 'AlternativePersonID',
     'MedicalSpecialty', 'HealthInstitution', 'HealthInstitutionSpecialties',
@@ -18,13 +18,25 @@ class Party(SyncMixin):
     __name__ = 'party.party'
     __metaclass__ = PoolMeta
     unique_id_column = 'code'
-    sync_mode = SyncMode.push_update
+    sync_mode = SyncMode.full
 
     def get_wire_value(self):
         values = super(Party, self).get_wire_value()
         if 'internal_user' in values:
             del(values['internal_user'])
         return values
+
+    @classmethod
+    def get_to_synchronise(cls, remote_sync_data=None):
+        if remote_sync_data:
+            return super(Party, cls).get_to_synchronise(remote_sync_data)
+        else:
+            with Transaction().set_context(active_test=False) as t:
+                unsync_domain = [('synchronised', '=', False),
+                                ('is_healthprof','=',True)]
+                unsynced = cls.search(unsync_domain)
+
+            return [r.get_wire_value() for r in unsynced]
 
 
 class PartyAddress(SyncUUIDMixin):
