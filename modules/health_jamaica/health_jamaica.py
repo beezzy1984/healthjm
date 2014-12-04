@@ -45,7 +45,7 @@ __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'Insurance', 'PartyAddress', 'HealthProfessional', 'Appointment', 
     'DiagnosticHypothesis', 'PathologyGroup', 'PatientEvaluation',
     'SignsAndSymptoms', 'OccupationalGroup', 'HealthProfessionalSpecialties',
-    'HealthInstitutionSpecialties']
+    'HealthInstitutionSpecialties', 'ProcedureCode']
 __metaclass__ = PoolMeta
 
 _STATES = {
@@ -1107,24 +1107,20 @@ class Appointment(ModelSQL, ModelView):
                                    appt.appointment_date.strftime('%b %d'),
                                   '\nAre you sure you need this ',
                                   appt.speciality.name, ' one?'])
-                
+
                 cls.raise_user_warning(warning_code, u''.join(warning_msg))
 
-# class PathologyCategory(ModelSQL, ModelView):
-#     'Disease Categories'
-#     __name__ = 'gnuhealth.pathology.category'
-#     childs = fields.One2Many(
-#         'gnuhealth.pathology.category', 'parent', 'Sub-Category')
-#     code = fields.Char('Code', required=True, translate=False)
 
-#     @classmethod
-#     def __setup__(cls):
-#         super(PathologyCategory, cls).__setup__()
-#         cls._sql_constraints = [
-#             ('name_uniq', 'UNIQUE(name)', 'The category name must be unique'),
-#             ('code_uniq', 'UNIQUE(code)', 'The category code must be unique'),
-#         ]
-
+class ProcedureCode(ModelSQL, ModelView):
+    'Medcal Procedures'
+    __name__ = 'gnuhealth.procedure'
+    @classmethod
+    def __setup__(cls):
+        super(ProcedureCode, cls).__setup__()
+        if not isinstance(cls._sql_constraints, (list,)):
+            cls._sql_constraints = []
+        cls._sql_constraints.append(('name_uniq', 'UNIQUE(name)',
+                                     'Medical procedure code must be unique'))
 
 
 class PathologyGroup(ModelSQL, ModelView):

@@ -40,6 +40,7 @@ def register():
         HealthInstitution,
         Insurance,
         PathologyGroup,
+        ProcedureCode,
         HealthProfessional,
         Appointment,
         DiagnosticHypothesis,
