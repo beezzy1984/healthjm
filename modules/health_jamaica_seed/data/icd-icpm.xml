@@ -82,7 +82,7 @@
 			<field name="description">SURGICAL OPERATIONS TO PRODUCE FEMALE STERILIZATION (TUBAL LIGATION)</field>
 			<field name="name">5-980</field>
 		</record>
-		<record id="icpm_" model="gnuhealth.procedure">
+		<record id="icpm_5-981" model="gnuhealth.procedure">
 			<field name="description">MALE SURGICAL STERILISATION (VASECTOMY)</field>
 			<field name="name">5-981</field>
 		</record>
