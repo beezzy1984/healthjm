@@ -38,4 +38,5 @@ def register():
         SecondaryCondition, 
         SignsAndSymptoms,
         Directions,
+        Ethnicity,
         module='health_jamaica_sync', type_='model')

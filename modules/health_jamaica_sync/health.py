@@ -6,12 +6,13 @@ from trytond.transaction import Transaction
 __all__ = ['Party', 'PartyAddress', 'OccupationalGroup', 'OperationalArea',
     'OperationalSector', 'DomiciliaryUnit', 'AlternativePersonID',
     'MedicalSpecialty', 'HealthInstitution', 'HealthInstitutionSpecialties',
-    'HospitalUnit', 'HospitalWard', 'HealthProfessional', 'HealthProfessionalSpecialties',
-    'PathologyCategory', 'PathologyGroup', 'Pathology', 'DiseaseMembers',
-    'HealthInstitutionOperationalSector', 'PatientData', 'Country',
-    'CountrySubdivision', 'PostOffice', 'DistrictCommunity', 'ProcedureCode',
-    'Appointment', 'PatientDiseaseInfo', 'Directions', 'PatientEvaluation',
-    'SecondaryCondition', 'SignsAndSymptoms', 'DiagnosticHypothesis']
+    'HospitalUnit', 'HospitalWard', 'HealthProfessional',
+    'HealthProfessionalSpecialties',  'PathologyCategory', 'PathologyGroup',
+    'Pathology', 'DiseaseMembers', 'HealthInstitutionOperationalSector',
+    'PatientData', 'Country', 'CountrySubdivision', 'PostOffice',
+    'DistrictCommunity', 'ProcedureCode', 'Appointment', 'PatientDiseaseInfo',
+    'Directions', 'PatientEvaluation', 'SecondaryCondition',
+    'SignsAndSymptoms', 'DiagnosticHypothesis', 'Ethnicity']
 
 
 class Party(SyncMixin):
@@ -236,3 +237,9 @@ class PatientEvaluation(SyncUUIDMixin):
 class PatientVaccination(SyncUUIDMixin):
     __name__ = 'gnuhealth.vaccination'
     __metaclass__ = PoolMeta
+
+
+class Ethnicity(SyncMixin):
+    __name__ = 'gnuhealth.ethnicity'
+    __metaclass__ = PoolMeta
+    unique_id_column = 'code'
