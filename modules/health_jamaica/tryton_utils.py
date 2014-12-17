@@ -58,3 +58,10 @@ def get_timezone():
 
     return _cached_timezone
 
+def is_not_synchro():
+    '''
+    returns True if the effective user id of the transaction is
+    greater than 0
+    '''
+    t = Transaction()
+    return (t.user>0)

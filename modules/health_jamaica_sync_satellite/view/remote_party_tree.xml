@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<tree string="Master Index">
+	<field name="upi" expand="1" />
+	<field name="name" expand="1" />
+	<field name="sex" expand="1" />
+	<field name="dob" expand="1" />
+	<field name="father_name" expand="1" />
+	<field name="mother_maiden_name" expand="1" />
+</tree>

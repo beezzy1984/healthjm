@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<form string="Master Index - Details" >
+	<group string="Party" col="12" id="remote_party_ident_header">
+		<field name="name" colspan="2"/>
+		<label name="sex" />
+		<field name="sex" />
+		<label name="dob" />
+		<field name="dob" />
+		<label name="upi" />
+		<field name="upi" />
+	</group>
+	<newline />
+	<separator id="remote_party_name_separator" />
+	<newline />
+	<group col="12" id="remote_party_ident_other">
+		<label name="alias" colspan="1" />
+		<field name="alias" colspan="1" />
+		<label name="marital_status" />
+		<field name="marital_status" />
+		<label name="maiden_name" />
+		<field name="maiden_name" />
+		<newline/>
+		<label name="alt_ids" colspan="1" />
+		<field name="alt_ids" colspan="5" />
+		<newline />
+		<label name="father_name" />
+		<field name="father_name" colspan="2" />
+		<label name="mother_maiden_name" />
+		<field name="mother_maiden_name" colspan="2" />
+	</group>
+	<newline />
+	<group id="remote_party_address" string="Address">
+		<field name="du_address" />
+	</group>
+	<newline />
+	<group col="10" id="remote_party_button_space">
+		<separator colspan="8" id="remote_party_button_push_separator" />
+		<button string="Import Party" name="fetch_remote_party" colspan="2" />
+	</group>
+</form>

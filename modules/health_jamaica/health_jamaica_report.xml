@@ -84,6 +84,13 @@
             <field name="keyword">form_print</field> 
             <field name="model">gnuhealth.patient,-1</field> 
             <field name="action" ref="jmreport_facesheet_hosp"/> 
-        </record>      -->   
+        </record>      -->  
+
+        <record model="ir.ui.view" id="appointments_report_start_view_form">
+            <field name="model">gnuhealth.appointment.report.open.start</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="health.appointments_report_open_start_view_form" />
+            <field name="name">appointments_report_start_form</field>
+        </record> 
     </data>
 </tryton>

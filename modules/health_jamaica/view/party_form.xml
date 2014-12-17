@@ -1,5 +1,8 @@
 <?xml version="1.0" ?>
 <data>
+    <xpath expr="/form" position="replace_attributes" >
+        <form string="Party" col="6" cursor="lastname" />
+    </xpath>
     <xpath expr="/form/field[@name='lastname']" position="replace"/>
     <xpath expr="/form/label[@name='lastname']" position="replace" />
     <xpath expr="/form/notebook/page[@id=&quot;party_gnuhealth&quot;]/field[@name=&quot;insurance&quot;]" position="replace" />
@@ -75,6 +78,10 @@
 
     <xpath expr="/form/notebook/page[@id=&quot;general&quot;]" position="replace_attributes">
         <page string="Contact" id="general" />
+    </xpath>
+
+    <xpath expr="/form/field[@name=&quot;ref&quot;]" position="replace">
+        <field name="upi" />
     </xpath>
 
 </data>

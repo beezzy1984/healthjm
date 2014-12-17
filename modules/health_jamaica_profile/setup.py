@@ -45,28 +45,28 @@ for dep in info.get('depends', []):
 requires.append('trytond >= %s.%s, < %s.%s' %
     (major_version, minor_version, major_version, minor_version + 1))
 
-setup(name='trytond_health_profile',
+setup(name='trytond_health_jamaica_profile',
     version=info.get('version', '0.0.1'),
-    description=info.get('description', 'GNU Health Basic profile Module'),
-    author=info.get('author', 'GNU Solidario'),
-    author_email=info.get('email', 'health@gnusolidario.org'),
-    url=info.get('website', 'http://health.gnu.org/'),
-    download_url='http://ftp.gnu.org/gnu/health/',
-    package_dir={'trytond.modules.health_profile': '.'},
+    description=info.get('description', 'Jamaica ePAS default module'),
+    author=info.get('author', 'Ministry of Health/NHIN'),
+    author_email=info.get('email', 'nhin-team@moh.gov.jm'),
+    url=info.get('website', 'http://mohnhin.info/'),
+    download_url='http://mohnhin.info/rcode/jm/healthjm',
+    package_dir={'trytond.modules.health_jamaica_profile': '.'},
     packages=[
-        'trytond.modules.health_profile',
+        'trytond.modules.health_jamaica_profile',
         ],
     package_data={
-        'trytond.modules.health_profile': info.get('xml', []) \
+        'trytond.modules.health_jamaica_profile': info.get('xml', []) \
             + info.get('translation', []) \
             + ['tryton.cfg', 'doc/*.rst', 'locale/*.po', 'report/*.odt', 'icons/*.svg'],
         },
 
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Production/Beta',
         'Environment :: Plugins',
         'Framework :: Tryton',
-        'Intended Audience :: Developers',
+        'Intended Audience :: Healthcare Workers',
         'Intended Audience :: Healthcare Industry',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Natural Language :: English',
@@ -81,7 +81,7 @@ setup(name='trytond_health_profile',
     zip_safe=False,
     entry_points="""
     [trytond.modules]
-    health_profile = trytond.modules.health_profile
+    health_jamaica_profile = trytond.modules.health_jamaica_profile
     """,
     test_suite='tests',
     test_loader='trytond.test_loader:Loader',

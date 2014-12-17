@@ -37,18 +37,25 @@ def register():
         PartyAddress,
         DomiciliaryUnit,
         Newborn,
+        HealthInstitution,
         Insurance,
         PathologyGroup,
+        ProcedureCode,
         HealthProfessional,
         Appointment,
         DiagnosticHypothesis,
         PatientEvaluation,
         SignsAndSymptoms,
         PatientRegisterModel,
+        OpenAppointmentReportStart,
+        HealthProfessionalSpecialties,
+        HealthInstitutionSpecialties,
+        AppointmentReport,
         module='health_jamaica', type_='model')
 
     Pool.register(
         PatientRegisterWizard,
+        OpenAppointmentReport,
         module='health_jamaica', type_='wizard'
     )
 

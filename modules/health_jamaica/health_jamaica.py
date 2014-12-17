@@ -26,21 +26,26 @@ import string
 import random
 import hashlib
 import re
+import six
+import uuid
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
+from trytond.config import CONFIG
 
 from .tryton_utils import (negate_clause, replace_clause_column,
-                           make_selection_display, get_timezone)
+                           make_selection_display, get_timezone,
+                           is_not_synchro)
 
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
-    'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'Insurance',
-    'PartyAddress', 'HealthProfessional', 'Appointment', 
+    'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'HealthInstitution',
+    'Insurance', 'PartyAddress', 'HealthProfessional', 'Appointment', 
     'DiagnosticHypothesis', 'PathologyGroup', 'PatientEvaluation',
-    'SignsAndSymptoms', 'OccupationalGroup']
+    'SignsAndSymptoms', 'OccupationalGroup', 'HealthProfessionalSpecialties',
+    'HealthInstitutionSpecialties', 'ProcedureCode']
 __metaclass__ = PoolMeta
 
 _STATES = {
@@ -50,7 +55,35 @@ _DEPENDS = ['is_person']
 
 JAMAICA_ID=89
 JAMAICA = lambda : Pool().get('country.country')(JAMAICA_ID)
+ThisInstitution = lambda : Pool().get('gnuhealth.institution').get_institution()
 SEX_OPTIONS = [('m', 'Male'), ('f', 'Female'), ('u', 'Unknown')]
+MARITAL_STATUSES = [
+        ('s', 'Single'),
+        ('m', 'Married'),
+        ('c', 'Living with partner'),
+        ('v', 'Visiting'),
+        ('w', 'Widowed'),
+        ('d', 'Divorced'),
+        ('x', 'Separated'),
+        ('n', 'Not Applicable'),
+        ('u', 'Unknown')]
+ALTERNATIVE_ID_TYPES = [
+        ('trn','TRN'),
+        ('medical_record', 'Medical Record'),
+        ('pathID','PATH ID'),
+        ('gojhcard','GOJ Health Card'),
+        ('votersid','GOJ Voter\'s ID'),
+        ('birthreg', 'Birth Registration ID'),
+        ('ninnum', 'NIN #'),
+        ('passport', 'Passport'),
+        ('jm_license', 'Drivers License (JM)'),
+        ('nonjm_license', 'Drivers License (non-JM)'),
+        ('other', 'Other')]
+
+SYNC_ID=int(CONFIG.get('synchronisation_id',1))
+# Default sync ID to 1 so it doesn't think it's the master
+
+NNre = re.compile('(%?)NN-(.*)', re.I)
 
 
 class OccupationalGroup(ModelSQL, ModelView):
@@ -62,7 +95,13 @@ class OccupationalGroup(ModelSQL, ModelView):
         super(OccupationalGroup, cls).__register__(module_name)
         # remove the occupations from the table that don't have 4 char codes
         cursor = Transaction().cursor
-        cursor.execute('delete from gnuhealth_occupation where char_length(code)<4')
+        cursor.execute('select count(*) from gnuhealth_occupation where char_length(code)=4;')
+        possibly_valid, = cursor.fetchone()
+        if possibly_valid == 0:
+            cursor.execute('delete from gnuhealth_occupation where char_length(code)<4;')
+            cursor.execute('alter sequence gnuhealth_occupation_id_seq restart with 1;')
+        else:
+            print('Mixed occupation list, cannot auto-resolve. Fix by hand')
 
 
 class PartyPatient (ModelSQL, ModelView):
@@ -73,6 +112,8 @@ class PartyPatient (ModelSQL, ModelView):
         'UPI',
         help='Universal Person Indentifier',
         states=_STATES, depends=_DEPENDS, readonly=True)
+    upi = fields.Function(fields.Char('UPI', help='Universal Person Identifier'),
+                          'get_upi_display', searcher='search_upi')
     name = fields.Char('Name', required=True, 
         states={'readonly':Bool(Eval('is_person'))},
         )
@@ -100,18 +141,8 @@ class PartyPatient (ModelSQL, ModelView):
         ('III', 'III - The Third'),
         ], 'Suffix', states=_STATES, depends=_DEPENDS)
 
-    marital_status = fields.Selection([
-        (None, ''),
-        ('s', 'Single'),
-        ('m', 'Married'),
-        ('c', 'Living with partner'),
-        ('v', 'Visiting'),
-        ('w', 'Widowed'),
-        ('d', 'Divorced'),
-        ('x', 'Separated'),
-        ('n', 'Not Applicable'),
-        ('u', 'Unknown'),
-        ], 'Marital Status', sort=False)
+    marital_status = fields.Selection([(None, '')]+MARITAL_STATUSES,
+                                      'Marital Status', sort=False)
 
     # gender vs sex: According to the AMA Manual of Style :
     # Gender refers to the psychological/societal aspects of being male or female,
@@ -130,6 +161,15 @@ class PartyPatient (ModelSQL, ModelView):
     insurance = fields.One2Many('gnuhealth.insurance', 'name', 'Insurance',
         help="Insurance Plans associated to this party")
     du = fields.Many2One('gnuhealth.du', 'Address')
+    internal_user = fields.Many2One(
+        'res.user', 'Internal User',
+        help='In order for this health professional to use the system, an'
+        ' internal user account must be assigned. This health professional'
+        ' will have a user account on this instance only.',
+        states={
+            'invisible': Not(Bool(Eval('is_healthprof'))),
+            'required': False,
+            })
     medical_record_num = fields.Function(fields.Char('Medical Record Num.'),
         'get_alt_ids', searcher='search_alt_ids')
     alt_ids = fields.Function(fields.Char('Alternate IDs'), 'get_alt_ids',
@@ -138,6 +178,25 @@ class PartyPatient (ModelSQL, ModelView):
     def get_rec_name(self, name):
         # simplified since we generate the person name and all others are okay
         return self.name
+
+    def get_upi_display(self, name):
+        if self.party_warning_ack or not self.is_patient:
+            return self.ref
+        else:
+            return u'NN-{}'.format(self.ref)
+
+    @classmethod
+    def search_upi(cls, field_name, clause):
+        fld, operator, operand = clause
+        if (isinstance(operand, six.string_types) and
+            NNre.match(operand)):
+            # searching for NN- records, so auto-append verified=False
+            operand = u''.join(NNre.split(operand))
+            if operand == u'%%': operand = '%'
+            return ['AND', (('ref',operator, operand),
+                            ('party_warning_ack','=', False))]
+        else:
+            return [replace_clause_column(clause, 'ref')]
 
     @classmethod
     def __setup__(cls):
@@ -188,10 +247,13 @@ class PartyPatient (ModelSQL, ModelView):
         # The STRSIZE constant provides the length of the HIN
         # The format of the UPC is XXXNNNXXX
         STRSIZE = 9
+        letters = ('ABCDEFGHJKLMNPRTUWXY')
+        # letters removed = IOQSVZ because they look too similar to numbers
+        # or to other letters. 
         hin = ''
         for x in range(STRSIZE): 
             if ( x < 3 or x > 5 ):
-                hin = hin + random.choice(string.ascii_uppercase)
+                hin = hin + random.choice(letters)
             else:
                 hin = hin + random.choice(string.digits)
         return hin
@@ -205,8 +267,6 @@ class PartyPatient (ModelSQL, ModelView):
         for values in vlist:
             if not 'ref' in values:
                 values['ref'] = cls.generate_upc()
-                if 'unidentified' in values and values['unidentified']:
-                    values['ref'] = 'NN-' + values.get('ref')
                 if 'is_person' in values and not values['is_person']:
                     values['ref'] = 'NP-' + values['ref']
 
@@ -214,10 +274,15 @@ class PartyPatient (ModelSQL, ModelView):
                 config = Configuration(1)
                 # Use the company name . Initially, use the name
                 # since the company hasn't been created yet.
-                prefix = Transaction().context.get('company.rec_name') \
-                    or values['name']
-                values['code'] = str(prefix) + '-' + \
-                    Sequence.get_id(config.party_sequence.id)
+                institution_id = ThisInstitution()
+                if institution_id:
+                    institution = Pool().get('gnuhealth.institution')(institution_id)
+                    suffix = institution.code
+                else:                    
+                    suffix = Transaction().context.get('company.rec_name') \
+                        or values['name']
+                values['code'] = '-'.join([str(x) for x in 
+                                          (uuid.uuid4(), suffix)])
 
             values['code_length'] = len(values['code'])
             values.setdefault('addresses', None)
@@ -226,21 +291,27 @@ class PartyPatient (ModelSQL, ModelView):
     @classmethod
     def validate(cls, parties):
         super(PartyPatient, cls).validate(parties)
-        for party in parties:
-            party.check_party_warning()
-            party.check_dob()
+        # since these validations only matter for regular users of the 
+        # system, we will not perform the checks if the transaction's user
+        # id is 0. The sync-engine sets the user to 0 on both ends of the 
+        # connection. All regular users get their user ID in this space
 
-    @classmethod
-    def write(cls, *args):
-        regex = re.compile(u'NN-([A-Z]{3}\d{3}[A-Z]{3})')
-        actions = iter(args)
-        for parties, vals in zip(actions, actions):
-            if vals.get('party_warning_ack'):
-                for party in parties:
-                    if regex.match(party.ref):
-                        # remove the NN from the UPI
-                        vals['ref'] = ''.join(regex.split(party.ref))
-        return super(PartyPatient, cls).write(*args)
+        if is_not_synchro():
+            for party in parties:
+                party.check_party_warning()
+                party.check_dob()
+
+    # @classmethod
+    # def write(cls, *args):
+    #     regex = re.compile(u'NN-([A-Z]{3}\d{3}[A-Z]{3})')
+    #     actions = iter(args)
+    #     for parties, vals in zip(actions, actions):
+    #         if vals.get('party_warning_ack'):
+    #             for party in parties:
+    #                 if regex.match(party.ref):
+    #                     # remove the NN from the UPI
+    #                     vals['ref'] = ''.join(regex.split(party.ref))
+    #     return super(PartyPatient, cls).write(*args)
 
     def check_party_warning(self):
         '''validates that a party being entered as verified has an alt-id
@@ -257,17 +328,28 @@ class PartyPatient (ModelSQL, ModelView):
             self.raise_user_error('future_dob_error')
 
     def get_alt_ids(self, field_name):
+
+        here = ThisInstitution()
+        id_type_map = dict(ALTERNATIVE_ID_TYPES)
         if (field_name == 'medical_record_num'):
             for altid in self.alternative_ids:
-                if altid.alternative_id_type == 'medical_record':
+                if (altid.alternative_id_type == 'medical_record' and
+                    (altid.issuing_institution and 
+                     altid.issuing_institution.id==here)):
                     return altid.code
             return '--'
         else:
             altids = []
             for altid in self.alternative_ids:
-                if altid.alternative_id_type != 'medical_record':
-                    altids.append('-'.join([altid.alternative_id_type,altid.code]))
-            return ', '.join(altids)
+                if (altid.alternative_id_type == 'medical_record' and
+                    altid.issuing_institution and
+                    altid.issuing_institution.id == here):
+                    continue
+                else:
+                    a_type = id_type_map.get(altid.alternative_id_type, 
+                                             altid.alternative_id_type)
+                    altids.append('{} {}'.format(a_type, altid.code))
+            return '; '.join(altids)
 
 
     @classmethod
@@ -397,6 +479,9 @@ class PatientData(ModelSQL, ModelView):
         # print(repr(cond))
         return cond
 
+    def get_patient_puid(self, name):
+        return self.name.get_upi_display('upi')
+
     # Get the patient age in the following format : 'YEARS MONTHS DAYS'
     # It will calculate the age of the patient while the patient is alive.
     # When the patient dies, it will show the age at time of death.
@@ -478,52 +563,71 @@ class AlternativePersonID (ModelSQL, ModelView):
    
     issuing_institution = fields.Many2One('gnuhealth.institution', 'Issued By',
         help='Institution that assigned the medical record number',
-        states={'required':Eval('alternative_id_type') == 'medical_record'})
-    expiry_date = fields.Date('Expiry Date',
-        states={'required':Eval('alternative_id_type') == 'passport'})
+        states={'required':Eval('alternative_id_type') == 'medical_record'},
+        depends=['alternative_id_type'])
+    expiry_date = fields.Date('Expiry Date')
+    issue_date = fields.Date('Date Issued')
+    type_display = fields.Function(fields.Char('ID Type'), 'get_type_display')
 
     @classmethod
     def __setup__(cls):
         super(AlternativePersonID, cls).__setup__()
-        selections = [
-                ('trn','TRN (Taxpayer Registration Number)'),
-                ('medical_record', 'Medical Record Number'),
-                ('pathID','PATH ID'),
-                ('gojhcard','GOJ Health Card'),
-                ('votersid','GOJ Voter\'s ID'),
-                ('birthreg', 'Birth Registration ID'),
-                ('ninnum', 'NIN #'),
-                ('passport', 'Passport Number'),
-                ('other', 'Other')
-            ]
-        cls.alternative_id_type.selection = selections[:]
+        
+        cls.alternative_id_type.selection = ALTERNATIVE_ID_TYPES[:]
         cls._error_messages.update({
             'invalid_trn':'Invalid format for TRN',
+            'invalid_jm_license':'Invalid format for Jamaican Drivers License.\n Numbers only please.',
             'invalid_medical_record': 'Invalid format for medical record number',
-            'invalid_format':'Invalid format'
+            'invalid_format':'Invalid format for %s',
+            'mismatched_issue_expiry':'%s issue date cannot be after the expiry date',
+            'expiry_date_required':'An expiry date is required for %s'
         })
         cls.format_test = {
-            'trn':re.compile('1\d{8}'),
+            'trn':re.compile('^1\d{8}$'),
             'medical_record': re.compile('\d{6}[a-z]?', re.I),
-            'pathID':re.compile('\d{8}'),
-            'gojhcard':re.compile('\d{10}'),
-            'nunnum':re.compile('\d{9}')
+            'pathID':re.compile('^\d{8}$'),
+            'gojhcard':re.compile('^\d{10}$'),
+            'nunnum':re.compile('^\d{9}$')
         }
+        cls.format_test['jm_license'] = cls.format_test['trn']
+        cls.expiry_required = ('passport', 'jm_license', 'nonjm_license')
         # for selection in selections:
         #     if selection not in cls.alternative_id_type.selection:
         #         cls.alternative_id_type.selection.append(selection)
 
-    # @fields.depends('alternative_id_type')
-    # def on_change_with_issuedby(self, *arg, **kwarg):
-    #     print(('*'*20) + " on_change_with_issuedby " + ('*'*20) )
-    #     print(repr(self.alternative_id_type))
-    #     return ''
+        # cls.get_altid_type = lambda x : dict(selections).get(x,'')
+
+    def get_type_display(self, fn):
+        return make_selection_display()(self, 'alternative_id_type')
+
+    @fields.depends('alternative_id_type')
+    def on_change_with_issuing_institution(self, *a, **k):
+        '''set this institution as the issuing instution whenever
+            medical record selected as the ID type'''
+
+        if self.alternative_id_type == 'medical_record':
+            institution = Pool().get('gnuhealth.institution').get_institution()
+            if institution:
+                return institution
+
+        return None
 
     @classmethod
     def validate(cls, records):
         super(AlternativePersonID, cls).validate(records)
         for alternative_id in records:
             alternative_id.check_format()
+            if (alternative_id.expiry_date and alternative_id.issue_date and
+                alternative_id.issue_date > alternative_id.expiry_date):
+                    alternative_id.raise_user_error(
+                                        'mismatched_issue_expiry',
+                                        (alternative_id.type_display,))
+            if (not alternative_id.expiry_date and 
+                alternative_id.alternative_id_type in cls.expiry_required):
+                    alternative_id.raise_user_error(
+                                        'expiry_date_required',
+                                        (alternative_id.type_display,))
+
 
     def check_format(self):
         format_tester = self.format_test.get(self.alternative_id_type, False)
@@ -534,7 +638,7 @@ class AlternativePersonID (ModelSQL, ModelView):
                 error_msg = 'invalid_{}'.format(self.alternative_id_type)
                 if not self._error_messages.has_key(error_msg):
                     error_msg = 'invalid_format'
-                self.raise_user_error(error_msg)
+                self.raise_user_error(error_msg, (self.type_display,))
 
 
 class PostOffice(ModelSQL, ModelView):
@@ -552,7 +656,7 @@ class PostOffice(ModelSQL, ModelView):
         super(PostOffice, cls).__setup__()
         cls._sql_constraints = [
             ('code_uniq', 'UNIQUE(code)',
-                'The Post Office code be unique !'),
+                'The Post Office code be unique.'),
         ]
 
     @classmethod
@@ -578,6 +682,7 @@ class DistrictCommunity(ModelSQL, ModelView):
     'Country District Community'
     __name__ = 'country.district_community'
     
+    code = fields.Char('Code', required=True, size=10)
     name = fields.Char('District Community', required=True,
         help="District Communities")
     post_office = fields.Many2One('country.post_office', 'Post Office', 
@@ -588,7 +693,9 @@ class DistrictCommunity(ModelSQL, ModelView):
         super(DistrictCommunity, cls).__setup__()
         cls._sql_constraints = [
             ('name_per_po_uniq', 'UNIQUE(name, post_office)',
-                'The District Community must be unique for each post office!'),
+                'The District Community must be unique for each post office.'),
+            ('code_uniq', 'UNIQUE(code)',
+                'The Community code be unique.'),
         ]
 
 
@@ -690,6 +797,14 @@ class DomiciliaryUnit(ModelSQL, ModelView):
         depends=['address_post_office'], help="Select District/Community, Jamaica only")
     desc = fields.Char('Additional Description',
         help="Landmark or additional directions")
+    # address_district = fields.Char(
+    #     'District', help="Neighborhood, Village, Barrio....",
+    #     states={'invisible':Eval('address_country')==89})
+    # address_municipality = fields.Char(
+    #     'Municipality', help="Municipality, Township, county ..",
+    #     states={'invisible':Eval('address_country')==89})
+    # address_zip = fields.Char('Zip Code',
+    #     states={'invisible':Eval('address_country')==89})
     city_town = fields.Function(fields.Char('City/Town/P.O.'), 'get_city_town')
 
     full_address = fields.Function(fields.Text('Full Address'),
@@ -735,34 +850,6 @@ class DomiciliaryUnit(ModelSQL, ModelView):
             addr.append(u' '.join(line))
             return (u'\r\n').join(addr)
 
-    # @fields.depends('address_subdivision')
-    # def on_change_with_name(self, *arg, **kwarg):
-    #     ''' generates domunit code as follows :
-    #     PARISHCODE-{RANDOM_HEX_DIGITSx8}.
-    #     The parish code is taken directly from the parish when selected or 
-    #     when a post office is selected. The RANDOM_HEX_DIGITSx8 is the
-    #     first 8 chars from the SHA1 hash of [self.desc, self.post_office.code,
-    #                 self.address_district_community.name,
-    #                 self.address_street, self.address_street_num,
-    #                 self.address_street_bis]) #, str(time.time())])
-    #     separated by semi-colon (;)
-    #     '''
-    #     codelist = []
-    #     if self.address_subdivision:
-    #         codelist.append(self.address_subdivision.code)
-    #     else :
-    #         return ''
-
-    #     hashlist = filter(None, [self.desc, 
-    #                 self.address_post_office and self.address_post_office.code or '',
-    #                 self.address_district_community and self.address_district_community.name or '',
-    #                 self.address_street, self.address_street_num,
-    #                 self.address_street_bis]) #, str(time.time())])
-
-    #     codelist.append(hashlib.sha1(';'.join(hashlist)).hexdigest()[:8])
-
-    #     return '-'.join(codelist)
-
     @classmethod
     def generate_du_code(cls, prefix, *args):
         ''' generates domunit code as follows :
@@ -791,7 +878,7 @@ class DomiciliaryUnit(ModelSQL, ModelView):
                 state_code = values.get('address_subdivision')
                 if state_code:
                     state_code = (Pool().get('country.subdivision')(state_code)).code
-                values['name'] = cls.generate_du_code(state_code,
+                values['name'] = cls.generate_du_code(state_code, datetime.now(),
                     *[values.get(r) for r in ('desc','address_post_office',
                                               'address_district_community',
                                               'address_street',
@@ -808,6 +895,70 @@ class Newborn (ModelSQL, ModelView):
     cephalic_perimeter = fields.Integer('Head Circumference',
         help="Perimeter in centimeters (cm)")
     length = fields.Integer('Crown-Heel Length', help="Length in centimeters (cm)")
+
+
+class HealthInstitution(ModelSQL, ModelView):
+    'Health Institution'
+    __name__ = 'gnuhealth.institution'
+
+    main_specialty = fields.Function(
+                        fields.Many2One('gnuhealth.institution.specialties',
+                            'Specialty',
+                            domain=[('name', '=', 
+                                     Eval('active_id'))], 
+                            depends=['specialties'], 
+        help="Choose the speciality in the case of Specialized Hospitals" \
+            " or where this center excels",
+        # Allow to select the institution specialty only if the record already
+        # exists
+        states={'required': And(Eval('institution_type') == 'specialized',
+            Eval('id', 0) > 0),
+            'readonly': Eval('id', 0) < 0}),
+                        'get_main_specialty',
+                        'set_main_specialty',
+                        'search_main_specialty'
+    )
+
+    def get_main_specialty(self, name):
+        mss = [x for x in self.specialties if x.is_main_specialty]
+        if mss:
+            return mss[0].id
+        return None
+
+    @classmethod
+    def search_main_specialty(cls, name, clause):
+        return ['AND',[
+            ('specialties.is_main_specialty','=',True),
+            replace_clause_column(clause, 'specialties.specialty.id')
+        ]]
+
+    @classmethod
+    def set_main_specialty(cls, instances, field_name, value):
+        for i in instances:
+            turnoff,turnon = [],[]
+            for spec in i.specialties:
+                if spec.id == value:
+                    turnon.append(spec)
+                elif spec.is_main_specialty:
+                    turnoff.append(spec)
+        HIS = Pool().get('gnuhealth.institution.specialties')
+        if turnoff:
+            HIS.write(turnoff,{'is_main_specialty':None})
+        if turnon:
+            HIS.write(turnon, {'is_main_specialty':True})
+
+
+class HealthInstitutionSpecialties(ModelSQL, ModelView):
+    'Health Institution Specialties'
+    __name__ = 'gnuhealth.institution.specialties'
+
+    is_main_specialty = fields.Boolean('Main Specialty',
+                                       help="Check if this is the main specialty"\
+                                       " e.g. in the case of specialized hospital"\
+                                       " or an area in which this institution excels.")
+    @staticmethod
+    def default_is_main_specialty():
+        return False
 
 
 class Insurance(ModelSQL, ModelView):
@@ -827,9 +978,57 @@ class HealthProfessional(ModelSQL, ModelView):
     'Health Professional'
     __name__ = 'gnuhealth.healthprofessional'
 
+    main_specialty = fields.Function(fields.Many2One('gnuhealth.hp_specialty',
+                                                     'Main Specialty',
+                                                     domain=[('name', '=', 
+                                                              Eval('active_id'))]),
+                                     'get_main_specialty',
+                                     'set_main_specialty',
+                                     'search_main_specialty')
+
     def get_rec_name(self, name):
-        if self.name:
-            return self.name.name
+        return self.name.name
+
+    def get_main_specialty(self, name):
+        mss = [x for x in self.specialties if x.is_main_specialty]
+        if mss:
+            return mss[0].id
+        return None
+
+    @classmethod
+    def search_main_specialty(cls, name, clause):
+        return ['AND',[
+            ('specialties.is_main_specialty','=',True),
+            replace_clause_column(clause, 'specialties.specialty.id')
+        ]]
+
+    @classmethod
+    def set_main_specialty(cls, instances, field_name, value):
+        for i in instances:
+            turnoff,turnon = [],[]
+            for spec in i.specialties:
+                if spec.id == value:
+                    turnon.append(spec)
+                elif spec.is_main_specialty:
+                    turnoff.append(spec)
+        HPS = Pool().get('gnuhealth.hp_specialty')
+        if turnoff:
+            HPS.write(turnoff,{'is_main_specialty':None})
+        if turnon:
+            HPS.write(turnon, {'is_main_specialty':True})
+
+
+class HealthProfessionalSpecialties(ModelSQL, ModelView):
+    'Health Professional Specialties'
+    __name__ = 'gnuhealth.hp_specialty'
+    is_main_specialty = fields.Boolean('Main Specialty',
+                                       help="Check if this is the main specialty"\
+                                       " i.e. in the case of specialty doctor"\
+                                       " or an area in which this professional excels.")
+
+    @staticmethod
+    def default_is_main_specialty():
+        return False
 
 
 class Appointment(ModelSQL, ModelView):
@@ -886,17 +1085,42 @@ class Appointment(ModelSQL, ModelView):
 
                 others = cls.search(search_terms)
             
-            if others: # pop up the warning
+            if others and is_not_synchro(): # pop up the warning but not during sync
                 # setup warning params
+                other_specialty = others[0].speciality.name
                 warning_code = 'healthjm.duplicate_appointment_warning.w_{}_{}'.format(
                                 appt.patient.id, appt.appointment_date.strftime('%s'))
-                warning_msg = '''Possible Duplicate Appointment\n
-{} {} already has an appointment for {}.
-Are you sure you want to create another one?'''.format(
-                                   appt.patient.name.firstname,
-                                   appt.patient.name.lastname,
-                                   appt.appointment_date.strftime('%b %d'))
-                cls.raise_user_warning(warning_code, warning_msg)
+                warning_msg = ['Possible Duplicate Appointment\n\n',
+                                appt.patient.name.firstname,' ',
+                                appt.patient.name.lastname]
+                use_an = False
+                if other_specialty == appt.speciality.name:
+                    warning_msg.append(' already has')
+                else:
+                    warning_msg.append(' has')
+
+                if re.match('^[aeiou].+', other_specialty, re.I):
+                    warning_msg.append(' an ')
+                else:
+                    warning_msg.append(' a ')
+                warning_msg.extend([other_specialty, ' appointment for ',
+                                   appt.appointment_date.strftime('%b %d'),
+                                  '\nAre you sure you need this ',
+                                  appt.speciality.name, ' one?'])
+
+                cls.raise_user_warning(warning_code, u''.join(warning_msg))
+
+
+class ProcedureCode(ModelSQL, ModelView):
+    'Medcal Procedures'
+    __name__ = 'gnuhealth.procedure'
+    @classmethod
+    def __setup__(cls):
+        super(ProcedureCode, cls).__setup__()
+        if not isinstance(cls._sql_constraints, (list,)):
+            cls._sql_constraints = []
+        cls._sql_constraints.append(('name_uniq', 'UNIQUE(name)',
+                                     'Medical procedure code must be unique'))
 
 
 class PathologyGroup(ModelSQL, ModelView):
@@ -971,9 +1195,23 @@ class PatientEvaluation(ModelSQL, ModelView):
 
     visit_type_display = fields.Function(fields.Char('Visit Type'),
                                          'get_selection_display')
+    upi = fields.Function(fields.Char('UPI'), getter='get_person_patient_field')
+    sex_display = fields.Function(fields.Char('Sex'), 'get_person_patient_field')
+    age = fields.Function(fields.Char('Age'), 'get_person_patient_field')
 
     def get_selection_display(self, fn):
         return make_selection_display()(self,'visit_type')
+
+    def get_person_patient_field(self, name):
+        if name in ['upi', 'sex_display']:
+            return getattr(self.patient.name, name)
+        if name in ['age']:
+            return getattr(self.patient, name)
+        return ''
+
+    def get_patient_age(self, name):
+        if self.patient:
+            return self.patient.patient_age(name)
 
     @fields.depends('patient', 'evaluation_start', 'institution')
     def on_change_with_first_visit_this_year(self, *arg, **kwarg):
@@ -988,6 +1226,23 @@ class PatientEvaluation(ModelSQL, ModelView):
                 return False
 
         return True
+
+    @fields.depends('patient')
+    def on_change_patient(self, *arg, **kwarg):
+        return {'upi':self.patient.puid,
+                'sex_display':self.patient.name.sex_display,
+                'age':self.patient.age}
+
+    @classmethod
+    def write(cls, evaluations, vals):
+        # Don't allow to write the record if the evaluation has been done
+        if is_not_synchro():
+            for ev in evaluations:
+                if ev.state == 'done':
+                    cls.raise_user_error(
+                        "This evaluation is in a Done state.\n"
+                        "You can no longer modify it.")
+        return super(PatientEvaluation, cls).write(evaluations, vals)
 
 
 

@@ -1,14 +1,19 @@
 
+from datetime import timedelta
 
+from sql import Literal, Join
+from trytond.pool import Pool, PoolMeta
+from trytond.transaction import Transaction
+from trytond.model import ModelView, ModelSQL, fields
+from trytond.pyson import Eval, Not, Bool, PYSONEncoder
 from trytond.wizard import (Wizard, StateView, StateTransition, Button,
                             StateAction)
-from trytond.model import ModelView, ModelSQL, fields
-from trytond.pool import Pool, PoolMeta
-from trytond.pyson import Eval
 
 from .reports import DailyPatientRegister
 
-__all__ = ['PatientRegisterModel', 'PatientRegisterWizard']
+__all__ = ['PatientRegisterModel', 'PatientRegisterWizard',
+           'AppointmentReport', 'OpenAppointmentReportStart',
+           'OpenAppointmentReport']
 
 
 class PatientRegisterModel(ModelView):
@@ -88,3 +93,76 @@ class PatientRegisterWizard(Wizard):
             return 'start'
 
         return action, data
+
+
+class AppointmentReport(ModelSQL, ModelView):
+    'Appointment Report'
+    __name__ = 'gnuhealth.appointment.report'
+    speciality = fields.Many2One('gnuhealth.specialty', 'Specialty')
+
+    @classmethod
+    def table_query(cls):
+        pool = Pool()
+        xaction = Transaction()
+        appointment = pool.get('gnuhealth.appointment').__table__()
+        party = pool.get('party.party').__table__()
+        patient = pool.get('gnuhealth.patient').__table__()
+        join1 = Join(appointment, patient)
+        join1.condition = join1.right.id == appointment.patient
+        join2 = Join(join1, party)
+        join2.condition = join2.right.id == join1.right.name
+        where = Literal(True)
+        if xaction.context.get('date_start'):
+            where &= (appointment.appointment_date >=
+                    xaction.context['date_start'])
+        if xaction.context.get('date_end'):
+            where &= (appointment.appointment_date <
+                    xaction.context['date_end'] + timedelta(days=1))
+        if xaction.context.get('healthprof'):
+            where &= \
+                appointment.healthprof == xaction.context['healthprof']
+
+        if xaction.context.get('specialty', False):
+            where &= appointment.speciality == xaction.context['specialty']
+
+        return join2.select(
+            appointment.id,
+            appointment.create_uid,
+            appointment.create_date,
+            appointment.write_uid,
+            appointment.write_date,
+            join2.right.ref,
+            join1.right.id.as_('patient'),
+            join2.right.sex,
+            appointment.appointment_date,
+            appointment.appointment_date.as_('appointment_date_time'),
+            appointment.healthprof,
+            appointment.speciality,
+            where=where)
+
+class OpenAppointmentReportStart(ModelView):
+    'Open Appointment Report'
+    __name__ = 'gnuhealth.appointment.report.open.start'
+    specialty = fields.Many2One('gnuhealth.specialty', 'Specialty',
+                                states={'required':Not(Bool(Eval('healthprof')))})
+    healthprof = fields.Many2One('gnuhealth.healthprofessional', 'Health Professional',
+        required=False, states={'required':Not(Bool(Eval('specialty')))})
+
+
+class OpenAppointmentReport(Wizard):
+    'Open Appointment Report'
+    __name__ = 'gnuhealth.appointment.report.open'
+
+    def do_open_(self, action):
+        action_dict = {'date_start': self.start.date_start,
+            'date_end': self.start.date_end }
+        if self.start.healthprof:
+            action_dict['healthprof'] = self.start.healthprof.id
+            action['name'] += ' - {}'.format(self.start.healthprof.name.name)
+            
+        if self.start.specialty:
+            action_dict['specialty'] = self.start.specialty.id
+            action['name'] += ' - {}'.format(self.start.specialty.name)
+
+        action['pyson_context'] = PYSONEncoder().encode(action_dict)
+        return action, {}
