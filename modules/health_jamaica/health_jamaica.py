@@ -193,8 +193,8 @@ class PartyPatient (ModelSQL, ModelView):
             # searching for NN- records, so auto-append verified=False
             operand = u''.join(NNre.split(operand))
             if operand == u'%%': operand = '%'
-            return ['AND', (('ref',operator, operand),
-                            ('party_warning_ack','=', False))]
+            return ['AND', ('ref',operator, operand),
+                           ('party_warning_ack','=', False)]
         else:
             return [replace_clause_column(clause, 'ref')]
 
@@ -355,12 +355,12 @@ class PartyPatient (ModelSQL, ModelView):
     @classmethod
     def search_alt_ids(cls, field_name, clause):
         if field_name == 'medical_record_num':
-            return ['AND',(('alternative_ids.alternative_id_type','=','medical_record'),
-                    ('alternative_ids.code',)+tuple(clause[1:]))]
+            return ['AND',('alternative_ids.alternative_id_type','=','medical_record'),
+                    ('alternative_ids.code',)+tuple(clause[1:])]
         else:
-            return ['AND',(
+            return ['AND',
             ('alternative_ids.alternative_id_type','!=','medical_record'),
-            ('alternative_ids.code', clause[1], clause[2]))]
+            ('alternative_ids.code', clause[1], clause[2])]
 
     def get_person_field(self, field_name):
         return getattr(self.name, field_name)
@@ -463,12 +463,12 @@ class PatientData(ModelSQL, ModelView):
     @classmethod
     def search_alt_ids(cls, field_name, clause):
         if field_name == 'medical_record_num':
-            return ['AND',(('name.alternative_ids.alternative_id_type','=','medical_record'),
-                    ('name.alternative_ids.code',)+tuple(clause[1:]))]
+            return ['AND',('name.alternative_ids.alternative_id_type','=','medical_record'),
+                    ('name.alternative_ids.code',)+tuple(clause[1:])]
         else:
-            return ['AND',(
+            return ['AND',
             ('name.alternative_ids.alternative_id_type','!=','medical_record'),
-            ('name.alternative_ids.code', clause[1], clause[2]))]
+            ('name.alternative_ids.code', clause[1], clause[2])]
 
     @classmethod
     def search_unidentified(cls, field_name, clause):
@@ -927,10 +927,10 @@ class HealthInstitution(ModelSQL, ModelView):
 
     @classmethod
     def search_main_specialty(cls, name, clause):
-        return ['AND',[
+        return ['AND',
             ('specialties.is_main_specialty','=',True),
             replace_clause_column(clause, 'specialties.specialty.id')
-        ]]
+        ]
 
     @classmethod
     def set_main_specialty(cls, instances, field_name, value):
@@ -997,10 +997,10 @@ class HealthProfessional(ModelSQL, ModelView):
 
     @classmethod
     def search_main_specialty(cls, name, clause):
-        return ['AND',[
+        return ['AND',
             ('specialties.is_main_specialty','=',True),
             replace_clause_column(clause, 'specialties.specialty.id')
-        ]]
+        ]
 
     @classmethod
     def set_main_specialty(cls, instances, field_name, value):
