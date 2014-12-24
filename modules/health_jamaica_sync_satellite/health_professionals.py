@@ -1,0 +1,32 @@
+
+
+from trytond.model import ModelView, ModelSQL, fields
+from trytond.pool import Pool
+from ..health_jamaica.health_jamaica import ThisInstitution
+
+class HealthProfessional(ModelSQL, ModelView):
+    'Health Professional'
+    __name__ = 'gnuhealth.healthprofessional'
+
+    is_local = fields.Function(fields.Boolean('is local'), 'get_is_local',
+                               searcher='search_is_local')
+
+    def get_is_local(self, name):
+    	if not (name == 'is_local'):
+    		return None
+    	if self.name.internal_user:
+    		return True
+    	else:
+    		return self.institution == ThisInstitution()
+
+    @classmethod
+    def search_is_local(cls, field_name, clause):
+        if field_name == 'is_local':
+            if clause:
+                if clause[-1]:
+                    return ['OR',('name.internal_user','!=',None),
+                           ('institution','=',ThisInstitution())]
+                else:
+                    return [['OR',('name.internal_user','=',None),
+                           ('institution','!=',ThisInstitution())]]
+        return []

@@ -25,7 +25,22 @@
 			<field name="view" ref="remote_party_form" />
 			<field name="act_window" ref="act_remote_party" />
 		</record>
+
 		<menuitem action="act_remote_party" id="sync_menu_remote_party"
 			parent="party.menu_party_form" icon="gnuhealth-demography" sequence="3" />
+
+        <!-- Add "Local Health Professionals" menu -->
+    
+        <record model="ir.action.act_window" id="act_local_healthprof_tree">
+            <field name="name">Local Health Professionals</field>
+            <field name="res_model">gnuhealth.healthprofessional</field>
+            <field name="domain">[('is_local','=',True)]</field>
+        </record>
+
+        <menuitem parent="health.gnuhealth_conf_healthprofessionals" sequence="10"
+            icon="gnuhealth-healthprofessional" 
+            action="act_local_healthprof_tree" id="menu_local_healthprofs"/>
+
+
 	</data>
 </tryton>
