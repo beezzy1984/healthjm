@@ -1,11 +1,11 @@
 from trytond.pool import Pool
-from .celerytools import *
+# from .celerytools import *
 from .health import *
 
 
 def register():
     Pool.register(
-        Sync,
+        # Sync,
         Country,
         CountrySubdivision,
         PostOffice,

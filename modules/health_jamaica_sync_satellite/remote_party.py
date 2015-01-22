@@ -4,7 +4,6 @@ import time
 from trytond.cache import LRUDict
 from trytond.const import OPERATORS, RECORD_CACHE_SIZE
 from trytond.rpc import RPC
-from trytond.config import CONFIG
 from trytond.model import ModelView, ModelStorage, fields
 from trytond.pool import Pool
 from trytond.pyson import Eval, Bool

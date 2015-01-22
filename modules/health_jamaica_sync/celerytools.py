@@ -3,7 +3,7 @@ import subprocess
 import tempfile
 from trytond.model import ModelSQL
 from trytond.transaction import Transaction
-from trytond.config import CONFIG
+# from trytond.config import CONFIG
 
 __all__ = ['Sync']
 
@@ -18,13 +18,13 @@ except AttributeError:
     pass
 
 def start_celery():
-    celery_start = CONFIG.get('celery_start', True)
+    celery_start = 1 #CONFIG.get('celery_start', True)
     if celery_available is None or not celery_start:
         return
     db = Transaction().cursor.database_name
     env = {
         'TRYTON_DATABASE': db,
-        'TRYTON_CONFIG': CONFIG.configfile
+        'TRYTON_CONFIG': '/etc/trytond.conf' #CONFIG.configfile
     }
     print "env", env
     #Copy environment variables in order to get virtualenvs working

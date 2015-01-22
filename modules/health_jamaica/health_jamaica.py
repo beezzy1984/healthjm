@@ -34,7 +34,7 @@ from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
-from trytond.config import CONFIG
+from trytond.config import config as CONFIG
 
 from .tryton_utils import (negate_clause, replace_clause_column,
                            make_selection_display, get_timezone,
@@ -80,7 +80,7 @@ ALTERNATIVE_ID_TYPES = [
         ('nonjm_license', 'Drivers License (non-JM)'),
         ('other', 'Other')]
 
-SYNC_ID=int(CONFIG.get('synchronisation_id',1))
+SYNC_ID=CONFIG.getint('synchronisation','id',1)
 # Default sync ID to 1 so it doesn't think it's the master
 
 NNre = re.compile('(%?)NN-(.*)', re.I)
@@ -265,7 +265,7 @@ class PartyPatient (ModelSQL, ModelView):
 
         vlist = [x.copy() for x in vlist]
         for values in vlist:
-            if not 'ref' in values:
+            if not 'ref' in values or not values['ref'] :
                 values['ref'] = cls.generate_upc()
                 if 'is_person' in values and not values['is_person']:
                     values['ref'] = 'NP-' + values['ref']
@@ -284,7 +284,6 @@ class PartyPatient (ModelSQL, ModelView):
                 values['code'] = '-'.join([str(x) for x in 
                                           (uuid.uuid4(), suffix)])
 
-            values['code_length'] = len(values['code'])
             values.setdefault('addresses', None)
         return super(PartyPatient, cls).create(vlist)
 
@@ -388,7 +387,7 @@ class PatientData(ModelSQL, ModelView):
             ('is_patient', '=', True),
             ('is_person', '=', True),
             ],
-        # states={'readonly': Bool(Eval('name'))},
+        states = {'readonly': Eval('id', 0) > 0},
         help="Person that is this patient")
 
     ses = fields.Selection([
@@ -504,6 +503,12 @@ class PatientData(ModelSQL, ModelView):
                 else:
                     delta = relativedelta(now, dob)
                     deceased = ''
+
+                # Return the raw age in the integers array [Y,M,D]
+                # When name is 'raw_age'
+                if name == 'raw_age':
+                    return [delta.years,delta.months,delta.days]
+
                 ymd = []
                 if delta.years >= 1:
                     ymd.append(str(delta.years) + 'y')
