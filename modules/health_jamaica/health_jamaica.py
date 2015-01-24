@@ -1220,7 +1220,7 @@ class PatientEvaluation(ModelSQL, ModelView):
 
     @fields.depends('patient', 'evaluation_start', 'institution')
     def on_change_with_first_visit_this_year(self, *arg, **kwarg):
-        if self.institution and self.patient:
+        if self.institution and self.patient: # ToDo: Make sure to test for THIS YEAR
             M = Pool().get('gnuhealth.patient.evaluation')
             search_parms = [('evaluation_start','<',self.evaluation_start),
                             ('patient','=',self.patient.id),
