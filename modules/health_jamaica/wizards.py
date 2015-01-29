@@ -23,8 +23,8 @@ class PatientRegisterModel(ModelView):
     on_or_before = fields.Date('End date')
     institution = fields.Many2One('gnuhealth.institution', 'Institution',
                                   states={'readonly': True}, required=True)
-    specialty = fields.Many2One('gnuhealth.specialty', 'Specialty',
-                                depends=['institution'])
+    specialty = fields.Selection('get_specialty_list', 'Specialty',
+                                selection_change_with=['institution'])
 
     @classmethod
     def __setup__(cls):
@@ -45,17 +45,12 @@ Please contact your system administrator to have this resolved.'''
             self.raise_user_error('required_institution')
         return institution
 
-    @fields.depends('institution')
-    def on_change_with_specialty(self):
-        # print('we got a inst = '+str(self.institution))
+    def get_specialty_list(self):
         if self.institution:
-            self.specialty.domain = [
-                ('id', 'in', tuple([x.specialty.id
-                                    for x in self.institution.specialties]))
-            ]
+            return [(x.specialty.id, x.specialty.name)
+                    for x in self.institution.specialties]
         else:
-            self.specialty.domain = []
-        return {}
+            return []
 
 
 class PatientRegisterWizard(Wizard):
@@ -84,7 +79,7 @@ class PatientRegisterWizard(Wizard):
             data['end_date'] = self.start.on_or_before
 
         if self.start.specialty:
-            data['specialty'] = self.start.specialty.id
+            data['specialty'] = self.start.specialty
 
         if self.start.institution:
             data['institution'] = self.start.institution.id
