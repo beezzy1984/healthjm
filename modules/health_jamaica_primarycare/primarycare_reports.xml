@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<tryton>
+	<data>
+	<!-- <Syndromic Surveillance Report> -->
+		<record model="ir.action.report" id="jmreport_syndromic_surveillance">
+			<field name="name">Syndromic Surveillance Report</field>
+			<field name="report_name">healthjm_primarycare.report.syndromic_surveillance</field>
+			<field name="active" eval="True"></field>
+			<field name="report">health_jamaica_primarycare/report/syndromic_surveillance.odt</field>
+			<field name="template_extension">odt</field>
+			<field name="extension"></field>
+		</record>
+		<!-- report wizard view -->
+        <record model="ir.ui.view" id="report_syndromic_surveillance_start">
+            <field name="model">healthjm_primarycare.report.syndromic_surveillance.start</field>
+            <field name="type">form</field>
+            <field name="name">report_syndromic_surveillance_start</field>
+        </record>
+        <!-- report wizard -->
+        <record model="ir.action.wizard" id="action_patientregister_wizard">
+            <field name="name">Sentinel Surveillance Report</field>
+            <field name="wiz_name">healthjm_primarycare.report.syndromic_surveillance.wizard</field>
+        </record>
+        <!-- menu item -->
+        <menuitem id="menu_syndromic_surveillance_report" name="Syndromic Surveillance Report" parent="health.gnuhealth_reporting_menu" sequence="4" action="action_patientregister_wizard" icon="gnuhealth-list"/>
+    <!-- </end of Syndromic Surveillance Report> -->
+
+
+	</data>
+</tryton>

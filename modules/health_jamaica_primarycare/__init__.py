@@ -1,7 +1,19 @@
 from trytond.pool import Pool
-# from .models import ModelName
+
+from .reports import *
+
 
 def register():
     Pool.register(
-#        ModelName,
+        SyndromicSurveillanceWizardModel,
         module='health_jamaica_primarycare', type_='model')
+
+    Pool.register(
+        SyndromicSurveillanceWizard,
+        module='health_jamaica_primarycare', type_='wizard')
+
+
+    Pool.register(
+        SyndromicSurveillanceReport,
+        module='health_jamaica_primarycare', type_='report')
+
