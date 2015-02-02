@@ -80,7 +80,7 @@ class SyndromicSurveillanceReport(Report):
         #                             order=(('evaluation_start','ASC'),
         #                                    ('evaluation_endtime', 'ASC')))
 
-        common_age_groups = [('<5yrs',0,5), ('>5yrs', 5,None)]
+        common_age_groups = [('< 5yrs',0,5), ('> 5yrs', 5,None)]
         syndromes = [
             ('Fever and Rash', {'signs':['R50.1', 'R21']}),
             ('Fever', {'signs':['R50.1'], 'age_groups':common_age_groups}),
@@ -91,8 +91,8 @@ class SyndromicSurveillanceReport(Report):
             ('Violence', {'signs':[], 'diagnosis':['X85 - Y09'],
                           'age_groups':common_age_groups}),
             ('Fever and repiratory symptoms', {
-                    'age_groups':[('<5yrs', 0, 5), ('5-59yrs', 5, 60),
-                                  ('>60yrs', 60, None)],
+                    'age_groups':[('<5 yrs', 0, 5), ('5-59 yrs', 5, 60),
+                                  ('>60 yrs', 60, None)],
                     'signs':['R50.1', 'R05 - R07']
             }),
             ('Fever and Haemorrhagic Symptoms', {'signs':['R50.1', 'R58']}),
@@ -175,11 +175,15 @@ class SyndromicSurveillanceReport(Report):
                                                              localcontext)
 
 
+STATE_RO={'readonly':True}
+
 class SyndromicSurveillanceWizardModel(ModelView):
     '''Syndromic Surveillance for'''
     __name__ = 'healthjm_primarycare.report.syndromic_surveillance.start'
-    on_or_after = fields.Date('Start date', required=True)
-    on_or_before = fields.Date('End date')
+    on_or_after = fields.Date('Select date', required=True)
+    on_or_before = fields.Date('Week Ending', states=STATE_RO, help="Saturday")
+    epi_week = fields.Char('Week Number', states=STATE_RO,
+                              help="Epidemiological Week")
     institution = fields.Many2One('gnuhealth.institution', 'Institution',
                                   states={'readonly': True}, required=True)
 
@@ -202,6 +206,14 @@ Please contact your system administrator to have this resolved.'''
             self.raise_user_error('required_institution')
         return institution
 
+    @fields.depends('on_or_after')
+    def on_change_on_or_after(self):
+        if self.on_or_after and isinstance(self.on_or_after,
+                                            (date,datetime)):
+            epidata = utils.get_epi_week(self.on_or_after)
+            return {'on_or_before':epidata[1],
+                    'epi_week':'%d Week: #%02d'%(epidata[2:])}
+        return {}
 
 class SyndromicSurveillanceWizard(Wizard):
     '''Syndromic Surveillance Report Wizard'''
