@@ -23,8 +23,7 @@ class PatientRegisterModel(ModelView):
     on_or_before = fields.Date('End date')
     institution = fields.Many2One('gnuhealth.institution', 'Institution',
                                   states={'readonly': True}, required=True)
-    specialty = fields.Selection('get_specialty_list', 'Specialty',
-                                selection_change_with=['institution'])
+    specialty = fields.Selection('get_specialty_list', 'Specialty')
 
     @classmethod
     def __setup__(cls):
@@ -45,6 +44,7 @@ Please contact your system administrator to have this resolved.'''
             self.raise_user_error('required_institution')
         return institution
 
+    @fields.depends('institution')
     def get_specialty_list(self):
         if self.institution:
             return [(x.specialty.id, x.specialty.name)

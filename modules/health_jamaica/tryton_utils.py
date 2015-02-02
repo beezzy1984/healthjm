@@ -77,6 +77,38 @@ def get_dob(age, ref_date=None):
     return ref_date - relativedelta(years=age)
 
 
+def get_epi_week(d=None):
+    '''
+    Returns a tuple containing two date objects and an integer. They
+    represent (sunday, saturday, weeknum) for the epidemiological week
+    in which the date passed in <d> belongs.
+    '''
+    if d is None:
+        d = date.today()
+
+    jan1 = date(d.year, 1,1)
+    yr,weeknum,wkday = jan1.isocalendar()
+
+
+    # check iso_weekday for Jan 1. If it's <4
+    if (wkday%7) < 4 :
+        subtractor = 0 # iso_weeknumber and epi-week are the same this year
+    else:
+        subtractor = 1 # iso_weeknumber is 1 less than epi-week this year
+
+    dyr, dweek, dday = d.isocalendar()
+    return_week = dweek - subtractor + (1 if dday == 7 else 0)
+    if return_week <= 0:
+        return_week = 53 - return_week
+        dyr -= 1 # rewind to the previous year
+    if dday == 6: # saturday
+        return_date = date(*d.timetuple()[:3])
+    else:
+        return_date = date(*d.timetuple()[:3]) + timedelta(6 - (dday%7))
+
+    return (return_date-timedelta(6), return_date, return_week)
+
+
 def is_not_synchro():
     '''
     returns True if the effective user id of the transaction is
