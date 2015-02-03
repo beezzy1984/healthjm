@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
-<form string="Sentinel Surveillance Report - Syndromes" cols="6">
-    <label name="on_or_after"/>
-    <field name="on_or_after"/>
+<form string="Sentinel Surveillance Report - Syndromes" col="7">
+    <label name="selectdate"/>
+    <field name="selectdate"/>
     <label name="on_or_before"/>
     <field name="on_or_before"/>
-    <label name="epi_week" />
-    <field name="epi_week" />
-<!--     <newline /> -->
-<!--     <label name="specialty"/>
-    <field name="specialty" widget="selection"/> -->
+    <field name="on_or_after" />
+    <label name="epi_week_display" />
+    <field name="epi_week_display" colspan="1" />
+    <newline />
     <label name="institution" />
-    <field name="institution" />
+    <field name="institution" colspan="2" />
+    <field name="epi_week" />
+    <field name="epi_week_year" />
 </form>
-	

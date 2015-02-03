@@ -176,14 +176,18 @@ class SyndromicSurveillanceReport(Report):
 
 
 STATE_RO={'readonly':True}
+STATE_INVRO={'readonly':True, 'invisible':True}
 
 class SyndromicSurveillanceWizardModel(ModelView):
     '''Syndromic Surveillance for'''
     __name__ = 'healthjm_primarycare.report.syndromic_surveillance.start'
-    on_or_after = fields.Date('Select date', required=True)
+    selectdate = fields.Date('Select date', required=True)
     on_or_before = fields.Date('Week Ending', states=STATE_RO, help="Saturday")
-    epi_week = fields.Char('Week Number', states=STATE_RO,
+    epi_week = fields.Integer('Week Number', states=STATE_INVRO,
                               help="Epidemiological Week")
+    epi_week_year = fields.Integer('year', states=STATE_INVRO)
+    epi_week_display = fields.Char('Week number', size=12, states=STATE_RO)
+    on_or_after = fields.Date('start date', states=STATE_INVRO)
     institution = fields.Many2One('gnuhealth.institution', 'Institution',
                                   states={'readonly': True}, required=True)
 
@@ -206,13 +210,15 @@ Please contact your system administrator to have this resolved.'''
             self.raise_user_error('required_institution')
         return institution
 
-    @fields.depends('on_or_after')
-    def on_change_on_or_after(self):
-        if self.on_or_after and isinstance(self.on_or_after,
+    @fields.depends('selectdate')
+    def on_change_selectdate(self):
+        if self.selectdate and isinstance(self.selectdate,
                                             (date,datetime)):
-            epidata = utils.get_epi_week(self.on_or_after)
-            return {'on_or_before':epidata[1],
-                    'epi_week':'%d Week: #%02d'%(epidata[2:])}
+            epidata = utils.get_epi_week(self.selectdate)
+            d = dict(zip(['on_or_after', 'on_or_before', 'epi_week_year',
+                             'epi_week'], epidata))
+            d['epi_week_display'] = '%02d of %04d'%(epidata[3], epidata[2])
+            return d
         return {}
 
 class SyndromicSurveillanceWizard(Wizard):
@@ -236,7 +242,9 @@ class SyndromicSurveillanceWizard(Wizard):
         # specify data that will be passed to .parse on the report object
         data = {'start_date':self.start.on_or_after,
                 'end_date':self.start.on_or_after,
-                'facility':None}
+                'facility':None,
+                'epi_week': self.start.epi_week,
+                'epi_week_year': self.start.epi_week_year}
 
         if self.start.on_or_before:
             data['end_date'] = self.start.on_or_before
