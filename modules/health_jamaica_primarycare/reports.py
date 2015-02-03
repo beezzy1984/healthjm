@@ -3,7 +3,7 @@
 import pytz
 from datetime import date, datetime, timedelta
 from itertools import groupby
-from collections import defaultdict
+from collections import defaultdict, Counter
 from trytond.report import Report
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool
@@ -76,10 +76,6 @@ class SyndromicSurveillanceReport(Report):
             if osectors:
                 localcontext['sector'] = osectors[0].operational_sector
 
-        # objects = Evaluation.search(search_criteria,
-        #                             order=(('evaluation_start','ASC'),
-        #                                    ('evaluation_endtime', 'ASC')))
-
         common_age_groups = [('< 5yrs',0,5), ('> 5yrs', 5,None)]
         syndromes = [
             ('Fever and Rash', {'signs':['R50.1', 'R21']}),
@@ -106,10 +102,18 @@ class SyndromicSurveillanceReport(Report):
         ]
         output_lines = []
         def day_group_counts(evaluation_list):
-            dayfunc = lambda x: x['evaluation_start'].timetuple()[:3]
-            #assuming evaluations are ordered by evaluation_start
-            evgroups = groupby(evaluation_list, dayfunc)
-            return [(d, len(list(i))) for d,i in evgroups]
+            # restricted to using day names as the keys since we're sure
+            # this will only be run for a single week
+            # dayfunc = lambda x: x['evaluation_start'].timetuple()[:3]
+            dayfunc = lambda x: x['evaluation_start'].strftime('%a')
+            # #assuming evaluations are ordered by evaluation_start
+            # evgroups = groupby(evaluation_list, dayfunc)
+            # return [(d, len(list(i))) for d,i in evgroups]
+            counter = Counter(Sun=0, Mon=0, Tue=0, Wed=0, Thu=0, Fri=0, Sat=0,
+                             total=0)
+            counter.update(Counter(map(dayfunc, evaluation_list)))
+            counter.update(total = len(evaluation_list))
+            return counter
 
         def mk_domain_clause(code, column='signs_and_symptoms.clinical.code'):
             if ' - ' in code:
@@ -123,7 +127,8 @@ class SyndromicSurveillanceReport(Report):
             else:
                 return (column, '=', code)
 
-
+        total_line = Counter(Sun=0, Mon=0, Tue=0, Wed=0, Thu=0, Fri=0, Sat=0,
+                             total=0)
         for heading, params in syndromes:
             search_domain = search_criteria[:]
             if params.get('signs', False):
@@ -136,9 +141,9 @@ class SyndromicSurveillanceReport(Report):
                                          'diagnostic_hypothesis.pathology.code'
                                         )
                     )
-            print("{}\nsearch_domain = {}\n{}".format('*'*80,
-                                                      repr(search_domain),
-                                                      '*'*80))
+            # print("{}\nsearch_domain = {}\n{}".format('*'*80,
+            #                                           repr(search_domain),
+            #                                           '*'*80))
             objects = Evaluation.search_read(search_domain,
                                     order=(('evaluation_start','ASC'),
                                            ('evaluation_endtime', 'ASC')),
@@ -146,10 +151,16 @@ class SyndromicSurveillanceReport(Report):
                                                   'patient.dob',
                                                   'signs_and_symptoms',
                                                   'diagnostic_hypothesis'])
-            line = [heading] + day_group_counts(objects)
+
+            line = {'title':heading, 'summary':False}
+            counts = day_group_counts(objects)
+            total_line.update(counts)
+            line.update(dict(counts))
 
             if params.get('age_groups', False):
-                line[0] = '%s (Total)'%(heading,)
+                line['title'] = '%s (Total)'%(heading,)
+                line['summary'] = True
+
                 output_lines.append(line) # total Line
                 age_groupings = defaultdict(list)
                 grouper = make_age_grouper(params['age_groups'], end_date)
@@ -157,23 +168,26 @@ class SyndromicSurveillanceReport(Report):
                     age_groupings[grouper(ev)].append(ev)
 
                 for ag in params['age_groups']:
-                    line = ['%s: %s'%(heading, ag[0])] +\
-                            day_group_counts(age_groupings[ag[0]])
+                    g = age_groupings[ag[0]]
+                    line = {'title':'%s: %s'%(heading, ag[0]), 'summary':False}
+                    line.update(day_group_counts(g))
                     output_lines.append(line) # age group line
             else:
                 # make a single line for the heading
                 output_lines.append(line) # no-age-grouping line
 
-        print('{}\n OMG, what a function. These are usually quite sexy'.format('*'*80))
-        print('{}\n\n{}'.format(repr(output_lines), '*'*80))
-        localcontext['syndrome_counts'] = output_lines
-
+        # print('{}\n OMG, what a function. These are usually quite sexy'.format('*'*80))
+        # print('{}\n\n{}'.format(repr(output_lines), '*'*80))
+        localcontext.update(syndrome_counts=output_lines, totals=total_line,
+                            epi_week=data['epi_week'],
+                            now_date=datetime.now(timezone),
+                            epi_week_year=data['epi_week_year'],
+                            end_date=data['end_date'])
 
         return super(SyndromicSurveillanceReport, cls).parse(report,
                                                              records,
                                                              data,
                                                              localcontext)
-
 
 STATE_RO={'readonly':True}
 STATE_INVRO={'readonly':True, 'invisible':True}
