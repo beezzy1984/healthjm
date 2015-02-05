@@ -86,7 +86,7 @@ class SyndromicSurveillanceReport(Report):
                            'age_groups':common_age_groups}),
             ('Violence', {'signs':[], 'diagnosis':['X85 - Y09'],
                           'age_groups':common_age_groups}),
-            ('Fever and repiratory symptoms', {
+            ('Fever and respiratory symptoms', {
                     'age_groups':[('<5 yrs', 0, 5), ('5-59 yrs', 5, 60),
                                   ('>60 yrs', 60, None)],
                     'signs':['R50.1', 'R05 - R07']
