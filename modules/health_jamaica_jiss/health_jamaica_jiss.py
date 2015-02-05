@@ -27,6 +27,10 @@
 
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal
 from trytond.model import ModelView, ModelSQL, fields
+from trytond.transaction import Transaction
+from datetime import datetime, date
+from ..health_jamaica.health_jamaica import (ThisInstitution)
+from ..health_jamaica.tryton_utils import get_timezone
 
 __all__ = ['Jiss']
 
@@ -40,16 +44,16 @@ class Jiss (ModelSQL, ModelView):
 
     injury_date = fields.Date('Injury Date',
         help="Usually the same as the Evaluation")
-    
+
     registration_date = fields.Date('Registration Date')
-    
-    code = fields.Char('Code',help='Injury Code', required=True)
+
+    code = fields.Char('Code',help='Injury Code', readonly=True)
 
     location = fields.Many2One(
         'country.subdivision', 'Location',
         domain=[('country', '=', 'Jamaica')])
 
-    latitude = fields.Numeric('Latidude', digits=(3, 14))
+    latitude = fields.Numeric('Latitude', digits=(3, 14))
     longitude = fields.Numeric('Longitude', digits=(4, 14))
 
     urladdr = fields.Char(
@@ -118,7 +122,7 @@ class Jiss (ModelSQL, ModelView):
         ('bicycle', 'Bicycle'),
         ('motorbike', 'Motorbike'),
         ('car', 'Car'),
-        ('van', 'Van / Pickup / Jeep'),
+        ('van', 'Van / Pickup / SUV'),
         ('truck', 'Truck / Heavy vehicle'),
         ('bus', 'Bus'),
         ('train', 'Train'),
@@ -231,18 +235,33 @@ class Jiss (ModelSQL, ModelView):
         ('transferred', 'Transferred'),
         ('doa', 'Dead on Arrival'),
         ], 'Disposition', help="Place of occurrance",sort=False, required=True)
-    
+
     def get_patient(self, name):
-        return self.name.patient.name.name +' ' + self.name.patient.name.lastname
+        return self.name.patient.name.name
 
     def get_patient_sex(self, name):
-        return self.name.patient.sex
+        return self.name.patient.sex_display
 
     def get_patient_age(self, name):
         return self.name.patient.age
 
     def get_patient_complaint(self, name):
         return self.name.chief_complaint
+
+    @classmethod
+    def default_patient(cls):
+        # print("{}\nContext = {}\n{}".format('%'*80,repr(Transaction().context),
+        #                                      '%'*80))
+        return '(Save to see patient information)'
+
+    def on_change_name(self):
+        k = {'patient':self.name.patient.name.name,
+                'patient_age':self.name.patient.age,
+                'patient_sex':self.name.patient.sex_display}
+        # print "{}\non_change_name has been called with \n{}\n{}",format(
+        #             '*'*80, repr(k), '*'*80
+        #     )
+        return k
 
     @fields.depends('latitude', 'longitude')
     def on_change_with_urladdr(self):
@@ -265,3 +284,27 @@ class Jiss (ModelSQL, ModelView):
         res.append(('name.patient', clause[1], value))
         return res
 
+    @classmethod
+    def generate_injury_code(cls):
+        now = datetime.now(tz=get_timezone())
+        return 'ISS-%s'%(now.strftime('%s'))
+
+    @classmethod
+    def create(cls, vlist):
+        vlist = [x.copy() for x in vlist]
+        for values in vlist:
+            if not 'code' in values:
+                values['code'] = cls.generate_injury_code()
+        return super(Jiss, cls).create(vlist)
+
+    @classmethod
+    def default_healthcenter(cls):
+        h = ThisInstitution()
+        if h:
+            return h
+        else:
+            return None
+
+    @classmethod
+    def default_registration_date(cls):
+        return datetime.now(tz=get_timezone()).date()
