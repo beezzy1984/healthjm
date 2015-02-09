@@ -29,6 +29,7 @@ def register():
         PathologyCategory, 
         PathologyGroup,
         Pathology,
+        # DiseaseMembers, # ToDo: Add this to sync
         ProcedureCode,
         PatientData,
         PatientEvaluation, 
