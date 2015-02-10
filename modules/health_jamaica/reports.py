@@ -9,6 +9,9 @@ from .tryton_utils import get_timezone
 
 __all__ = ('DailyPatientRegister', )
 
+class BaseReport(Report):
+    pass
+
 class DailyPatientRegister(Report):
     __name__ = 'health_jamaica.report_patient_register'
 

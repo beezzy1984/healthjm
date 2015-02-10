@@ -17,12 +17,35 @@
             <field name="name">report_syndromic_surveillance_start</field>
         </record>
         <!-- report wizard -->
-        <record model="ir.action.wizard" id="action_patientregister_wizard">
+        <record model="ir.action.wizard" id="action_syndromic_surveillance_wizard">
             <field name="name">Sentinel Surveillance Report</field>
             <field name="wiz_name">healthjm_primarycare.report.syndromic_surveillance.wizard</field>
         </record>
         <!-- menu item -->
-        <menuitem id="menu_syndromic_surveillance_report" name="Syndromic Surveillance Report" parent="health.gnuhealth_reporting_menu" sequence="4" action="action_patientregister_wizard" icon="gnuhealth-list"/>
+        <menuitem id="menu_syndromic_surveillance_report" name="Syndromic Surveillance Report" parent="health.gnuhealth_reporting_menu" sequence="404" action="action_syndromic_surveillance_wizard" icon="gnuhealth-list"/>
+    <!-- </end of Syndromic Surveillance Report> -->
+    <!-- <Service Utilisation Report> -->
+        <record model="ir.action.report" id="jmreport_service_utilisation">
+            <field name="name">Service Utilisation Report</field>
+            <field name="report_name">healthjm_primarycare.report.service_utilisation</field>
+            <field name="active" eval="True"></field>
+            <field name="report">health_jamaica_primarycare/report/service_utilisation.odt</field>
+            <field name="template_extension">odt</field>
+            <field name="extension"></field>
+        </record>
+        <!-- report wizard view -->
+        <record model="ir.ui.view" id="report_service_utilisation_start">
+            <field name="model">healthjm_primarycare.report.service_utilisation.start</field>
+            <field name="type">form</field>
+            <field name="name">report_service_utilisation_start</field>
+        </record>
+        <!-- report wizard -->
+        <record model="ir.action.wizard" id="action_service_utilisation_wizard">
+            <field name="name">Service Utilisation Report</field>
+            <field name="wiz_name">healthjm_primarycare.report.service_utilisation.wizard</field>
+        </record>
+        <!-- menu item -->
+        <menuitem id="menu_service_utilisation_report" name="Service Utilisation Report" parent="health.gnuhealth_reporting_menu" sequence="403" action="action_service_utilisation_wizard" icon="gnuhealth-list"/>
     <!-- </end of Syndromic Surveillance Report> -->
 
 

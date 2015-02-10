@@ -12,9 +12,12 @@ from trytond.pyson import Eval, Not, Bool, PYSONEncoder
 from trytond.wizard import (Wizard, StateView, StateTransition, Button,
                             StateAction)
 from ..health_jamaica import tryton_utils as utils
+from ..health_jamaica.wizards import PatientRegisterModel
 
 __all__ = ['SyndromicSurveillanceWizardModel', 'SyndromicSurveillanceWizard',
-           'SyndromicSurveillanceReport']
+           'SyndromicSurveillanceReport',
+           'ServiceUtilisationWizardModel', 'ServiceUtilisationWizard',
+           'ServiceUtilisationReport']
 
 def make_age_grouper(age_groups, ref_date):
     age_group_dict = {}
@@ -40,6 +43,8 @@ def make_age_grouper(age_groups, ref_date):
             age_group_dict[title] = lambda x: (dob_min < x['patient.dob'])
         elif dob_max:
             age_group_dict[title] = lambda x: (dob_max >= x['patient.dob'])
+        elif age_min < 0 : # use negative age_min for unknown
+            age_group_dict[title] = lambda x: (x['patient.dob'] is None)
         else:
             age_group_dict[title] = lambda x: False # always fail
 
@@ -61,7 +66,7 @@ class SyndromicSurveillanceReport(Report):
         Institution = pool.get('gnuhealth.institution')
         Company = pool.get('company.company')
         Evaluation = pool.get('gnuhealth.patient.evaluation')
-        Patient = pool.get('gnuhealth.patient')
+        # Patient = pool.get('gnuhealth.patient')
 
         timezone = utils.get_timezone()
         start_date = utils.get_start_of_day(data['start_date'], timezone)
@@ -294,4 +299,103 @@ class SyndromicSurveillanceWizard(Wizard):
             self.start.raise_user_error('required_institution')
             return 'start'
 
-        return action, data        
+        return action, data
+
+
+# =====================================================================
+
+class ServiceUtilisationReport(Report):
+    '''Service Utilisation Report'''
+    __name__ = 'healthjm_primarycare.report.service_utilisation'
+
+    @classmethod
+    def parse(cls, report, records, data, localcontext):
+        pool = Pool()
+        User = pool.get('res.user')
+        Institution = pool.get('gnuhealth.institution')
+        Company = pool.get('company.company')
+        Appointment = pool.get('gnuhealth.appointment')
+        # Patient = pool.get('gnuhealth.patient')
+
+        timezone = utils.get_timezone()
+        start_date = utils.get_start_of_day(data['start_date'], timezone)
+        end_date = utils.get_start_of_next_day(data['end_date'], timezone)
+
+        search_criteria = ['AND',
+            ('state','=','done'),
+            ('appointment_date','>=',start_date),
+            ('appointment_date','<',end_date)
+        ]
+
+        if ((end_date - start_date) > timedelta(1.05)):
+            localcontext['report_date_is_range'] = True
+        else : 
+            localcontext['report_date_is_range'] = False
+
+        localcontext['user_name'] = User(Transaction().user).name
+        if data.get('institution', False):
+            search_criteria.append(('institution','=',data['institution']))
+            localcontext['institution'] = Institution(data['institution'])
+            osectors = localcontext['institution'].operational_sectors
+            if osectors:
+                localcontext['sector'] = osectors[0].operational_sector
+            localcontext['parish'] = ''
+            for addr in localcontext['institution'].name.addresses:
+                if addr.subdivision:
+                    localcontext['parish'] = addr.subdivision.name
+                    break
+
+        age_groups = [('0 - 4',0,5), ('5 - 9', 5,10), ('10 - 19', 10, 20),
+                      ('20 - 59', 20, 60), ('60+', 60, None),
+                      ('Unknown', -1, None)] # negative min_age for dob==null
+
+        appointments = Appointment.search_read(search_criteria,
+                                    order=(('speciality','ASC'),
+                                           ('patient.dob', 'ASC')),
+                                    fields_names=['id','appoinentment_date',
+                                                  'patient.dob', 'patient.id',
+                                                  'speciality','urgency',
+                                                  'appointment_type'])
+        
+
+        return super(ServiceUtilisationReport, cls).parse(
+                        report, records, data, localcontext
+                    )
+
+class ServiceUtilisationWizardModel(PatientRegisterModel):
+    '''Service Utilisation Report for'''
+    __name__ = 'healthjm_primarycare.report.service_utilisation.start'
+    pass
+
+
+
+class ServiceUtilisationWizard(Wizard):
+    '''Service Utilisation Report Wizard'''
+    __name__ = 'healthjm_primarycare.report.service_utilisation.wizard'
+    start = StateView(
+            'healthjm_primarycare.report.service_utilisation.start',
+            'health_jamaica_primarycare.report_service_utilisation_start',
+            [Button('Cancel', 'end', 'tryton-cancel'),
+             Button('Generate report', 'generate_report', 'tryton-ok',
+                    default=True)])
+
+    generate_report = StateAction(
+                  'health_jamaica_primarycare.jmreport_syndromic_surveillance')
+
+    def transition_generate_report(self):
+        return 'end'
+
+    def do_generate_report(self, action):
+        data = {'start_date':self.start.on_or_after,
+                'end_date':self.start.on_or_after}
+
+        if self.start.on_or_before:
+            data['end_date'] = self.start.on_or_before
+
+        if self.start.institution:
+            data['institution'] = self.start.institution.id
+        else:
+            self.start.raise_user_error('required_institution')
+            return 'start'
+
+        return action, data                
