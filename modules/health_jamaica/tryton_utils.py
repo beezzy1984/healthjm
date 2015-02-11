@@ -76,6 +76,15 @@ def get_dob(age, ref_date=None):
         ref_date = date.today()
     return ref_date - relativedelta(years=age)
 
+def get_age_in_years(dob, ref_date=None):
+    '''returns just the years portion of the full year,month,day age'''
+
+    if dob is None:
+        return None
+    ref_date = ref_date or date.today()
+    full_age = relativedelta(ref_date, dob)
+    return full_age.years
+
 
 def get_epi_week(d=None):
     '''

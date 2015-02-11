@@ -19,40 +19,55 @@ __all__ = ['SyndromicSurveillanceWizardModel', 'SyndromicSurveillanceWizard',
            'ServiceUtilisationWizardModel', 'ServiceUtilisationWizard',
            'ServiceUtilisationReport']
 
-def make_age_grouper(age_groups, ref_date):
+def make_age_grouper(age_groups, ref_date, dob_field='patient.dob'):
     age_group_dict = {}
     if len(age_groups) == 2 and age_groups[0][2] == age_groups[1][1]:
         age_boundary = utils.get_dob(age_groups[0][2])
         return lambda x: (age_groups[0][0]
-                          if x['patient.dob'] >= age_boundary 
+                          if x[dob_field] >= age_boundary 
                           else age_groups[1][0])
 
+    # build an age lookup table using the age groups and individual ages 
+    age_table = {}
+    # Two exception clauses
+    age_upper_threshold = age_lower_threshold = None
     for title, age_min, age_max in age_groups:
-        if age_min>0:
-            dob_max = utils.get_dob(age_min, ref_date)
-        else:
-            dob_max = False
-        if age_max and age_max>0:
-            dob_min = utils.get_dob(age_max, ref_date)
-        else:
-            dob_min = False
-        if dob_min and dob_max:
-            age_group_dict[title] = lambda x: (dob_min < x['patient.dob']) and\
-                                              (dob_max >= x['patient.dob'])
-        elif dob_min:
-            age_group_dict[title] = lambda x: (dob_min < x['patient.dob'])
-        elif dob_max:
-            age_group_dict[title] = lambda x: (dob_max >= x['patient.dob'])
-        elif age_min < 0 : # use negative age_min for unknown
-            age_group_dict[title] = lambda x: (x['patient.dob'] is None)
-        else:
-            age_group_dict[title] = lambda x: False # always fail
+        if age_min>=0 and age_max>=0:
+            age_table.update([(a, title) for a in range(age_min,age_max)])
+        elif age_min<0:
+            age_table[None] = title
+        elif age_min>0 and age_max is None:
+            age_upper_threshold = age_min
+        elif age_min is None and age_max>0:
+            age_lower_threshold = age_max
 
-    def grouper(record):
-        for title, test_func in age_group_dict.items():
-            if test_func(record):
-                return title
-    return grouper
+        # gfailover handles the connection to the two exception clauses
+        # or a default passthru for the regular age.
+        # this allows us to pass in the ages higher than age_upper_threshold
+        # so that what is returned is the age that represents the treshold.
+        # This allows the lookups for all ages, e.g. above 60 to be retrieved
+        # using the key 60. 
+        # example usage: 
+        #   age_upper_threshold = 49
+        #   gfailover(32) == 32
+        #   gfailover(52) == 49
+        def gfailover(age):
+            if age_upper_threshold and age >= age_upper_threshold:
+                return age_upper_threshold
+            elif age_lower_threshold and age <= age_lower_threshold:
+                return age_lower_threshold
+            return age
+
+        # make the grouper do a simple lookup from the table
+        # with a function failover that returns a result from the 3 exct sets
+        get_age = utils.get_age_in_years
+        def grouper(record):
+            # take the age of the each record and lookup the 
+            age = get_age(record[dob_field])
+            # group from the age_table
+            return age_table.get(age,
+                                 age_table.get(gfailover(age), None))
+        return grouper
 
 
 class SyndromicSurveillanceReport(Report):
@@ -322,7 +337,7 @@ class ServiceUtilisationReport(Report):
         end_date = utils.get_start_of_next_day(data['end_date'], timezone)
 
         search_criteria = ['AND',
-            ('state','=','done'),
+            # ('state','=','done'),
             ('appointment_date','>=',start_date),
             ('appointment_date','<',end_date)
         ]
@@ -351,12 +366,38 @@ class ServiceUtilisationReport(Report):
 
         appointments = Appointment.search_read(search_criteria,
                                     order=(('speciality','ASC'),
-                                           ('patient.dob', 'ASC')),
-                                    fields_names=['id','appoinentment_date',
-                                                  'patient.dob', 'patient.id',
-                                                  'speciality','urgency',
+                                           ('appointment_date', 'ASC')),
+                                    fields_names=['id','appointment_date',
+                                                  'patient.name.dob',
+                                                  'patient.name.sex',
+                                                  'speciality.name','urgency',
                                                   'appointment_type'])
-        
+
+
+        service_counts = []
+        named_age_groups = [('age_group%d'%i, x[1], x[2]) for i,x in
+                            enumerate(age_groups)]
+        age_grouper = make_age_grouper(named_age_groups, start_date,
+                            'patient.name.dob')
+        gender_grouper = lambda r: {'m':'male', 'f':'female'}.get(
+                                                    r['patient.name.sex'],
+                                                    'Unknown')
+        make_row = lambda t : Counter(total = t,male=0, female=0,
+                                 **dict([(x[0], 0) for x in named_age_groups]))
+        total_line = make_row(0)
+        for specialty, appts in groupby(appointments,
+                                        lambda x: x['speciality.name']):
+            appts = list(appts)
+            spec_count = make_row(len(appts))
+            spec_count.update(Counter(map(gender_grouper, appts)) +
+                                          Counter(map(age_grouper, appts)))
+
+            service_counts.append((specialty, dict(spec_count)))
+            total_line.update(spec_count)
+        localcontext.update(start_date=start_date, end_date=end_date,
+                            service_counts=service_counts,
+                            total_line=total_line,
+                            now_date=datetime.now(timezone),)
 
         return super(ServiceUtilisationReport, cls).parse(
                         report, records, data, localcontext
@@ -380,7 +421,7 @@ class ServiceUtilisationWizard(Wizard):
                     default=True)])
 
     generate_report = StateAction(
-                  'health_jamaica_primarycare.jmreport_syndromic_surveillance')
+                  'health_jamaica_primarycare.jmreport_service_utilisation')
 
     def transition_generate_report(self):
         return 'end'
