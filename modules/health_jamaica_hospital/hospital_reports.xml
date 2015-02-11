@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<tryton>
+	<data>
+    <!-- Hospital Face Sheet -->
+    <!-- TODO: make this inherit and override the primarycare version -->
+        <record model="ir.action.report" id="jmreport_facesheet">
+            <field name="name">Hospital Face sheet</field>
+            <field name="model">gnuhealth.patient</field>
+            <field name="report_name">health_jamaica_hospital.report_facesheet_hosp</field>
+            <field name="active" eval="True" />
+            <field name="template_extension">odt</field>
+            <field name="extension"></field>
+            <field name="report">health_jamaica_hospital/report/facesheet.odt</field>
+        </record>
+        <!-- <record model="ir.action.keyword" id="jmkw_facesheet_hosp"> 
+            <field name="keyword">form_print</field> 
+            <field name="model">gnuhealth.patient,-1</field> 
+            <field name="action" ref="jmreport_facesheet_hosp"/> 
+        </record> -->
+	</data>
+</tryton>

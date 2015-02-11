@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <tryton>
 	<data>
+    <!-- Primary Care Face Sheet -->
+        <record model="ir.action.report" id="jmreport_facesheet">
+            <field name="name">Facesheet</field>
+            <field name="model">gnuhealth.patient</field>
+            <field name="report_name">health_jamaica_primarycare.report_facesheet</field>
+            <field name="active" eval="True" />
+            <field name="template_extension">odt</field>
+            <field name="extension"></field>
+            <field name="report">health_jamaica_primarycare/report/facesheet.odt</field>
+        </record>
+        <record model="ir.action.keyword" id="jmkw_facesheet_hc">
+            <field name="keyword">form_print</field>
+            <field name="model">gnuhealth.patient,-1</field>
+            <field name="action" ref="jmreport_facesheet"/>
+        </record>
+    <!-- /end of Primary Care Face Sheet -->
 	<!-- <Syndromic Surveillance Report> -->
 		<record model="ir.action.report" id="jmreport_syndromic_surveillance">
 			<field name="name">Syndromic Surveillance Report</field>
