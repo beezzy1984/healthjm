@@ -29,45 +29,48 @@ def make_age_grouper(age_groups, ref_date, dob_field='patient.dob'):
 
     # build an age lookup table using the age groups and individual ages 
     age_table = {}
-    # Two exception clauses
     age_upper_threshold = age_lower_threshold = None
     for title, age_min, age_max in age_groups:
-        if age_min>=0 and age_max>=0:
-            age_table.update([(a, title) for a in range(age_min,age_max)])
-        elif age_min<0:
-            age_table[None] = title
+        if age_min is None and age_max is None:
+            continue #improperly specified age group
+        elif age_min is None and age_max>0:
+            age_lower_threshold = age_max-1
+            age_table[age_lower_threshold] = title
         elif age_min>0 and age_max is None:
             age_upper_threshold = age_min
-        elif age_min is None and age_max>0:
-            age_lower_threshold = age_max
+            age_table[age_upper_threshold] = title
+        elif age_min<0 and age_max is None:
+            age_table[None] = title
+        elif age_min>=0 and age_max>=0:
+            age_table.update([(a, title) for a in range(age_min,age_max)])
 
-        # gfailover handles the connection to the two exception clauses
-        # or a default passthru for the regular age.
-        # this allows us to pass in the ages higher than age_upper_threshold
-        # so that what is returned is the age that represents the treshold.
-        # This allows the lookups for all ages, e.g. above 60 to be retrieved
-        # using the key 60. 
-        # example usage: 
-        #   age_upper_threshold = 49
-        #   gfailover(32) == 32
-        #   gfailover(52) == 49
-        def gfailover(age):
-            if age_upper_threshold and age >= age_upper_threshold:
-                return age_upper_threshold
-            elif age_lower_threshold and age <= age_lower_threshold:
-                return age_lower_threshold
-            return age
+    # gfailover handles the connection to the two exception clauses
+    # or a default passthru for the regular age.
+    # This allows us to pass in the ages higher than age_upper_threshold
+    # and that what is returned is the age that represents the treshold.
+    # example usage: 
+    #   age_upper_threshold = 49; age_lower_threshold=13
+    #   gfailover(32) == 32
+    #   gfailover(52) == 49
+    #   gfailover(60) == 49
+    #   gfailover(10) == 13
+    def gfailover(age):
+        if age_upper_threshold and age >= age_upper_threshold:
+            return age_upper_threshold
+        elif age_lower_threshold and age <= age_lower_threshold:
+            return age_lower_threshold
+        return age
 
-        # make the grouper do a simple lookup from the table
-        # with a function failover that returns a result from the 3 exct sets
-        get_age = utils.get_age_in_years
-        def grouper(record):
-            # take the age of the each record and lookup the 
-            age = get_age(record[dob_field])
-            # group from the age_table
-            return age_table.get(age,
-                                 age_table.get(gfailover(age), None))
-        return grouper
+    # make the grouper do a simple lookup from the table
+    # with a function failover that returns a result from the 3 exct sets
+    get_age = utils.get_age_in_years
+    def grouper(record):
+        # take the age of the each record and lookup the 
+        age = get_age(record[dob_field])
+        # group from the age_table
+        return age_table.get(age,
+                             age_table.get(gfailover(age), None))
+    return grouper
 
 
 class SyndromicSurveillanceReport(Report):
@@ -394,7 +397,8 @@ class ServiceUtilisationReport(Report):
 
             service_counts.append((specialty, dict(spec_count)))
             total_line.update(spec_count)
-        localcontext.update(start_date=start_date, end_date=end_date,
+        localcontext.update(start_date=start_date,
+                            end_date=end_date-timedelta(0,2),
                             service_counts=service_counts,
                             total_line=total_line,
                             now_date=datetime.now(timezone),)
