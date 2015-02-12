@@ -333,6 +333,7 @@ class ServiceUtilisationReport(Report):
         Institution = pool.get('gnuhealth.institution')
         Company = pool.get('company.company')
         Appointment = pool.get('gnuhealth.appointment')
+        InstitutionSpecialties = pool.get('gnuhealth.institution.specialties')
         # Patient = pool.get('gnuhealth.patient')
 
         timezone = utils.get_timezone()
@@ -353,15 +354,27 @@ class ServiceUtilisationReport(Report):
         localcontext['user_name'] = User(Transaction().user).name
         if data.get('institution', False):
             search_criteria.append(('institution','=',data['institution']))
-            localcontext['institution'] = Institution(data['institution'])
-            osectors = localcontext['institution'].operational_sectors
+            institution = Institution(data['institution'])
+            localcontext['institution'] = institution
+            default_services = InstitutionSpecialties.search_read(
+                                [('name','=',institution.id)],
+                                order=(('specialty', 'ASC'),),
+                                fields_names=['specialty.name',
+                                              'is_main_specialty'])
+            osectors = institution.operational_sectors
             if osectors:
                 localcontext['sector'] = osectors[0].operational_sector
             localcontext['parish'] = ''
-            for addr in localcontext['institution'].name.addresses:
+            for addr in institution.name.addresses:
                 if addr.subdivision:
                     localcontext['parish'] = addr.subdivision.name
                     break
+        else:
+            default_services = ['Curative', 'Oral Health (Primary Care)', 
+                        'Family Planning', 'Child Health', 'Antenatal',
+                        'Nutrition', 'Postnatal']
+            default_services = [{'specialty.name':x, 'is_main_specialty':False}
+                                for x  in default_services ]
 
         age_groups = [('0 - 4',0,5), ('5 - 9', 5,10), ('10 - 19', 10, 20),
                       ('20 - 59', 20, 60), ('60+', 60, None),
@@ -377,7 +390,6 @@ class ServiceUtilisationReport(Report):
                                                   'appointment_type'])
 
 
-        service_counts = []
         named_age_groups = [('age_group%d'%i, x[1], x[2]) for i,x in
                             enumerate(age_groups)]
         age_grouper = make_age_grouper(named_age_groups, start_date,
@@ -388,6 +400,8 @@ class ServiceUtilisationReport(Report):
         make_row = lambda t : Counter(total = t,male=0, female=0,
                                  **dict([(x[0], 0) for x in named_age_groups]))
         total_line = make_row(0)
+        service_counts = dict([(x['specialty.name'], make_row(0))
+                              for x in default_services])
         for specialty, appts in groupby(appointments,
                                         lambda x: x['speciality.name']):
             appts = list(appts)
@@ -395,8 +409,10 @@ class ServiceUtilisationReport(Report):
             spec_count.update(Counter(map(gender_grouper, appts)) +
                                           Counter(map(age_grouper, appts)))
 
-            service_counts.append((specialty, dict(spec_count)))
+            service_counts.setdefault(specialty, Counter()).update(spec_count)
             total_line.update(spec_count)
+        service_counts = service_counts.items()
+        service_counts.sort(key=lambda x: x[0])
         localcontext.update(start_date=start_date,
                             end_date=end_date-timedelta(0,2),
                             service_counts=service_counts,
