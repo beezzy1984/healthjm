@@ -29,7 +29,8 @@ def register():
         PathologyCategory, 
         PathologyGroup,
         Pathology,
-        DiseaseMembers,
+        # DiseaseMembers, # removed due to 
+            #WARNING:init:unable to add 'UNIQUE(uuid)' constraint on table gnuhealth_disease_group_members !
         ProcedureCode,
         PatientData,
         PatientEvaluation, 
