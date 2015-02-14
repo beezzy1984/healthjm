@@ -143,6 +143,8 @@ class PartyPatient (ModelSQL, ModelView):
 
     marital_status = fields.Selection([(None, '')]+MARITAL_STATUSES,
                                       'Marital Status', sort=False)
+    marital_status_display = fields.Function(fields.Char('Marital Status'),
+                                             'get_marital_status_display')
 
     # gender vs sex: According to the AMA Manual of Style :
     # Gender refers to the psychological/societal aspects of being male or female,
@@ -371,6 +373,9 @@ class PartyPatient (ModelSQL, ModelView):
     def get_sex_display(self, field_name):
         sex_dict = dict(SEX_OPTIONS)
         return sex_dict.get(self.sex, '')
+
+    def get_marital_status_display(s,n):
+        return make_selection_display()(s,'marital_status')
 
 
 BloodDict = dict([('{}{}'.format(t,r),(t,r)) for t in ['A','B','AB','O']
