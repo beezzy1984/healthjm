@@ -791,7 +791,7 @@ class DomiciliaryUnit(ModelSQL, ModelView):
     'Domiciliary Unit'
     __name__ = 'gnuhealth.du'
 
-    name = fields.Char('Code', readonly=True)
+    name = fields.Char('Code', required=False, readonly=True)
     address_street_num = fields.Char('Street Number', size=8)
     address_post_office = fields.Many2One(
         'country.post_office', 'Post Office (JM)', help="Closest Post Office, Jamaica only",

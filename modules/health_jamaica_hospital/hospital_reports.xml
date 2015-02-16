@@ -6,7 +6,6 @@
         <record model="ir.action.report" id="health_jamaica_primarycare.jmreport_facesheet">
             <field name="extension"></field>
             <field name="report">health_jamaica_hospital/report/facesheet.odt</field>
-        </record>action" ref="jmreport_facesheet_hosp"/> 
-        </record> -->
+        </record>
 	</data>
 </tryton>
