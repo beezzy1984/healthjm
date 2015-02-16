@@ -34,7 +34,7 @@ from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
-from trytond.config import config as CONFIG
+from trytond.config import CONFIG
 
 from .tryton_utils import (negate_clause, replace_clause_column,
                            make_selection_display, get_timezone,
@@ -80,7 +80,7 @@ ALTERNATIVE_ID_TYPES = [
         ('nonjm_license', 'Drivers License (non-JM)'),
         ('other', 'Other')]
 
-SYNC_ID=CONFIG.getint('synchronisation','id',1)
+SYNC_ID=int(CONFIG.get('synchronisation_id','1'))
 # Default sync ID to 1 so it doesn't think it's the master
 
 NNre = re.compile('(%?)NN-(.*)', re.I)
