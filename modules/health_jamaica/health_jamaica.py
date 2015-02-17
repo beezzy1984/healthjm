@@ -392,7 +392,7 @@ class PatientData(ModelSQL, ModelView):
             ('is_patient', '=', True),
             ('is_person', '=', True),
             ],
-        states = {'readonly': Eval('id', 0) > 0},
+        # states = {'readonly': Eval('id', 0) > 0},
         help="Person that is this patient")
 
     ses = fields.Selection([
