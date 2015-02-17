@@ -5,14 +5,43 @@ from trytond.pyson import Eval, PYSONEncoder, Date
 from trytond.transaction import Transaction
 from trytond.pool import Pool
 from trytond.report import Report
-from .tryton_utils import get_timezone
+from .tryton_utils import get_timezone, get_start_of_day, get_start_of_next_day
 
 __all__ = ('DailyPatientRegister', )
 
 class BaseReport(Report):
-    pass
+    '''defines basic data elements that are passed to all health_jamaica
+    related reports.'''
+    __name__ = 'health_jamaica.report_base'
 
-class DailyPatientRegister(Report):
+    @classmethod
+    def parse(cls, report, records, data, localcontext):
+        pool = Pool()
+        Institution = pool.get('gnuhealth.institution')
+        Company = pool.get('company.company')
+        tz = get_timezone()
+
+        localcontext.update(institution=None, sector=None)
+
+        if data.get('institution', False):
+            localcontext['institution'] = Institution(data['institution'])
+        else:
+            institution = Institution.get_institution()
+            if institution:
+                localcontext['institution'] = institution
+
+        if localcontext.get('institution', False):
+            osectors = localcontext['institution'].operational_sectors
+            if osectors:
+                localcontext['sector'] = osectors[0].operational_sector
+
+        localcontext['now_date']= datetime.now(timezone)
+
+        return super(BaseReport, cls).parse(report, records, data,
+                                                      localcontext)
+
+
+class DailyPatientRegister(BaseReport):
     __name__ = 'health_jamaica.report_patient_register'
 
     @classmethod
