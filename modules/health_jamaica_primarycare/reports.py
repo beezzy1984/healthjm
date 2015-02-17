@@ -12,6 +12,7 @@ from trytond.pyson import Eval, Not, Bool, PYSONEncoder
 from trytond.wizard import (Wizard, StateView, StateTransition, Button,
                             StateAction)
 from ..health_jamaica import tryton_utils as utils
+from ..health_jamaica.reports import BaseReport
 from ..health_jamaica.wizards import PatientRegisterModel
 
 __all__ = ['SyndromicSurveillanceWizardModel', 'SyndromicSurveillanceWizard',
@@ -101,6 +102,8 @@ class SyndromicSurveillanceReport(Report):
             osectors = localcontext['institution'].operational_sectors
             if osectors:
                 localcontext['sector'] = osectors[0].operational_sector
+            else:
+                localcontext['sector'] = ''
             localcontext['parish'] = ''
             for addr in localcontext['institution'].name.addresses:
                 if addr.subdivision:
@@ -364,6 +367,8 @@ class ServiceUtilisationReport(Report):
             osectors = institution.operational_sectors
             if osectors:
                 localcontext['sector'] = osectors[0].operational_sector
+            else:
+                localcontext['sector'] = ''
             localcontext['parish'] = ''
             for addr in institution.name.addresses:
                 if addr.subdivision:
