@@ -4,6 +4,8 @@ import pytz
 from os import path as ospath
 from trytond.transaction import Transaction
 from trytond.pool import Pool
+from datetime import date, datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 _cached_timezone = None
 
@@ -37,7 +39,8 @@ def make_selection_display():
     return _get_x_display
 
 def get_timezone():
-
+    '''returns the current timezone specified for the company/facility 
+    or the default which is the value in /etc/localtime'''
     global _cached_timezone
     if _cached_timezone:
         return _cached_timezone
@@ -58,6 +61,64 @@ def get_timezone():
 
     return _cached_timezone
 
+def get_start_of_day(d, tz=None):
+    '''returns a datetime object representing midnight at the start of
+    the datetime passed in.'''
+    dt = d if isinstance(d, date) else d.date()
+    return datetime(*dt.timetuple()[:6], tzinfo=(tz if tz else d.tzinfo))
+
+def get_start_of_next_day(d, tz=None):
+    return get_start_of_day(d+timedelta(1), tz)
+
+def get_dob(age, ref_date=None):
+    '''returns the oldest date of birth for the age passed in'''
+    if ref_date is None:
+        ref_date = date.today()
+    return ref_date - relativedelta(years=age)
+
+def get_age_in_years(dob, ref_date=None):
+    '''returns just the years portion of the full year,month,day age'''
+
+    if dob is None:
+        return None
+    ref_date = ref_date or date.today()
+    full_age = relativedelta(ref_date, dob)
+    return full_age.years
+
+
+def get_epi_week(d=None):
+    '''
+    Returns a tuple containing two date objects and an integer. They
+    represent (sunday, saturday, weeknum) for the epidemiological week
+    in which the date passed in <d> belongs.
+    '''
+    if d is None:
+        d = date.today()
+
+    dday = d.isoweekday()
+    if dday == 7: 
+        weekstart = d
+    else:
+        # rewind to the previous Sunday
+        weekstart = d - timedelta(dday)
+
+    weekend = weekstart + timedelta(6)
+
+    jan1 = date(weekend.year, 1,1)
+    jan1_wkday = jan1.isoweekday()%7 # modulo with 7 since we want Sunday=0
+
+    dyear = weekend.year
+    dweek = int(weekend.strftime('%U'))
+    if jan1_wkday > 0: # year doesn't start on a Sunday. Life is hard
+        if jan1_wkday < 4:
+            dweek += 1
+        elif dweek == 0 :
+            dweek = 53
+            dyear = weekstart.year
+
+    return (weekstart, weekend, dyear, dweek)
+
+
 def is_not_synchro():
     '''
     returns True if the effective user id of the transaction is
@@ -65,3 +126,4 @@ def is_not_synchro():
     '''
     t = Transaction()
     return (t.user>0)
+

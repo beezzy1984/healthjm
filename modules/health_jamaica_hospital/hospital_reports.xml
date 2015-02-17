@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<tryton>
+	<data>
+    <!-- Hospital Face Sheet -->
+        <!-- Override the Primary Care facesheet -->
+        <record model="ir.action.report" id="health_jamaica_primarycare.jmreport_facesheet">
+            <field name="extension"></field>
+            <field name="report">health_jamaica_hospital/report/facesheet.odt</field>
+        </record>
+	</data>
+</tryton>

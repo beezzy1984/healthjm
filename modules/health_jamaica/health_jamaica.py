@@ -34,7 +34,7 @@ from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
-from trytond.config import config as CONFIG
+from trytond.config import CONFIG
 
 from .tryton_utils import (negate_clause, replace_clause_column,
                            make_selection_display, get_timezone,
@@ -80,7 +80,7 @@ ALTERNATIVE_ID_TYPES = [
         ('nonjm_license', 'Drivers License (non-JM)'),
         ('other', 'Other')]
 
-SYNC_ID=CONFIG.getint('synchronisation','id',1)
+SYNC_ID=int(CONFIG.get('synchronisation_id','1'))
 # Default sync ID to 1 so it doesn't think it's the master
 
 NNre = re.compile('(%?)NN-(.*)', re.I)
@@ -143,6 +143,8 @@ class PartyPatient (ModelSQL, ModelView):
 
     marital_status = fields.Selection([(None, '')]+MARITAL_STATUSES,
                                       'Marital Status', sort=False)
+    marital_status_display = fields.Function(fields.Char('Marital Status'),
+                                             'get_marital_status_display')
 
     # gender vs sex: According to the AMA Manual of Style :
     # Gender refers to the psychological/societal aspects of being male or female,
@@ -193,8 +195,8 @@ class PartyPatient (ModelSQL, ModelView):
             # searching for NN- records, so auto-append verified=False
             operand = u''.join(NNre.split(operand))
             if operand == u'%%': operand = '%'
-            return ['AND', (('ref',operator, operand),
-                            ('party_warning_ack','=', False))]
+            return ['AND', ('ref',operator, operand),
+                           ('party_warning_ack','=', False)]
         else:
             return [replace_clause_column(clause, 'ref')]
 
@@ -354,12 +356,12 @@ class PartyPatient (ModelSQL, ModelView):
     @classmethod
     def search_alt_ids(cls, field_name, clause):
         if field_name == 'medical_record_num':
-            return ['AND',(('alternative_ids.alternative_id_type','=','medical_record'),
-                    ('alternative_ids.code',)+tuple(clause[1:]))]
+            return ['AND',('alternative_ids.alternative_id_type','=','medical_record'),
+                    ('alternative_ids.code',)+tuple(clause[1:])]
         else:
-            return ['AND',(
+            return ['AND',
             ('alternative_ids.alternative_id_type','!=','medical_record'),
-            ('alternative_ids.code', clause[1], clause[2]))]
+            ('alternative_ids.code', clause[1], clause[2])]
 
     def get_person_field(self, field_name):
         return getattr(self.name, field_name)
@@ -371,6 +373,9 @@ class PartyPatient (ModelSQL, ModelView):
     def get_sex_display(self, field_name):
         sex_dict = dict(SEX_OPTIONS)
         return sex_dict.get(self.sex, '')
+
+    def get_marital_status_display(s,n):
+        return make_selection_display()(s,'marital_status')
 
 
 BloodDict = dict([('{}{}'.format(t,r),(t,r)) for t in ['A','B','AB','O']
@@ -387,7 +392,7 @@ class PatientData(ModelSQL, ModelView):
             ('is_patient', '=', True),
             ('is_person', '=', True),
             ],
-        states = {'readonly': Eval('id', 0) > 0},
+        # states = {'readonly': Eval('id', 0) > 0},
         help="Person that is this patient")
 
     ses = fields.Selection([
@@ -462,12 +467,12 @@ class PatientData(ModelSQL, ModelView):
     @classmethod
     def search_alt_ids(cls, field_name, clause):
         if field_name == 'medical_record_num':
-            return ['AND',(('name.alternative_ids.alternative_id_type','=','medical_record'),
-                    ('name.alternative_ids.code',)+tuple(clause[1:]))]
+            return ['AND',('name.alternative_ids.alternative_id_type','=','medical_record'),
+                    ('name.alternative_ids.code',)+tuple(clause[1:])]
         else:
-            return ['AND',(
+            return ['AND',
             ('name.alternative_ids.alternative_id_type','!=','medical_record'),
-            ('name.alternative_ids.code', clause[1], clause[2]))]
+            ('name.alternative_ids.code', clause[1], clause[2])]
 
     @classmethod
     def search_unidentified(cls, field_name, clause):
@@ -748,6 +753,10 @@ class PartyAddress(ModelSQL, ModelView):
         help="Landmark or additional directions")
     full_address = fields.Function(fields.Text('Full Address'),
             'get_full_address')
+    simple_address = fields.Function(fields.Text('Simple Address'),
+            'get_full_address')
+    relationship_display = fields.Function(fields.Char('Relationship'),
+                                           'get_relationship_display')
 
     @classmethod
     def default_country(cls):
@@ -772,21 +781,28 @@ class PartyAddress(ModelSQL, ModelView):
                 addr.append(u' '.join(line[:]))
                 line=[]
 
+            if name == 'simple_address' :
+                return '\n'.join(addr)
+
             if self.subdivision:
                 # if not self.district_community and self.district
                 line.append(self.subdivision.name)
-            line.append(self.country.name)
+
+            # line.append(self.country.name)
 
             addr.append(u' '.join(line))
             return (u'\r\n').join(addr)
         else:
             return super(PartyAddress, self).get_full_address(name)
 
+    def get_relationship_display(self, name):
+        return make_selection_display()(self, 'relationship')
+
 class DomiciliaryUnit(ModelSQL, ModelView):
     'Domiciliary Unit'
     __name__ = 'gnuhealth.du'
 
-    name = fields.Char('Code', readonly=True)
+    name = fields.Char('Code', required=False, readonly=True)
     address_street_num = fields.Char('Street Number', size=8)
     address_post_office = fields.Many2One(
         'country.post_office', 'Post Office (JM)', help="Closest Post Office, Jamaica only",
@@ -814,6 +830,8 @@ class DomiciliaryUnit(ModelSQL, ModelView):
 
     full_address = fields.Function(fields.Text('Full Address'),
             'get_full_address')
+    simple_address = fields.Function(fields.Text('Address'),
+                                     'get_full_address')
 
     @classmethod
     def default_address_country(cls):
@@ -829,7 +847,7 @@ class DomiciliaryUnit(ModelSQL, ModelView):
             return self.address_city or self.address_municipality
 
     def get_full_address(self, name):
-        if self.address_country and self.address_country.id == JAMAICA_ID:
+        if self.address_country:
             addr,line = [],[]
             if self.address_street_num: line.append(self.address_street_num)
             if self.address_street: line.append(','.join([self.address_street,'']))
@@ -837,15 +855,18 @@ class DomiciliaryUnit(ModelSQL, ModelView):
             if line:
                 addr.append(u' '.join(line[:]))
                 line =[]
-            if self.address_district_community and self.address_district_community.id:
-                line.append(','.join([self.address_district_community.name,'']))
+            if self.address_country.id == JAMAICA_ID:
+                if self.address_district_community and self.address_district_community.id:
+                    line.append(','.join([self.address_district_community.name,'']))
 
-            if self.address_post_office:
-                line.append(self.address_post_office.name)
+                if self.address_post_office:
+                    line.append(self.address_post_office.name)
 
-            if line:
-                addr.append(u' '.join(line[:]))
-                line=[]
+                if line:
+                    addr.append(u' '.join(line[:]))
+                    line=[]
+            if name == 'simple_address': # stop now. Don't attach subdiv + country
+                return '\n'.join(addr)
 
             if self.address_subdivision:
                 # if not self.district_community and self.district
@@ -854,6 +875,7 @@ class DomiciliaryUnit(ModelSQL, ModelView):
 
             addr.append(u' '.join(line))
             return (u'\r\n').join(addr)
+
 
     @classmethod
     def generate_du_code(cls, prefix, *args):
@@ -932,10 +954,10 @@ class HealthInstitution(ModelSQL, ModelView):
 
     @classmethod
     def search_main_specialty(cls, name, clause):
-        return ['AND',[
+        return ['AND',
             ('specialties.is_main_specialty','=',True),
             replace_clause_column(clause, 'specialties.specialty.id')
-        ]]
+        ]
 
     @classmethod
     def set_main_specialty(cls, instances, field_name, value):
@@ -1002,10 +1024,10 @@ class HealthProfessional(ModelSQL, ModelView):
 
     @classmethod
     def search_main_specialty(cls, name, clause):
-        return ['AND',[
+        return ['AND',
             ('specialties.is_main_specialty','=',True),
             replace_clause_column(clause, 'specialties.specialty.id')
-        ]]
+        ]
 
     @classmethod
     def set_main_specialty(cls, instances, field_name, value):
