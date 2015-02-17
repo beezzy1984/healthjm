@@ -753,6 +753,10 @@ class PartyAddress(ModelSQL, ModelView):
         help="Landmark or additional directions")
     full_address = fields.Function(fields.Text('Full Address'),
             'get_full_address')
+    simple_address = fields.Function(fields.Text('Simple Address'),
+            'get_full_address')
+    relationship_display = fields.Function(fields.Char('Relationship'),
+                                           'get_relationship_display')
 
     @classmethod
     def default_country(cls):
@@ -777,15 +781,22 @@ class PartyAddress(ModelSQL, ModelView):
                 addr.append(u' '.join(line[:]))
                 line=[]
 
+            if name == 'simple_address' :
+                return '\n'.join(addr)
+
             if self.subdivision:
                 # if not self.district_community and self.district
                 line.append(self.subdivision.name)
-            line.append(self.country.name)
+
+            # line.append(self.country.name)
 
             addr.append(u' '.join(line))
             return (u'\r\n').join(addr)
         else:
             return super(PartyAddress, self).get_full_address(name)
+
+    def get_relationship_display(self, name):
+        return make_selection_display()(self, 'relationship')
 
 class DomiciliaryUnit(ModelSQL, ModelView):
     'Domiciliary Unit'
@@ -819,6 +830,8 @@ class DomiciliaryUnit(ModelSQL, ModelView):
 
     full_address = fields.Function(fields.Text('Full Address'),
             'get_full_address')
+    simple_address = fields.Function(fields.Text('Address'),
+                                     'get_full_address')
 
     @classmethod
     def default_address_country(cls):
@@ -834,7 +847,7 @@ class DomiciliaryUnit(ModelSQL, ModelView):
             return self.address_city or self.address_municipality
 
     def get_full_address(self, name):
-        if self.address_country and self.address_country.id == JAMAICA_ID:
+        if self.address_country:
             addr,line = [],[]
             if self.address_street_num: line.append(self.address_street_num)
             if self.address_street: line.append(','.join([self.address_street,'']))
@@ -842,15 +855,18 @@ class DomiciliaryUnit(ModelSQL, ModelView):
             if line:
                 addr.append(u' '.join(line[:]))
                 line =[]
-            if self.address_district_community and self.address_district_community.id:
-                line.append(','.join([self.address_district_community.name,'']))
+            if self.address_country.id == JAMAICA_ID:
+                if self.address_district_community and self.address_district_community.id:
+                    line.append(','.join([self.address_district_community.name,'']))
 
-            if self.address_post_office:
-                line.append(self.address_post_office.name)
+                if self.address_post_office:
+                    line.append(self.address_post_office.name)
 
-            if line:
-                addr.append(u' '.join(line[:]))
-                line=[]
+                if line:
+                    addr.append(u' '.join(line[:]))
+                    line=[]
+            if name == 'simple_address': # stop now. Don't attach subdiv + country
+                return '\n'.join(addr)
 
             if self.address_subdivision:
                 # if not self.district_community and self.district
@@ -859,6 +875,7 @@ class DomiciliaryUnit(ModelSQL, ModelView):
 
             addr.append(u' '.join(line))
             return (u'\r\n').join(addr)
+
 
     @classmethod
     def generate_du_code(cls, prefix, *args):
