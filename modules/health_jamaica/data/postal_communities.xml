@@ -1040,7 +1040,7 @@
 		</record>
 		<record id="jmpo_P1217FA" model="country.post_office">
 			<field name="code">P1217FA</field>
-			<field name="subdivision" ref="country.jm-12" />
+			<field name="subdivision" ref="country.jm-11" />
 			<field name="name">Myersville P.O</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
@@ -21394,7 +21394,7 @@
 		</record>
 		<record id="jmdisco_4521" model="country.district_community">
 			<field name="code">D026BB-11</field><field name="post_office" ref="health_jamaica.jmpo_P11525F" />
-			<field name="name">Good Hope</field>
+			<field name="name">Good Hope (Joyland)</field>
 		</record>
 		<record id="jmdisco_4522" model="country.district_community">
 			<field name="code">1F59DD-11</field><field name="post_office" ref="health_jamaica.jmpo_P11525F" />
@@ -36148,5 +36148,44 @@
 			<field name="code">6785D9-04</field><field name="post_office" ref="health_jamaica.jmpo_G042C6E" />
 			<field name="name">Windsor Forest</field>
 		</record>
+
+	<!-- New communities add Feb 18, 2015 on advice from Medical Records
+		staff in Santa Cruz Centre of Excellence -->
+
+		<record id="jmdisco_C49109_11" model="country.district_community">
+			<field name="post_office" ref="health_jamaica.jmpo_P11525F"/>
+			<field name="code">C49109-11</field>
+			<field name="name">Burnt Ground</field>
+		</record>
+		<record id="jmdisco_C6B340_11" model="country.district_community">
+			<field name="post_office" ref="health_jamaica.jmpo_P11525F"/>
+			<field name="code">C6B340-11</field>
+			<field name="name">Waterloo</field>
+		</record>
+		<record id="jmdisco_619A0C_11" model="country.district_community">
+			<field name="post_office" ref="health_jamaica.jmpo_P11525F"/>
+			<field name="code">619A0C-11</field>
+			<field name="name">Seven Corners</field>
+		</record>
+		<record id="jmdisco_4F0BEC_11" model="country.district_community">
+			<field name="post_office" ref="health_jamaica.jmpo_P11525F"/>
+			<field name="code">4F0BEC-11</field>
+			<field name="name">Beadles Heights</field>
+		</record>
+		<record id="jmdisco_896E87_11" model="country.district_community">
+			<field name="post_office" ref="health_jamaica.jmpo_P11525F"/>
+			<field name="code">896E87-11</field>
+			<field name="name">Abraham</field>
+		</record>
+		<record id="jmdisco_7F4115_11" model="country.district_community">
+			<field name="post_office" ref="health_jamaica.jmpo_P11C1A0"/>
+			<field name="code">7F4115-11</field>
+			<field name="name">Dixon Land</field>
+		</record>
+		<record id="jmdisco_226093_11" model="country.district_community">
+			<field name="post_office" ref="health_jamaica.jmpo_P11C1A0"/>
+			<field name="code">226093-11</field>
+			<field name="name">New Alley</field>
+		</record>		
 	</data>
 </tryton>
