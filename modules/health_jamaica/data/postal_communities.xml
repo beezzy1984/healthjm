@@ -36157,11 +36157,6 @@
 			<field name="code">C49109-11</field>
 			<field name="name">Burnt Ground</field>
 		</record>
-		<record id="jmdisco_C6B340_11" model="country.district_community">
-			<field name="post_office" ref="health_jamaica.jmpo_P11525F"/>
-			<field name="code">C6B340-11</field>
-			<field name="name">Waterloo</field>
-		</record>
 		<record id="jmdisco_619A0C_11" model="country.district_community">
 			<field name="post_office" ref="health_jamaica.jmpo_P11525F"/>
 			<field name="code">619A0C-11</field>
