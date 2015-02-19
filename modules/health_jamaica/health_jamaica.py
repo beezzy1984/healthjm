@@ -1097,12 +1097,18 @@ class Appointment(ModelSQL, ModelView):
     @classmethod
     def validate(cls, appointments):
         super(Appointment, cls).validate(appointments)
+        tz = get_timezone()
+        now = datetime.now()
         for appt in appointments:
+            if appt.state == 'done' and appt.appointment_date > now:
+                cls.raise_user_error(
+                        "An appointment in the future cannot be marked done.")
+
             if appt.patient:
                 comp_startdate = datetime(*(appt.appointment_date.timetuple()[:3]+(0,0,0)),
-                                          tzinfo=get_timezone())
+                                          tzinfo=tz)
                 comp_enddate = datetime(*(appt.appointment_date.timetuple()[:3]+(23,59,59)),
-                                          tzinfo=get_timezone())
+                                          tzinfo=tz)
                 search_terms = ['AND',
                             ('patient','=',appt.patient),
                             ('appointment_date','>=',comp_startdate),
