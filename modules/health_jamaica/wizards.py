@@ -16,18 +16,24 @@ __all__ = ['PatientRegisterModel', 'PatientRegisterWizard',
            'OpenAppointmentReport']
 
 
-class PatientRegisterModel(ModelView):
-    '''Patient Evaluation Register'''
-    __name__ = 'healthjm.report.patientregister.start'
+
+class StartEndDateModel(ModelView):
+    '''Generic ModelView that has start and end date fields. '''
     on_or_after = fields.Date('Start date', required=True)
     on_or_before = fields.Date('End date')
     institution = fields.Many2One('gnuhealth.institution', 'Institution',
-                                  states={'readonly': True}, required=True)
+                                  required=True)
+
+
+class PatientRegisterModel(StartEndDateModel):
+    '''Patient Evaluation Register'''
+    __name__ = 'healthjm.report.patientregister.start'
     specialty = fields.Selection('get_specialty_list', 'Specialty')
 
     @classmethod
     def __setup__(cls):
         super(PatientRegisterModel, cls).__setup__()
+        cls.institution.states.update(readonly=True)
         cls._error_messages.update({
             'required_institution':'''Institution is required.\n
 Your user account is not assigned to an institution.

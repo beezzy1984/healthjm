@@ -35,7 +35,7 @@ class BaseReport(Report):
             if osectors:
                 localcontext['sector'] = osectors[0].operational_sector
 
-        localcontext['now_date']= datetime.now(timezone)
+        localcontext['now_date']= datetime.now(tz)
 
         return super(BaseReport, cls).parse(report, records, data,
                                                       localcontext)
