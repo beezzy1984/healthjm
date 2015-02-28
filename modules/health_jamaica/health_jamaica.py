@@ -43,7 +43,7 @@ from .tryton_utils import (negate_clause, replace_clause_column,
 __all__ = ['PartyPatient', 'PatientData', 'AlternativePersonID', 'PostOffice',
     'DistrictCommunity', 'DomiciliaryUnit', 'Newborn', 'HealthInstitution',
     'Insurance', 'PartyAddress', 'HealthProfessional', 'Appointment', 
-    'DiagnosticHypothesis', 'PathologyGroup', 'PatientEvaluation',
+    'DiagnosticHypothesis', 'PathologyGroup', 'PatientEvaluation', 'Pathology',
     'SignsAndSymptoms', 'OccupationalGroup', 'HealthProfessionalSpecialties',
     'HealthInstitutionSpecialties', 'ProcedureCode']
 __metaclass__ = PoolMeta
@@ -1080,19 +1080,19 @@ class Appointment(ModelSQL, ModelView):
     def default_state():
         return 'free'
 
-    @classmethod
-    def __register__(cls, module_name):
-        '''hack to rename the window title from free to scheduled'''
-        super(Appointment, cls).__register__(module_name)
-        cursor = Transaction().cursor
-        # update ir_action_act_window_domain table to change name from free
-        cursor.execute('Select count(*) from ir_action_act_window_domain where name=%s',('Free',))
-        freetab = cursor.fetchone()
-        if freetab and freetab[0] == 1:
-            sql = 'UPDATE ir_action_act_window_domain set name=%s where name=%s'
-            parms = ('Scheduled', 'Free')
-            cursor.execute(sql, parms)
-            cursor.commit()
+    # @classmethod
+    # def __register__(cls, module_name):
+    #     '''hack to rename the window title from free to scheduled'''
+    #     super(Appointment, cls).__register__(module_name)
+    #     cursor = Transaction().cursor
+    #     # update ir_action_act_window_domain table to change name from free
+    #     cursor.execute('Select count(*) from ir_action_act_window_domain where name=%s',('Free',))
+    #     freetab = cursor.fetchone()
+    #     if freetab and freetab[0] == 1:
+    #         sql = 'UPDATE ir_action_act_window_domain set name=%s where name=%s'
+    #         parms = ('Scheduled', 'Free')
+    #         cursor.execute(sql, parms)
+    #         cursor.commit()
 
     @classmethod
     def validate(cls, appointments):
@@ -1159,14 +1159,27 @@ class ProcedureCode(ModelSQL, ModelView):
 class PathologyGroup(ModelSQL, ModelView):
     'Pathology Groups'
     __name__ = 'gnuhealth.pathology.group'
-    members = fields.One2Many ('gnuhealth.disease_group.members',
-        'disease_group','Members', readonly=True)
     track_first = fields.Boolean('Track first diagnosis',
-                                 help='Ask for status of first-diagnosis of diseases in this category upon creation of a diagnisis or diagnostic hypothesis',
+            help='Ask for status of first-diagnosis of diseases in this category upon creation of a diagnisis or diagnostic hypothesis',
                                 )
 
     @staticmethod
     def default_track_first():
+        return False
+
+
+class Pathology(ModelSQL, ModelView):
+    'Diseases'
+    __name__ = 'gnuhealth.pathology'
+
+    track_first = fields.Function(fields.Boolean('Track first diagnosis'),
+                                  'get_track_first')
+
+    def get_track_first(self, name):
+        for g in self.groups:
+            if g.disease_group.track_first:
+                return True
+
         return False
 
 
@@ -1177,9 +1190,9 @@ class DiagnosticHypothesis(ModelSQL, ModelView):
     # show_first_diagnosis = fields.Function(fields.Boolean('show first diag'),
     #                                        'get_sfd')
     first_diagnosis = fields.Boolean('First diagnosis', 
-                         help='First time being diagnosed with this ailment',
-                         states={'invisible':Bool(Eval('pathology.groups.disease_group.track_first'))},
-                         depends=['pathology'])
+            help='First time being diagnosed with this ailment',
+            states={'readonly': Not(Bool(Eval('pathology.track_first')))},
+            depends=['pathology'])
 
     @staticmethod
     def default_first_diagnosis():
@@ -1219,10 +1232,6 @@ class PatientEvaluation(ModelSQL, ModelView):
     'Patient Evaluation'
     __name__ = 'gnuhealth.patient.evaluation'
 
-    diagnostic_hypothesis = fields.One2Many(
-        'gnuhealth.diagnostic_hypothesis',
-        'evaluation', 'Hypotheses / DDx', help='Other Diagnostic Hypotheses /'
-        ' Differential Diagnosis (DDx)', states={'required':False})
     first_visit_this_year = fields.Boolean('First visit this year',
                                            help='First visit this year')
 
@@ -1248,9 +1257,12 @@ class PatientEvaluation(ModelSQL, ModelView):
 
     @fields.depends('patient', 'evaluation_start', 'institution')
     def on_change_with_first_visit_this_year(self, *arg, **kwarg):
-        if self.institution and self.patient: # ToDo: Make sure to test for THIS YEAR
+        if self.institution and self.patient: 
             M = Pool().get('gnuhealth.patient.evaluation')
-            search_parms = [('evaluation_start','<',self.evaluation_start),
+            search_parms = ['AND',
+                            ('evaluation_start','<',self.evaluation_start),
+                            ('evaluation_start','>=',
+                             datetime(self.evaluation_start.year,1,1,0,0,0)),
                             ('patient','=',self.patient.id),
                             ('institution', '=', self.institution.id)]
 
@@ -1283,12 +1295,10 @@ class SignsAndSymptoms(ModelSQL, ModelView):
     'Evaluation Signs and Symptoms'
     __name__ = 'gnuhealth.signs_and_symptoms'
 
-    sign_or_symptom = fields.Selection([
-        (None, ''),
-        ('sign', 'Sign'),
-        ('symptom', 'Symptom')],
-        'Subjective / Objective', required=False, 
-        states={'invisible':True})
+    @classmethod
+    def __setup__(cls):
+        super(SignsAndSymptoms, cls).__setup__()
+        cls.sign_or_symptom.states = {'invisible':True}
 
     @staticmethod
     def default_sign_or_symptom():

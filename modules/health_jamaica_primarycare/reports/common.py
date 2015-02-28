@@ -7,6 +7,15 @@ __all__ = ['STATE_RO', 'STATE_INVRO', 'make_age_grouper', 'utils']
 STATE_RO={'readonly':True}
 STATE_INVRO={'readonly':True, 'invisible':True}
 
+# make_age_grouper: 
+# takes a list of triples with each triple representing :
+# (age_group_name, min_age, age_too_old)
+# Comparisons are done as min_age<= current_age < age_too_old
+# So for the age group 12 - 18 years. You would put ('12-18', 12,19)
+# The logic here is that a person who's 19th birthday is tomorrow is still
+# 18 years old today. 
+
+
 def make_age_grouper(age_groups, ref_date, dob_field='patient.dob'):
     age_group_dict = {}
     if len(age_groups) == 2 and age_groups[0][2] == age_groups[1][1]:

@@ -22,18 +22,11 @@ class StartEndDateModel(ModelView):
     on_or_after = fields.Date('Start date', required=True)
     on_or_before = fields.Date('End date')
     institution = fields.Many2One('gnuhealth.institution', 'Institution',
-                                  required=True)
-
-
-class PatientRegisterModel(StartEndDateModel):
-    '''Patient Evaluation Register'''
-    __name__ = 'healthjm.report.patientregister.start'
-    specialty = fields.Selection('get_specialty_list', 'Specialty')
+                                  required=True, states={'readonly':True})
 
     @classmethod
     def __setup__(cls):
-        super(PatientRegisterModel, cls).__setup__()
-        cls.institution.states.update(readonly=True)
+        super(StartEndDateModel, cls).__setup__()
         cls._error_messages.update({
             'required_institution':'''Institution is required.\n
 Your user account is not assigned to an institution.
@@ -49,6 +42,12 @@ Please contact your system administrator to have this resolved.'''
         except AttributeError:
             self.raise_user_error('required_institution')
         return institution
+
+
+class PatientRegisterModel(StartEndDateModel):
+    '''Patient Evaluation Register'''
+    __name__ = 'healthjm.report.patientregister.start'
+    specialty = fields.Selection('get_specialty_list', 'Specialty')
 
     @fields.depends('institution')
     def get_specialty_list(self):

@@ -11,6 +11,7 @@ from trytond.pyson import Eval, Not, Bool, PYSONEncoder
 from trytond.wizard import (Wizard, StateView, StateTransition, Button,
                             StateAction)
 # from trytond.modules.health_jamaica.reports import BaseReport
+from trytond.modules.health_jamaica.wizards import StartEndDateModel
 
 from .common import *
 
@@ -183,22 +184,22 @@ class SyndromicSurveillanceReport(Report):
 
 
 
-class SyndromicSurveillanceWizardModel(ModelView):
+class SyndromicSurveillanceWizardModel(StartEndDateModel):
     '''Syndromic Surveillance for'''
     __name__ = 'healthjm_primarycare.report.syndromic_surveillance.start'
     selectdate = fields.Date('Select date', required=True)
-    on_or_before = fields.Date('Week Ending', states=STATE_RO, help="Saturday")
     epi_week = fields.Integer('Week Number', states=STATE_INVRO,
                               help="Epidemiological Week")
     epi_week_year = fields.Integer('year', states=STATE_INVRO)
-    epi_week_display = fields.Char('Week number', size=12, states=STATE_RO)
-    on_or_after = fields.Date('start date', states=STATE_INVRO)
-    institution = fields.Many2One('gnuhealth.institution', 'Institution',
-                                  states={'readonly': True}, required=True)
+    epi_week_display = fields.Char('Week number', size=12, states=STATE_RO)    
 
     @classmethod
     def __setup__(cls):
         super(SyndromicSurveillanceWizardModel, cls).__setup__()
+        cls.on_or_before.string = 'Week Ending'
+        cls.on_or_before.help = 'Saturday'
+        cls.on_or_before.states = {'readonly':True}
+        cls.on_or_after.states = {'invisible':True}
         cls._error_messages.update({
             'required_institution':'''Institution is required.\n
 Your user account is not assigned to an institution.
