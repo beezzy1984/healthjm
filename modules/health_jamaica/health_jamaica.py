@@ -1190,23 +1190,24 @@ class DiagnosticHypothesis(ModelSQL, ModelView):
     # show_first_diagnosis = fields.Function(fields.Boolean('show first diag'),
     #                                        'get_sfd')
     first_diagnosis = fields.Boolean('First diagnosis', 
-            help='First time being diagnosed with this ailment',
-            states={'readonly': Not(Bool(Eval('pathology.track_first')))},
-            depends=['pathology'])
+            help='First time being diagnosed with this ailment')
 
     @staticmethod
     def default_first_diagnosis():
         return False
 
-    @fields.depends('pathology')
-    def on_change_pathology(self):
-        val = False
-        if self.pathology and self.pathology.groups:
-            for g in self.pathology.groups:
-                val |= g.disease_group.track_first
-        self._show_first_diagnosis = val
-        # ToDo: check if this is the first diagnosis for this disease
-        return {'first_diagnosis':val}
+    # @fields.depends('pathology', 'evaluation')
+    # def on_change_pathology(self):
+    #     val = False        
+    #     if self.pathology and self.pathology.track_first:
+    #         previous_diagnoses = PatientEvaluation.search_count([
+    #                 ('patient','=',self.evaluation.patient),
+    #                 ('diagnostic_hypothesis.pathology','=',self.pathology)
+    #         ])
+    #         if previous_diagnoses == 0:
+    #             val = True
+    #     return {'first_diagnosis':val}
+
 
     @classmethod
     def __setup__(cls):
