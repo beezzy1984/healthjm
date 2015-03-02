@@ -107,7 +107,7 @@ class ServiceUtilisationReport(Report):
         service_counts = service_counts.items()
         service_counts.sort(key=lambda x: x[0])
         localcontext.update(start_date=start_date,
-                            end_date=end_date-timedelta(0,2),
+                            end_date=end_date-timedelta(0,0.2),
                             service_counts=service_counts,
                             total_line=total_line,
                             now_date=datetime.now(timezone),)

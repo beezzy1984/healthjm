@@ -1,7 +1,8 @@
 
 from trytond.modules.health_jamaica import tryton_utils as utils
 
-__all__ = ['STATE_RO', 'STATE_INVRO', 'make_age_grouper', 'utils']
+__all__ = ['STATE_RO', 'STATE_INVRO', 'make_age_grouper', 'utils',
+           'mk_domain_clause']
 
 
 STATE_RO={'readonly':True}
@@ -13,7 +14,10 @@ STATE_INVRO={'readonly':True, 'invisible':True}
 # Comparisons are done as min_age<= current_age < age_too_old
 # So for the age group 12 - 18 years. You would put ('12-18', 12,19)
 # The logic here is that a person who's 19th birthday is tomorrow is still
-# 18 years old today. 
+# 18 years old today.
+# For the case of Unknown age, where dob is unset, the age group should
+# use values like ('unknown age', -1, None)
+# the low age must be negative and the upper limit should be None
 
 
 def make_age_grouper(age_groups, ref_date, dob_field='patient.dob'):
@@ -69,3 +73,17 @@ def make_age_grouper(age_groups, ref_date, dob_field='patient.dob'):
                              age_table.get(gfailover(age), None))
     return grouper
 
+
+
+def mk_domain_clause(code, column='signs_and_symptoms.clinical.code'):
+    '''returns a single domain clause to say column="<code>" '''
+    if ' - ' in code:
+        limits = code.split(' - ')
+        return ['AND',
+                (column, '>=', limits[0]),
+                (column, '<=', limits[1])
+        ]
+    elif isinstance(code, (list, tuple)):
+        return ['OR'] + [mk_domain_clause(k, column) for k in code]
+    else:
+        return (column, '=', code)

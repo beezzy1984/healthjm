@@ -100,18 +100,6 @@ class SyndromicSurveillanceReport(Report):
             counter.update(total = len(evaluation_list))
             return counter, evgroups
 
-        def mk_domain_clause(code, column='signs_and_symptoms.clinical.code'):
-            if ' - ' in code:
-                limits = code.split(' - ')
-                return ['AND',
-                        (column, '>=', limits[0]),
-                        (column, '<=', limits[1])
-                ]
-            elif isinstance(code, (list, tuple)):
-                return ['OR'] + [mk_domain_clause(k, column) for k in code]
-            else:
-                return (column, '=', code)
-
         total_line = Counter(Sun=0, Mon=0, Tue=0, Wed=0, Thu=0, Fri=0, Sat=0,
                              total=0)
         for heading, params in syndromes:
