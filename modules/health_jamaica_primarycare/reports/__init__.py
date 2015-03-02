@@ -5,11 +5,13 @@ from .service_utilisation import (ServiceUtilisationWizardModel,
 from .syndromic import (SyndromicSurveillanceWizardModel, 
                         SyndromicSurveillanceWizard,
                         SyndromicSurveillanceReport)
-# from .mcsr import (MCSRWizardModel, MCSRWizard, MCSRReport)
+from .mcsr import (ClinicSummaryWizardModel, ClinicSummaryWizard,
+                   ClinicSummaryReport)
 
 
 __all__ = ['SyndromicSurveillanceWizardModel', 'SyndromicSurveillanceWizard',
            'SyndromicSurveillanceReport',
            'ServiceUtilisationWizardModel', 'ServiceUtilisationWizard',
-           'ServiceUtilisationReport']
+           'ServiceUtilisationReport', 'ClinicSummaryReport',
+           'ClinicSummaryWizard', 'ClinicSummaryWizardModel']
 
