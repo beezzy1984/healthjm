@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <tryton>
     <data>
+    <!-- Generic Start End Date Wizard View -->
+        <record model="ir.ui.view" id="view_startenddate_generic">
+            <field name="model">healthjm.report.startenddate_generic</field>
+            <field name="type">form</field>
+            <field name="name">wizard_startenddate</field>
+        </record>
+
 <!-- Patient Register Report -->
         <record model="ir.action.report" id="jmreport_patientregister">
             <field name="name">Patient Evaluation Register</field>

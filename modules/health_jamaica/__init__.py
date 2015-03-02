@@ -52,6 +52,7 @@ def register():
         HealthProfessionalSpecialties,
         HealthInstitutionSpecialties,
         AppointmentReport,
+        StartEndDateModel,
         module='health_jamaica', type_='model')
 
     Pool.register(

@@ -21,7 +21,7 @@ class BaseReport(Report):
         Company = pool.get('company.company')
         tz = get_timezone()
 
-        localcontext.update(institution=None, sector=None)
+        localcontext.update(institution=None, sector='', parish='')
 
         if data.get('institution', False):
             localcontext['institution'] = Institution(data['institution'])
@@ -34,6 +34,11 @@ class BaseReport(Report):
             osectors = localcontext['institution'].operational_sectors
             if osectors:
                 localcontext['sector'] = osectors[0].operational_sector
+
+            for addr in localcontext['institution'].name.addresses:
+                if addr.subdivision:
+                    localcontext['parish'] = addr.subdivision.name
+                    break
 
         localcontext['now_date']= datetime.now(tz)
 

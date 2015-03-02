@@ -13,12 +13,14 @@ from .reports import DailyPatientRegister
 
 __all__ = ['PatientRegisterModel', 'PatientRegisterWizard',
            'AppointmentReport', 'OpenAppointmentReportStart',
-           'OpenAppointmentReport']
+           'OpenAppointmentReport', 'StartEndDateModel']
 
 
 
 class StartEndDateModel(ModelView):
     '''Generic ModelView that has start and end date fields. '''
+    __name__ = 'healthjm.report.startenddate_generic'
+
     on_or_after = fields.Date('Start date', required=True)
     on_or_before = fields.Date('End date')
     institution = fields.Many2One('gnuhealth.institution', 'Institution',
