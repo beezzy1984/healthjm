@@ -137,23 +137,34 @@ class ClinicSummaryReport(BaseReport):
                                                     'first_visit_this_year',
                                                     'diagnostic_hypothesis'])
             newdiag = {'m':[],'f':[],'u':[]}
-            firstvisit = newdiag.copy()
+            firstvisit = {'m':[],'f':[],'u':[]}
             revisit = []
             age_grouper = make_age_grouper(age_groups, data['start_date'],
                                            'patient.name.dob')
             getsex = lambda x : x['patient.name.sex']
 
             for e in all_evals:
-                e['diagnostic_hypothesis'] = DiagnosticHypothesis.read(
-                                                    e['diagnostic_hypothesis'],
-                                                    ['pathology.code',
-                                                     'first_diagnosis'])
-                if e['diagnostic_hypothesis']['first_diagnosis']:
-                    newdiag[e['patient.name.sex']].append(e)
-                elif e['first_visit_this_year']:
-                    firstvisit[e['patient.name.sex']].append(e)
-                else:
-                    revisit.append(e)
+                newly_diagnosed = False
+                diagnostic_search_parm = ['AND',
+                        ('id','in',e['diagnostic_hypothesis'])
+                        ] + [mk_domain_clause(g, 'pathology.code')
+                             for g in group_mapping]
+                e['diagnostic_hypothesis'] = DiagnosticHypothesis.search_read(
+                                                    diagnostic_search_parm,
+                                                    fields_names = [
+                                                        'pathology.code',
+                                                        'first_diagnosis'])
+                for dh in e['diagnostic_hypothesis']:
+                    if dh['first_diagnosis']:
+                        newdiag[e['patient.name.sex']].append(e)
+                        newly_diagnosed = True
+                        break
+
+                if not newly_diagnosed:
+                    if e['first_visit_this_year']:
+                        firstvisit[e['patient.name.sex']].append(e)
+                    else:
+                        revisit.append(e)
 
             group_counts.append({
                     'name': disease_group_name,
@@ -245,7 +256,7 @@ class ClinicSummaryReport(BaseReport):
                             now_date=datetime.now(tz),)
 
 
-        print('{}\n\n{}\n\n{}'.format('-'*80, repr(localcontext), '-'*80))
+        # print('{}\n\n{}\n\n{}'.format('-'*80, repr(localcontext), '-'*80))
         return super(ClinicSummaryReport, cls).parse(
                         report, records, data, localcontext
                     )
