@@ -101,20 +101,16 @@ class ClinicSummaryReport(BaseReport):
                 ('<20', 0, 20), ('20-59', 20, 60), ('60+', 60, None),
                 ('Unknown', -1, None)
         ]
+        age_grouper = make_age_grouper(age_groups, data['start_date'],
+                                       'patient.name.dob')
 
         disease_groups = [
-                ('Diabetes', {'diagnosis':['E10 - E14.999z'],
-                              'age_groups': age_groups, 'signs': []}),
-                ('Hypertension', {
-                        'diagnosis':[('I10 - I10.999z',
-                                     'I15', 'I15.8', 'I15.9')],
-                        'age_groups':age_groups, 'signs': []
-                 }),
-                ('Diabetes and Hypertension', {
-                        'diagnosis':['E10 - E14.999z', ('I10 - I10.999z',
-                                     'I15', 'I15.8', 'I15.9')],
-                        'age_groups': age_groups, 'signs':[]
-                 })
+                ('Diabetes', ['E10 - E14.999z']),
+                ('Hypertension', [('I10 - I10.999z',
+                                   'I15', 'I15.8', 'I15.9')]),
+                ('Diabetes and Hypertension', ['E10 - E14.999z', 
+                                               ('I10 - I10.999z',
+                                                'I15', 'I15.8', 'I15.9')])
         ]
 
         search_criteria = ['AND',
@@ -125,11 +121,11 @@ class ClinicSummaryReport(BaseReport):
 
         group_counts = []
 
-        for disease_group_name, group_mapping in disease_groups:
+        for disease_group_name, disease_diagnosis in disease_groups:
             search_clause = search_criteria[:]
             search_clause.extend([mk_domain_clause(g,
                                    'diagnostic_hypothesis.pathology.code')
-                  for g in group_mapping['diagnosis']])
+                                  for g in disease_diagnosis])
             all_evals = Evaluation.search_read(search_clause, order=ordering, 
                                                fields_names=['id',
                                                     'patient.name.dob',
@@ -139,8 +135,6 @@ class ClinicSummaryReport(BaseReport):
             newdiag = {'m':[],'f':[],'u':[]}
             firstvisit = {'m':[],'f':[],'u':[]}
             revisit = []
-            age_grouper = make_age_grouper(age_groups, data['start_date'],
-                                           'patient.name.dob')
             getsex = lambda x : x['patient.name.sex']
 
             for e in all_evals:
@@ -148,7 +142,7 @@ class ClinicSummaryReport(BaseReport):
                 diagnostic_search_parm = ['AND',
                         ('id','in',e['diagnostic_hypothesis'])
                         ] + [mk_domain_clause(g, 'pathology.code')
-                             for g in group_mapping]
+                             for g in disease_diagnosis]
                 e['diagnostic_hypothesis'] = DiagnosticHypothesis.search_read(
                                                     diagnostic_search_parm,
                                                     fields_names = [
@@ -177,10 +171,32 @@ class ClinicSummaryReport(BaseReport):
         D['B'] = group_counts[:]
 
         #--------------------------------------------------------
-        # Curative section
+        # Curative section - regular
+
+        group_counts = []
+        age_groups = [('a0_4', 0, 5), ('a5_9', 5, 10), ('a10_14', 10, 15),
+                      ('a15_19', 15, 20), ('a20_', 20, None)]
+
+        age_grouper = make_age_grouper(age_groups, data['start_date'],
+                                       'patient.name.dob')
+        # redefine age_grouper since the age groups have changed
+
+        disease_groups = [
+                ('(E) Gastroenteritis', ['A09%']),
+                ('(F) Other G.I. Disorders', ['A00 - A08.999z']),
+                ('(G) Injuries', 'x'), # x marks the title
+                ('(G)(1) Intentional', ['X60 - X84.999z']),
+                ('(G)(2) Unintentional', ['Y60 - Y69.999z']),
+                ('(H) Musculoskeletal', ['M00 - M99.999z']),
+                ('(I) Leg Ulcers due to :', 'x'),
+                ('(I)(1) Diabetes', ['E10 - E14.999z', 'L97']),
+                ('(I)(2) Other Conditions', ['L97']),
+                ('(J) Genito-Urinary Diseases','x'),
+                
+        ]
 
 
-        D['C'] = []
+        D['C'] = group_counts[:]
 
         # if ((end_date - start_date) > timedelta(1.05)):
         #     localcontext['report_date_is_range'] = True

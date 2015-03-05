@@ -86,4 +86,7 @@ def mk_domain_clause(code, column='signs_and_symptoms.clinical.code'):
     elif isinstance(code, (list, tuple)):
         return ['OR'] + [mk_domain_clause(k, column) for k in code]
     else:
-        return (column, '=', code)
+        if '%' in code:
+            return (column, 'like', code)
+        else:
+            return (column, '=', code)
