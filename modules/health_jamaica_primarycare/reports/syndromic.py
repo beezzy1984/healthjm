@@ -57,7 +57,7 @@ class SyndromicSurveillanceReport(Report):
         syndromes = [
             ('Fever and Rash', {'signs':['R50.1', 'R21']}),
             ('Fever', {'signs':['R50.1'], 'age_groups':common_age_groups}),
-            ('Gastrointeritis', {'signs':['R19.7'],
+            ('Gastroenteritis', {'signs':['R19.7'],
                                  'age_groups':common_age_groups}),
             ('Accidents', {'signs':[], 'diagnosis':['V01 - X59'],
                            'age_groups':common_age_groups}),
