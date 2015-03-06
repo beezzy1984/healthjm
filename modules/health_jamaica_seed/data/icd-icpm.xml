@@ -114,84 +114,97 @@
 			<field name="description">CONTRACEPTIVE INSTRUCTION</field>
 			<field name="name">4-650</field>
 		</record>
-
-
 		<!-- ICD R Codes -->
 		<record id="R197" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-2" />
 			<field name="code">R19.7</field>
-			<field name="name">DIARRHOEA, UNSPECIFIED</field>
+			<field name="name">Diarrhoea, Unspecified</field>
 		</record>
 		<record id="R531" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-8" />
 			<field name="code">R53.1</field>
-			<field name="name">ASTHENIA (GENERALIZED WEAKNESS)</field>
+			<field name="name">Asthenia (Generalized Weakness)</field>
 		</record>
 		<record id="R532" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-8" />
 			<field name="code">R53.2</field>
-			<field name="name">DEBILITY</field>
+			<field name="name">Debility</field>
 		</record>
 		<record id="R533" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-8" />
 			<field name="code">R53.3</field>
-			<field name="name">GENERAL PHYSICAL DETERIORATION</field>
+			<field name="name">General Physical Deterioration</field>
 		</record>
 		<record id="R534" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-8" />
 			<field name="code">R53.4</field>
-			<field name="name">LETHARGY</field>
+			<field name="name">Lethargy</field>
 		</record>
 		<record id="R535" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-8" />
 			<field name="code">R53.5</field>
-			<field name="name">TIREDNESS</field>
+			<field name="name">Tiredness</field>
 		</record>
 		<record id="R295" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-4" />
 			<field name="code">R29.5</field>
-			<field name="name">JOINT PAIN OR STIFFNESS (ARTHRALGIA)</field>
+			<field name="name">Joint Pain Or Stiffness (arthralgia)</field>
 		</record>
 		<record id="R297" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-4" />
 			<field name="code">R29.7</field>
-			<field name="name">JOINT SWELLING </field>
+			<field name="name">Joint Swelling </field>
 		</record>
 		<record id="R602" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-8" />
 			<field name="code">R60.2</field>
-			<field name="name">PERIARTICULAR OEDEMA</field>
+			<field name="name">Periarticular Oedema</field>
 		</record>
 		<record id="R523" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-8" />
 			<field name="code">R52.3</field>
-			<field name="name">MUSCLE PAIN</field>
+			<field name="name">Muscle Pain</field>
 		</record>
 		<record id="R524" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-8" />
 			<field name="code">R52.4</field>
-			<field name="name">BACK PAIN</field>
+			<field name="name">Back Pain</field>
 		</record>
 		<record id="R110" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-2" />
 			<field name="code">R11.0</field>
-			<field name="name">NAUSEA</field>
+			<field name="name">Nausea</field>
 		</record>
 		<record id="R111" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-2" />
 			<field name="code">R11.1</field>
-			<field name="name">VOMITTING</field>
+			<field name="name">Vomitting</field>
 		</record>
 		<record id="R105" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-2" />
 			<field name="code">R10.5</field>
-			<field name="name">PELVIC PAIN</field>
+			<field name="name">Pelvic Pain</field>
 		</record>
 		<record id="R106" model="gnuhealth.pathology">
 			<field name="category" ref="health_icd10.icdcat18-2" />
 			<field name="code">R10.6</field>
-			<field name="name">PERINEAL PAIN</field>
-		</record>		
+			<field name="name">Perineal Pain</field>
+		</record>
+		<record model="gnuhealth.pathology" id="R502">
+			<field name="name">Drug Induced Fever</field>
+			<field name="code">R50.2</field>
+			<field name="category" ref="health_icd10.icdcat18-8" />
+		</record>
+		<record model="gnuhealth.pathology" id="R508">
+			<field name="name">Persistent Fever or Fever with Chills/Rigors</field>
+			<field name="code">R50.8</field>
+			<field name="category" ref="health_icd10.icdcat18-8" />
+		</record>
+		<record model="gnuhealth.pathology" id="R505">
+			<field name="name">High Fever Unspec. greater than 38&#176;C (100.4&#176;F)</field>
+			<field name="code">R50.5</field>
+			<field name="category" ref="health_icd10.icdcat18-8" />
+		</record>
 
 <!-- Corrections from GNU Health Default -->
 		<record model="gnuhealth.procedure" id="health_icpm.icpm_5-913">
@@ -203,6 +216,12 @@
 			<field name="description">OCULAR MUSCLE BALANCE TESTING</field>
 		</record>
 
+		<record model="gnuhealth.pathology" id="health_icd10.R500">
+			<field name="active" eval="False" />
+		</record>
+		<record model="gnuhealth.pathology" id="health_icd10.R501">
+			<field name="active" eval="False" />
+		</record>
 <!-- -->
 	</data>
 </tryton>

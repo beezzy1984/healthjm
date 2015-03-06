@@ -55,8 +55,8 @@ class SyndromicSurveillanceReport(Report):
 
         common_age_groups = [('< 5yrs',0,5), ('> 5yrs', 5,None)]
         syndromes = [
-            ('Fever and Rash', {'signs':['R50.1', 'R21']}),
-            ('Fever', {'signs':['R50.1'], 'age_groups':common_age_groups}),
+            ('Fever and Rash', {'signs':['R50.5', 'R21']}),
+            ('Fever', {'signs':['R50.5'], 'age_groups':common_age_groups}),
             ('Gastroenteritis', {'signs':['R19.7'],
                                  'age_groups':common_age_groups}),
             ('Accidents', {'signs':[], 'diagnosis':['V01 - X59'],
@@ -66,15 +66,15 @@ class SyndromicSurveillanceReport(Report):
             ('Fever and respiratory symptoms', {
                     'age_groups':[('<5 yrs', 0, 5), ('5-59 yrs', 5, 60),
                                   ('>60 yrs', 60, None)],
-                    'signs':['R50.1', 'R05 - R07']
+                    'signs':['R50.5', 'R05 - R07']
             }),
-            ('Fever and Haemorrhagic Symptoms', {'signs':['R50.1', 'R58']}),
-            ('Fever and Jaundice',{'signs':['R50.1', 'R17']}),
+            ('Fever and Haemorrhagic Symptoms', {'signs':['R50.5', 'R58']}),
+            ('Fever and Jaundice',{'signs':['R50.5', 'R17']}),
             ('Fever and Neurological Symptoms',{
-                    'signs':['R50.1', ['R40','R56','R26']]}),
+                    'signs':['R50.5', ['R40','R56','R26']]}),
             ('Asthma',{'signs':[], 'diagnosis':['J45 - J46']}),
             ('Severe Acute Respiratory Illness (SARI)', {
-                    'signs':['R50.1', 'R06', ['R05', 'R07']],
+                    'signs':['R50.5', 'R06', ['R05', 'R07']],
                     'diagnosis':[]
              }),
             ('Upper Respiratory Tract Infection', {
