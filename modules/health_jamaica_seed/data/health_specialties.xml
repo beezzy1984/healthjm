@@ -74,5 +74,9 @@
 			<field name="name">Antenatal</field>
 			<field name="code">ANTENATO</field>
 		</record>
+		<record id="jm_specialty_91" model="gnuhealth.specialty">
+			<field name="name">Ambulatory Care (Casualty)</field>
+			<field name="code">CASUALTY</field>
+		</record>
 	</data>
 </tryton>
