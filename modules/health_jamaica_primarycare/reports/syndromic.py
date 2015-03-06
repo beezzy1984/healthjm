@@ -114,22 +114,21 @@ class SyndromicSurveillanceReport(Report):
                                          'diagnostic_hypothesis.pathology.code'
                                         )
                     )
-            # print("{}\nsearch_domain = {}\n{}".format('*'*80,
+            # print("{}\nsearch_domain = {}\n{}".format('~'*80,
             #                                           repr(search_domain),
-            #                                           '*'*80))
+            #                                           '~'*80))
+            # import pdb; pdb.set_trace()
             objects = Evaluation.search_read(search_domain,
                                     order=(('evaluation_start','ASC'),
                                            ('evaluation_endtime', 'ASC')),
                                     fields_names=['id','evaluation_start',
-                                                  'patient.dob', 'patient.id',
-                                                  'signs_and_symptoms',
-                                                  'diagnostic_hypothesis'])
+                                                  'patient.dob', 'patient'])
 
             line = {'title':heading, 'summary':False}
             counts, eval_groups = day_group_counts(objects)
             line.update(dict(counts))
             for dayname, evallist in eval_groups:
-                patient_counter = Counter(map((lambda g: g['patient.id']),
+                patient_counter = Counter(map((lambda g: g['patient']),
                                               evallist))
                 total_line.update({dayname:len(patient_counter.keys())})
 
@@ -147,7 +146,7 @@ class SyndromicSurveillanceReport(Report):
                     g = age_groupings[ag[0]]
                     line = {'title':'%s: %s'%(heading, ag[0]), 'summary':False}
                     line.update(day_group_counts(g)[0])
-                    output_lines.append(line) # age group line
+                    output_lines.append(line)  # age group line
             else:
                 # make a single line for the heading
                 output_lines.append(line) # no-age-grouping line
