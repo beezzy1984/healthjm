@@ -15,6 +15,8 @@ class HospitalBed(ModelSQL, ModelView):
     def get_rec_name(self, name):
         if self.name:
             return self.name.code
+        else:
+            return "Unlabeled bed %d"%(self.id)
 
     @classmethod
     def search_rec_name(cls, name, clause):
@@ -39,3 +41,4 @@ class InpatientRegistration(ModelSQL, ModelView):
         else:
             cls.write(registrations, {'state': 'hospitalized'})
             Bed.write([registration_id.bed], {'state': 'occupied'})
+
