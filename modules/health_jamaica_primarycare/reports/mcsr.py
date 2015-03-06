@@ -96,6 +96,18 @@ class ClinicSummaryReport(BaseReport):
         D['A'].update(total=sum(apptcounter.values()))
 
         #--------------------------------------------------------
+        # Curative Section
+        default_fields_names = ['id', 'patient.name.dob', 'patient.name.sex',
+                                'first_visit_this_year',
+                                'diagnostic_hypothesis']
+        getsex = lambda x: x['patient.name.sex']
+        search_criteria = ['AND',
+                           ('institution','=',data['institution']),
+                           ('state', '=', 'done'),
+                           ('evaluation_start', '>=', start_date),
+                           ('evaluation_start', '<', end_date)
+        ]
+
         # Newly Diagnosed and First Visits
 
         age_groups = [
@@ -114,10 +126,6 @@ class ClinicSummaryReport(BaseReport):
                                             'I15', 'I15.8', 'I15.9')])
         ]
 
-        search_criteria = ['AND',
-                           ('institution','=',data['institution']),
-                           ('state', '=', 'done'),
-        ]
         ordering = [('first_visit_this_year', 'ASC')]
 
         group_counts = []
@@ -130,13 +138,11 @@ class ClinicSummaryReport(BaseReport):
             ])
             all_evals = Evaluation.search_read(
                 search_clause, order=ordering,
-                fields_names=['id', 'patient.name.dob', 'patient.name.sex',
-                              'first_visit_this_year', 'diagnostic_hypothesis']
+                fields_names=default_fields_names
             )
             newdiag = {'m': [], 'f': [], 'u': []}
             firstvisit = {'m': [], 'f': [], 'u': []}
             revisit = []
-            getsex = lambda x: x['patient.name.sex']
 
             for e in all_evals:
                 newly_diagnosed = False
@@ -183,92 +189,97 @@ class ClinicSummaryReport(BaseReport):
         # redefine age_grouper since the age groups have changed
 
         disease_groups = [
-            ('(E) Gastroenteritis', ['A09%']),
-            ('(F) Other G.I. Disorders', ['A00 - A08.999z']),
-            ('(G) Injuries', 'x'),  # x marks the title
-            ('(G)(1) Intentional', ['X60 - X84.999z']),
-            ('(G)(2) Unintentional', ['Y60 - Y69.999z']),
-            ('(H) Musculoskeletal', ['M00 - M99.999z']),
-            ('(I) Leg Ulcers due to :', 'x'),
-            ('(I)(1) Diabetes', ['E10 - E14.999z', 'L97']),
-            ('(I)(2) Other Conditions', ['L97']),
-            ('(J) Genito-Urinary Diseases', 'x'),
-        ]
+            ('(D) Gastroenteritis', ['A09%']),
+            ('(E) Other G.I. Disorders', ['A00 - A08.999z']),
+            ('(F) Injuries', 'x'),  # x marks the title
+            ('(F)(1) Intentional', ['X60 - X84.999z']),
+            ('(F)(2) Unintentional', ['Y60 - Y69.999z']),
+            ('(G) Musculoskeletal', ['M00 - M99.999z']),
+            ('(H) Leg Ulcers due to :', 'x'),
+            ('(H)(1) Diabetes', ['E10 - E14.999z', 'L97']),
+            ('(H)(2) Other Conditions', ['L97']),
+            ('(I) Genito-Urinary Diseases', 'x'),
+            ('(I)(1) STD',[('A56', 'A63.8', 'A56.8', 'A64')]),
+            ('(I)(2) PID',['N70 - N74.999z']),
+            ('(I)(3) Urinary', ['N30 - N39.999z']),
+            # ('(J) Other Gynecological Disorders', ['']),
+            ('(K) Psychiatry', ['F00-F99.999z']),
+            ('(L) Eye Disorders', ['H00 - H59.999z']),
+            ('(M) Diseases of The Respiratory Tract', 'x'),
+            ('(M)(1) U.R.T.I.', [('J39%', 'J00 - J06.999z')]),
+            ('(M)(2) L.R.T.I.', ['J20 - J22.999z']),
+            ('(M)(3) Asthma', ['J45%']),
+            ('(N) Skin Disease', [('L00 - L08.999z', 'L10 - L14.999z', 
+                                   'L20 - L30.999z', 'L40 - L45.999z',
+                                   'L55 - L59.999z', 'L60 - L75.999z',
+                                   'L80 - L99.999z')]),
+            ('(O) Rheumatic Fever', 'x'),
+            ('(O)(1) Number on Register',['I00']),
+            ('(O)(2) Number with RHD',['I01']),
+            # ('(O)(3) Number given Prophylaxis',),
+            ('(P) Other Cardiovascular Disease', [('I52%', 'I51.9')]),
+            # ('(Q) Other Diagnoses', [])
+
+        ]  # incomplete list 
+
+        for group_name, group_diagnosis in disease_groups:
+            if group_diagnosis == 'x':
+                group_counts.append({'title': group_name, 'f': Counter(),
+                                     'm': Counter(), 'is_title_row': True})
+                continue
+
+            line = {'title': group_name, 'is_title_row': False, 'f': Counter(),
+                    'm': Counter()}
+            search_clause = search_criteria[:]
+            for g in group_diagnosis:
+                search_clause.append(
+                    mk_domain_clause(g, 'diagnostic_hypothesis.pathology.code')
+                )
+            all_evals = Evaluation.search_read(
+                search_clause,
+                fields_names=default_fields_names)
+            all_evals.sort(key = getsex)
+            for sexkey, sexgroup in groupby(all_evals, getsex):
+                line[sexkey] = Counter([age_grouper(x) for x in sexgroup])
+
+            group_counts.append(line)
 
         D['C'] = group_counts[:]
 
-        # if ((end_date - start_date) > timedelta(1.05)):
-        #     localcontext['report_date_is_range'] = True
-        # else : 
-        #     localcontext['report_date_is_range'] = False
-
-        # localcontext['user_name'] = User(Transaction().user).name
-        # if data.get('institution', False):
-            
-        #     default_services = InstitutionSpecialties.search_read(
-        #                         [('name','=',institution.id)],
-        #                         order=(('specialty', 'ASC'),),
-        #                         fields_names=['specialty.name',
-        #                                       'is_main_specialty'])
-        #     osectors = institution.operational_sectors
-        #     if osectors:
-        #         localcontext['sector'] = osectors[0].operational_sector
-        #     else:
-        #         localcontext['sector'] = ''
-        #     localcontext['parish'] = ''
-        #     for addr in institution.name.addresses:
-        #         if addr.subdivision:
-        #             localcontext['parish'] = addr.subdivision.name
-        #             break
-        # else:
-        #     default_services = ['Curative', 'Oral Health (Primary Care)', 
-        #                 'Family Planning', 'Child Health', 'Antenatal',
-        #                 'Nutrition', 'Postnatal']
-        #     default_services = [{'specialty.name':x, 'is_main_specialty':False}
-        #                         for x  in default_services ]
-
-        # age_groups = [('0 - 4',0,5), ('5 - 9', 5,10), ('10 - 19', 10, 20),
-        #               ('20 - 59', 20, 60), ('60+', 60, None),
-        #               ('Unknown', -1, None)] # negative min_age for dob==null
-
-        # appointments = Appointment.search_read(search_criteria,
-        #                             order=(('speciality','ASC'),
-        #                                    ('appointment_date', 'ASC')),
-        #                             fields_names=['id','appointment_date',
-        #                                           'patient.name.dob',
-        #                                           'patient.name.sex',
-        #                                           'speciality.name','urgency',
-        #                                           'appointment_type'])
-
-
-        # named_age_groups = [('age_group%d'%i, x[1], x[2]) for i,x in
-        #                     enumerate(age_groups)]
-        # age_grouper = make_age_grouper(named_age_groups, start_date,
-        #                     'patient.name.dob')
-        # gender_grouper = lambda r: {'m':'male', 'f':'female'}.get(
-        #                                             r['patient.name.sex'],
-        #                                             'Unknown')
-        # make_row = lambda t : Counter(total = t,male=0, female=0,
-        #                          **dict([(x[0], 0) for x in named_age_groups]))
-        # total_line = make_row(0)
-        # service_counts = dict([(x['specialty.name'], make_row(0))
-        #                       for x in default_services])
-        # for specialty, appts in groupby(appointments,
-        #                                 lambda x: x['speciality.name']):
-        #     appts = list(appts)
-        #     spec_count = make_row(len(appts))
-        #     spec_count.update(Counter(map(gender_grouper, appts)) +
-        #                                   Counter(map(age_grouper, appts)))
-
-        #     service_counts.setdefault(specialty, Counter()).update(spec_count)
-        #     total_line.update(spec_count)
-        # service_counts = service_counts.items()
-        # service_counts.sort(key=lambda x: x[0])
         localcontext.update(start_date=start_date,
                             end_date=end_date-timedelta(0, 0.2),
                             D=D,
-                            is_weekly=False, is_monthly=False,
                             now_date=datetime.now(tz))
+
+        localcontext.update(is_weekly=False, is_monthly=False, subtitle='')
+        if (start_date.day == 1 and end_date.day == 1 and
+            ((end_date.year == start_date.year and 
+             (end_date.month - start_date.month)  == 1) or
+            (end_date.year == (1 + start_date.year) and 
+             (end_date.month - start_date.month) == -11))):
+            localcontext.update(is_monthly=True, mtitle='Monthly',
+                                subtitle=start_date.strftime('%B %Y'))
+        elif ((end_date - start_date) == timedelta(7)
+              and start_date.isoweekday() == 7):
+            epiweek = utils.get_epi_week(start_date)  # (sun, sat, yr, week#)
+            xsubtitle = ['Week', str(epiweek[3]), 'of', str(epiweek[2]),
+                         'ending', epiweek[1].strftime('%F'),
+                         '(epidemiological)']
+            localcontext.update(subtitle=' '.join(xsubtitle), mtitle='Weekly',
+                                is_weekly=True)
+        else:
+            date_format = '%a %Y-%m-%d'
+            xsubtitle = ['Date:', start_date.strftime(date_format)]
+            if end_date - start_date > timedelta(1.02):
+                # we've got a date range on our hands here
+                xsubtitle.extend(['to',
+                                  data['end_date'].strftime(date_format)])
+                xsubtitle[0] = 'Date range:'
+                # use data['end_date'] because end_date is tomorrow
+                # alternative would be to subtract a few seconds from end_date
+                # But, since end_date calculated from data['end_date'].....
+            localcontext.update(subtitle=' '.join(xsubtitle), mtitle='')
+
         # print('{}\n\n{}\n\n{}'.format('-'*80, repr(localcontext), '-'*80))
         return super(ClinicSummaryReport, cls).parse(
             report, records, data, localcontext
