@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<data>
+    <xpath expr="/tree/field[@name=&quot;visit_type&quot;]" position="replace">
+    </xpath>
+    <xpath expr="/tree/field[@name=&quot;evaluation_type&quot;]" position="replace_attributes">
+        <field name="evaluation_type" tree_invisible="1" />
+    </xpath>
+    <xpath expr="/tree/field[@name=&quot;urgency&quot;]" position="replace" />
+    <xpath expr="/tree/field[@name=&quot;urgency&quot;]" position="replace_attributes">
+        <field name="urgency" tree_invisible="1" />
+    </xpath>
+    <xpath expr="/tree/field[@name=&quot;evaluation_length&quot;]" position="replace" />
+    <xpath expr="/tree/field[@name=&quot;institution&quot;]" position="replace" />
+    <xpath expr="/tree/field[@name=&quot;healthprof&quot;]" position="replace" />
+    <xpath expr="/tree/field[@name=&quot;diagnosis&quot;]" position="replace" />
+    <xpath expr="/tree/field[@name=&quot;state&quot;]" position="replace" />
+    <xpath expr="/tree/field[@name=&quot;bmi&quot;]" position="replace" />
+
+    <xpath expr="/tree/field[@name=&quot;signed_by&quot;]" position="before">
+        <field name="healthprof" expand="1"/>
+    </xpath>
+    <xpath expr="/tree/field[@name=&quot;specialty&quot;]" position="after">
+        <field name="diagnosis" />
+    </xpath>
+    <xpath expr="/tree/field[@name=&quot;specialty&quot;]" position="before">
+        <field name="institution" />
+    </xpath>
+    <xpath expr="/tree/field[@name=&quot;diastolic&quot;]" position="after">
+        <field name="temperature"/>
+        <field name="osat"/>
+        <field name="bmi"/>
+        <field name="whr" />
+        <field name="visit_type" />
+        <field name="state" />
+    </xpath>
+    <xpath expr="/tree" position="replace_attributes">
+        <tree string="Patient Evaluations" colors="If(Equal(Eval('state'), 'in_progress'), 'blue', 'black')" />
+    </xpath>
+</data>
