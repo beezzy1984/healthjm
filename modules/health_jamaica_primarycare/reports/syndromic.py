@@ -97,11 +97,10 @@ class SyndromicSurveillanceReport(Report):
             counter = Counter(Sun=0, Mon=0, Tue=0, Wed=0, Thu=0, Fri=0, Sat=0,
                              total=0)
             counter.update(Counter(map(dayfunc, evaluation_list)))
-            counter.update(total = len(evaluation_list))
+            counter.update(total = sum(counter.values()))
             return counter, evgroups
 
-        total_line = Counter(Sun=0, Mon=0, Tue=0, Wed=0, Thu=0, Fri=0, Sat=0,
-                             total=0)
+        total_line = Counter(Sun=0, Mon=0, Tue=0, Wed=0, Thu=0, Fri=0, Sat=0)
         for heading, params in syndromes:
             search_domain = search_criteria[:]
             if params.get('signs', False):
@@ -158,6 +157,8 @@ class SyndromicSurveillanceReport(Report):
 
         # print('{}\n OMG, what a function. These are usually quite sexy'.format('*'*80))
         # print('{}\n\n{}'.format(repr(output_lines), '*'*80))
+        # calculate totals:total
+        total_line.update(total=sum(total_line.values()))
         localcontext.update(syndrome_counts=output_lines, totals=total_line,
                             epi_week=data['epi_week'],
                             now_date=datetime.now(timezone),
