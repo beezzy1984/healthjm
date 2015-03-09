@@ -25,7 +25,8 @@ def make_age_grouper(age_groups, ref_date, dob_field='patient.dob'):
     if len(age_groups) == 2 and age_groups[0][2] == age_groups[1][1]:
         age_boundary = utils.get_dob(age_groups[0][2])
         return lambda x: (age_groups[0][0]
-                          if x[dob_field] >= age_boundary 
+                          if isinstance(x[dob_field], (datetime,date))
+                            and x[dob_field] >= age_boundary
                           else age_groups[1][0])
 
     # build an age lookup table using the age groups and individual ages 
