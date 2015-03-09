@@ -241,6 +241,8 @@ class ClinicSummaryReport(BaseReport):
             all_evals.sort(key = getsex)
             for sexkey, sexgroup in groupby(all_evals, getsex):
                 line[sexkey] = Counter([age_grouper(x) for x in sexgroup])
+                t = sum(line[sexkey].values())
+                line[sexkey].update(total=t)
 
             group_counts.append(line)
 
