@@ -22,35 +22,33 @@
 ##############################################################################
 
 from trytond.pool import Pool
-from .health_jamaica import *
+from .du import DomiciliaryUnit
+from .party import PartyPatient, AlternativePersonID
+from .health import *
+from .address import PartyAddress
 from .wizards import *
 from .reports import *
 
 def register():
     Pool.register(
-        OccupationalGroup,
-        PartyPatient,
-        PatientData,
-        AlternativePersonID,
-        PostOffice,
-        DistrictCommunity,
-        PartyAddress,
         DomiciliaryUnit,
-        Newborn,
-        HealthInstitution,
+        PartyPatient,
+        AlternativePersonID,
+        PartyAddress,
+        PatientData,
         Insurance,
+        HealthInstitution,
+        HealthInstitutionSpecialties,
+        HealthProfessional,
+        HealthProfessionalSpecialties,
+        Appointment,
+        ProcedureCode,
         PathologyGroup,
         Pathology,
-        ProcedureCode,
-        HealthProfessional,
-        Appointment,
         DiagnosticHypothesis,
         PatientEvaluation,
-        SignsAndSymptoms,
         PatientRegisterModel,
         OpenAppointmentReportStart,
-        HealthProfessionalSpecialties,
-        HealthInstitutionSpecialties,
         AppointmentReport,
         StartEndDateModel,
         module='health_jamaica', type_='model')

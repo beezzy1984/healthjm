@@ -8,12 +8,12 @@
 #-------------------------------------------
 # Change these variables before running:
 #--------------------------------------
-old_sync_id = 35    # this is the syncid we want to change
-new_sync_id = 32    # and this is the new syncid
+old_sync_id = 2    # this is the syncid we want to change
+new_sync_id = 215    # and this is the new syncid
 
-connection_string = " ".join(("dbname=shc_christiana",
-                             "user=srha",
-                             "password=srhapwd",
+connection_string = " ".join(("dbname=nhc_brownstown",
+                             "user=nerha",
+                             "password=nerhapwd",
                              "port=5432", "host=localhost"))
 # db connection string broken down for easier editing
 
@@ -25,7 +25,8 @@ from trytond.modules.health_jamaica_sync import health
 def change_syncid(constr, oldid, newid):
     sqltmpl = " ".join(("update {} set synchronised_instances =",
             "set_bit(set_bit(synchronised_instances, %(syncbad)s, 0),"
-                      "%(syncrev)s, 1)",
+                      "%(syncrev)s, 1),",
+            "write_date = write_date+'1m'",
             "where get_bit(synchronised_instances, %(syncrev)s)=0"
             "and get_bit(synchronised_instances, %(syncbad)s)=1;"))
 
