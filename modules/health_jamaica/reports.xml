@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<tryton>
+	<data>
+	<!-- Generic Start End Date Wizard View -->
+		<record model="ir.ui.view" id="healthjm_wizard_startenddate">
+			<field name="model">healthjm.report.startenddate_generic</field>
+			<field name="type">form</field>
+			<field name="name">wizard-startenddate</field>
+		</record>
+
+	<!-- Patient Register Report -->
+		<record model="ir.action.report" id="healthjm_report_patientregister">
+			<field name="name">Patient Evaluation Register</field>
+			<field name="report_name">health_jamaica.report_patient_register</field>
+			<field name="active" eval="True" />
+			<field name="report">health_jamaica/report/patient_register.odt</field>
+			<field name="template_extension">odt</field>
+			<field name="extension">pdf</field>
+		</record>
+
+		<!-- Form To Select start- -->
+		<record model="ir.ui.view" id="healthjm_form_patientregister_report_start">
+				<field name="model">healthjm.report.patientregister.start</field>
+				<field name="type">form</field>
+				<field name="name">report_patientregister_start</field>
+		</record>
+		<!-- Wizard to contain start and output report -->
+		<record model="ir.action.wizard" id="healthjm_wizard_patientregister">
+			<field name="name">Patient Evaluation Register</field>
+			<field name="wiz_name">healthjm.report.patientregister.wizard</field>
+		</record>
+		<!-- Menu to open wizard -->
+		<menuitem id="menu_report_patientregister"
+			name="Patient Evaluation Register"
+			parent="health.gnuhealth_reporting_menu" sequence="2"
+			action="action_patientregister_wizard"
+			icon="gnuhealth-list" />
+
+	<!-- Update the default Appointment report -->
+		<record model="ir.ui.view" id="appointments_report_start_view_form">
+			<field name="model">gnuhealth.appointment.report.open.start</field>
+			<field name="type">form</field>
+			<field name="inherit" ref="health.appointments_report_open_start_view_form" />
+			<field name="name">form-appointments_report_start</field>
+		</record>
+	</data>
+</tryton>

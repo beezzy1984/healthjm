@@ -64,12 +64,13 @@ class PatientRegisterWizard(Wizard):
     '''Evaluation Register Wizard'''
     __name__ = 'healthjm.report.patientregister.wizard'
     start = StateView('healthjm.report.patientregister.start',
-        'health_jamaica.report_patientregister_start', [
+        'health_jamaica.healthjm_form_patientregister_report_start', [
             Button('Cancel', 'end', 'tryton-cancel'),
             Button('Generate Report', 'generate_report', 'tryton-ok',
                     default=True),
         ])
-    generate_report = StateAction('health_jamaica.jmreport_patientregister')
+    generate_report = \
+        StateAction('health_jamaica.healthjm_report_patientregister')
 
 
     def transition_generate_report(self):

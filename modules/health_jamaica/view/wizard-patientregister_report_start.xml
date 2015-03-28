@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<form string="Patient Evaluations Register - Result">
+<form string="Patient Evaluations Register">
     <label name="on_or_after"/>
     <field name="on_or_after"/>
     <label name="on_or_before"/>
