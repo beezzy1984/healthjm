@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<tryton>
+	<data>
+		<record model="ir.ui.view" id="healthjm_form-newborn">
+			<field name="model">gnuhealth.newborn</field>
+			<field name="type">form</field>
+			<field name="inherit" ref="health_pediatrics.gnuhealth_newborn_view" />
+			<field name="name">form_newborn</field>
+		</record>
+	</data>
+</tryton>
