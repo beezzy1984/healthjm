@@ -127,3 +127,17 @@ def is_not_synchro():
     t = Transaction()
     return (t.user>0)
 
+
+def get_field_states(field):
+    s = field.states
+    if s is None:
+        return {}
+    return s.copy()
+
+def update_states(field, updates):
+    '''updates a states attribute on a field with the values from <updates>.
+    <updates> can be either a dictionary or list of tuples
+    '''
+    current_states = get_field_states(field)
+    current_states.update(updates)
+    return current_states

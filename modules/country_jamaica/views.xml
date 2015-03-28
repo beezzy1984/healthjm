@@ -1,0 +1,16 @@
+
+<tryton>
+	<data>
+		<record model="ir.ui.view" id="cjmview_tree_post_office">
+			<field name="model">country.post_office</field>
+			<field name="type">tree</field>
+			<field name="name">tree-post_office</field>
+		</record>
+
+		<record model="ir.ui.view" id="cjmview_tree_district_community">
+			<field name="model">country.district_community</field>
+			<field name="type">tree</field>
+			<field name="name">tree-district_community</field>
+		</record>
+	</data>
+</tryton>
