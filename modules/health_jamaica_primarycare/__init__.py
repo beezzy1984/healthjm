@@ -1,10 +1,12 @@
 from trytond.pool import Pool
-
+from .health import Appointment, SignsAndSymptoms
 from .reports import *
 
 
 def register():
     Pool.register(
+        Appointment,
+        SignsAndSymptoms,
         ClinicSummaryWizardModel,
         ServiceUtilisationWizardModel,
         SyndromicSurveillanceWizardModel,
