@@ -30,6 +30,8 @@ from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
 
 ThisInstitution = lambda : Pool().get('gnuhealth.institution').get_institution()
 
+from .tryton_utils import is_not_synchro
+
 _DEPENDS = ['is_person']
 SEX_OPTIONS = [('m', 'Male'), ('f', 'Female'), ('u', 'Unknown')]
 MARITAL_STATUSES = [
@@ -99,6 +101,9 @@ class PartyPatient(ModelSQL, ModelView):
         cls._error_messages.update({
             'future_dob_error':
                 '== Error ==\n\nDate of birth cannot be in the future.',
+            'unidentified_party_warning':
+                '== Indentity Verification ==\n\n'
+                'Please enter an Alternative ID or leave Undentified checked.\n'
         })
 
         # field behaviour modifications
@@ -132,10 +137,20 @@ class PartyPatient(ModelSQL, ModelView):
         super(PartyPatient, cls).validate(parties)
         for party in parties:
             party.check_dob()
+            if is_not_synchro():
+                party.check_party_warning()
 
     def check_dob(self):
         if self.dob and self.dob > date.today():
             self.raise_user_error('future_dob_error')
+
+    def check_party_warning(self):
+        '''validates that a party being entered as verified has an alt-id
+        if there is no alt-id, then the party should be labeled as unidentified
+        '''
+        if len(self.alternative_ids) == 0 and not self.unidentified:
+            self.raise_user_error('unidentified_or_altid')
+
 
     def get_rec_name(self, name):
         return self.name

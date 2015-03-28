@@ -24,7 +24,7 @@ from dateutil.relativedelta import relativedelta
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
 from trytond.pool import Pool
-from .tryton_utils import negate_clause, replace_clause_column
+from .tryton_utils import negate_clause, replace_clause_column, is_not_synchro
 
 __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'HealthInstitutionSpecialties', 'HealthProfessional',
@@ -369,7 +369,6 @@ class Appointment(ModelSQL, ModelView):
                                   appt.speciality.name, ' one?'])
 
                 cls.raise_user_warning(warning_code, u''.join(warning_msg))
-
 
 
 class ProcedureCode(ModelSQL, ModelView):
