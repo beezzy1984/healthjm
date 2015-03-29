@@ -1,0 +1,128 @@
+<?xml version="1.0" ?>
+<tryton>
+    <data>
+        <record id="icpm_2-901" model="gnuhealth.procedure">
+            <field name="description">MICROSCOPY</field>
+            <field name="name">2-901</field>
+        </record>
+        <record id="icpm_2-130" model="gnuhealth.procedure">
+            <field name="description">BLOOD SUGAR</field>
+            <field name="name">2-130</field>
+        </record>
+        <record id="icpm_2-255" model="gnuhealth.procedure">
+            <field name="description">URINE (ROUTINE URINALYSIS)</field>
+            <field name="name">2-255</field>
+        </record>
+        <record id="icpm_2-801" model="gnuhealth.procedure">
+            <field name="description">HAEMATOLOGY</field>
+            <field name="name">2-801</field>
+        </record>
+        <record id="icpm_2-609" model="gnuhealth.procedure">
+            <field name="description">RPR/TRUST TEST</field>
+            <field name="name">2-609</field>
+        </record>
+        <record id="health_icpm.icpm_5-890" model="gnuhealth.procedure">
+            <field name="description">SUTURE OF SKIN SUBCUTANEOUS TISSUE</field>
+            <field name="name">5-890</field>
+        </record>
+        <record id="icpm_9-121" model="gnuhealth.procedure">
+            <field name="description">INTRAMUSCULAR INJECTION OF DRUG</field>
+            <field name="name">9-121</field>
+        </record>
+        <record id="health_icpm.icpm_5-882" model="gnuhealth.procedure">
+            <field name="description">INCISION &amp; DRAINAGE OF SKIN AND SUBCUTANEOUS TISSUE</field>
+            <field name="name">5-882</field>
+        </record>
+        <record id="icpm_8-753" model="gnuhealth.procedure">
+            <field name="description">NEBULIZATION</field>
+            <field name="name">8-753</field>
+        </record>
+        <record id="icpm_5-232" model="gnuhealth.procedure">
+            <field name="description">DENTAL FILLING</field>
+            <field name="name">5-232</field>
+        </record>
+        <record id="health_icpm.icpm_5-230" model="gnuhealth.procedure">
+            <field name="description">FORCEPS EXTRACTION OF TOOTH</field>
+            <field name="name">5-230</field>
+        </record>
+        <record id="icpm_4-521" model="gnuhealth.procedure">
+            <field name="description">DENTAL CLEANING (SCALING AND POLISHING)</field>
+            <field name="name">4-521</field>
+        </record>
+        <record id="icpm_9-301" model="gnuhealth.procedure">
+            <field name="description">DENTURES</field>
+            <field name="name">9-301</field>
+        </record>
+        <record id="icpm_4-150" model="gnuhealth.procedure">
+            <field name="description">MEDICAL EXAMINATION OF RAPE VICTIM</field>
+            <field name="name">4-150</field>
+        </record>
+        <record id="health_icpm.icpm_1-211" model="gnuhealth.procedure">
+            <field name="description">VISUAL ACUITY</field>
+            <field name="name">1-211</field>
+        </record>
+        <record id="health_icpm.icpm_1-220" model="gnuhealth.procedure">
+            <field name="description">OPHTHALMOSCOPIC EXAMINATION OF EYES</field>
+            <field name="name">1-220</field>
+        </record>
+        <record id="icpm_1-342" model="gnuhealth.procedure">
+            <field name="description">PROSTATE EXAMINATION</field>
+            <field name="name">1-342</field>
+        </record>
+        <record id="icpm_1-380" model="gnuhealth.procedure">
+            <field name="description">BREAST EXAMINATION</field>
+            <field name="name">1-380</field>
+        </record>
+        <record id="icpm_4-162" model="gnuhealth.procedure">
+            <field name="description">EXAMINATION FOR LICENCE AS FOOD HANDLER OR VENDOR</field>
+            <field name="name">4-162</field>
+        </record>
+
+        <record id="health_icpm.icpm_5-980" model="gnuhealth.procedure">
+            <field name="description">SURGICAL OPERATIONS TO PRODUCE FEMALE STERILIZATION (TUBAL LIGATION)</field>
+            <field name="name">5-980</field>
+        </record>
+        <record id="icpm_5-981" model="gnuhealth.procedure">
+            <field name="description">MALE SURGICAL STERILISATION (VASECTOMY)</field>
+            <field name="name">5-981</field>
+        </record>
+        <record id="icpm_4-658" model="gnuhealth.procedure">
+            <field name="description">OTHER CONTRACEPTIVE PROCEDURES</field>
+            <field name="name">4-658</field>
+        </record>
+        <record id="icpm_4-656" model="gnuhealth.procedure">
+            <field name="description">INSERTION OF CONTRACEPTIVE IMPLANT</field>
+            <field name="name">4-656</field>
+        </record>
+        <record id="icpm_4-655" model="gnuhealth.procedure">
+            <field name="description">CONDOM (ISSUANCE)</field>
+            <field name="name">4-655</field>
+        </record>
+        <record id="icpm_4-654" model="gnuhealth.procedure">
+            <field name="description">CONTRACEPTIVE INJECTION</field>
+            <field name="name">4-654</field>
+        </record>
+        <record id="icpm_4-652" model="gnuhealth.procedure">
+            <field name="description">PRESCRIPTION OF INTRAUTERINE DEVICE</field>
+            <field name="name">4-652</field>
+        </record>
+        <record id="icpm_4-651" model="gnuhealth.procedure">
+            <field name="description">PRESCRIPTION OF ORAL CONTRACEPTIVE</field>
+            <field name="name">4-651</field>
+        </record>
+        <record id="icpm_4-650" model="gnuhealth.procedure">
+            <field name="description">CONTRACEPTIVE INSTRUCTION</field>
+            <field name="name">4-650</field>
+        </record>
+
+<!-- Corrections from GNU Health Default -->
+        <record model="gnuhealth.procedure" id="health_icpm.icpm_5-913">
+            <field name="name">5-913</field>
+            <field name="description">SKIN CAUTERIZATION</field>
+        </record>
+        <record model="gnuhealth.procedure" id="health_icpm.icpm_1-216">
+            <field name="name">1-216</field>
+            <field name="description">OCULAR MUSCLE BALANCE TESTING</field>
+        </record>
+    </data>
+</tryton>

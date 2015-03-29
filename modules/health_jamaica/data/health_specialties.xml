@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tryton>
-	<data noupdate="0" skiptest="1">
-        <record model="gnuhealth.specialty" id="health.73">
-            <field name="name">Oral Health (Primary Care)</field>
-            <field name="code">PRIMARY-ORAL</field>
-        </record>
-
+	<data>
+		<record model="gnuhealth.specialty" id="health.73">
+			<field name="name">Oral Health (Primary Care)</field>
+			<field name="code">PRIMARY-ORAL</field>
+		</record>
 		<record id="jm_specialty_74" model="gnuhealth.specialty">
 			<field name="name">HIV</field>
 			<field name="code">HIV</field>
