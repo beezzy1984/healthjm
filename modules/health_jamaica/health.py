@@ -24,7 +24,8 @@ from dateutil.relativedelta import relativedelta
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
 from trytond.pool import Pool
-from .tryton_utils import negate_clause, replace_clause_column, is_not_synchro
+from .tryton_utils import (negate_clause, replace_clause_column, is_not_synchro,
+                           update_states)
 
 __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'HealthInstitutionSpecialties', 'HealthProfessional',
@@ -53,6 +54,8 @@ class PatientData(ModelSQL, ModelView):
     )
     alt_ids = fields.Function(fields.Char('Alternate IDs'), 'get_person_field',
                               searcher='search_alt_ids')
+    medical_record_num = fields.Function(fields.Char('Medical Record Number'),
+        'get_person_field', searcher='search_alt_ids')
     du = fields.Function(fields.Char('Address'),
                          'get_person_field', searcher='search_person_field')
     unidentified = fields.Function(
@@ -98,6 +101,10 @@ class PatientData(ModelSQL, ModelView):
         super(PatientData, cls).__setup__()
 
         cls.dob.getter = 'get_person_field'
+        cls.puid.string = 'UPI'
+
+        # if we need to make the Party Editable from Patient :
+        # cls.name.states = update_states(cls.name, {'readonly':False})
 
     # Get the patient age in the following format : 'YEARS MONTHS DAYS'
     # It will calculate the age of the patient while the patient is alive.

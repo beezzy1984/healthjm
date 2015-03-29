@@ -1,87 +1,90 @@
 <?xml version="1.0" ?>
 <data>
+
+    <!-- Default to putting the cursor in the lastname field -->
     <xpath expr="/form" position="replace_attributes" >
         <form string="Party" col="6" cursor="lastname" />
     </xpath>
-    <xpath expr="/form/field[@name='lastname']" position="replace"/>
-    <xpath expr="/form/label[@name='lastname']" position="replace" />
-    <xpath expr="/form/notebook/page[@id=&quot;party_gnuhealth&quot;]/field[@name=&quot;insurance&quot;]" position="replace" />
-    <xpath expr="/form//label[@name=&quot;alias&quot;]" position="replace" />
 
+    <!-- Same for the lastname field -->
+    <xpath expr="/form/label[@name='lastname']" position="replace" />
+    <!-- But we replace it with a hiddne altId checkbox -->
+    <xpath expr="/form/field[@name='lastname']" position="replace">
+        <!-- <field name="alternative_identification" invisible="1" /> -->
+    </xpath>
+
+    <!-- Alias and unidentified should be at the top of the form -->
+    <xpath expr="/form//label[@name=&quot;alias&quot;]" position="replace" />
     <xpath expr="/form//field[@name='alias']" position="replace" />
     <xpath expr="/form//label[@name='unidentified']" position="replace" />
     <xpath expr="/form//field[@name='unidentified']" position="replace" />
 
+    <!-- Alternative_ids will be in a new location -->
+    <xpath expr="/form//field[@name='alternative_ids']" position="replace" />
+    <xpath expr="/form//field[@name='insurance']" position="replace">
+        <field colspan="4" name="alternative_ids" />
+    </xpath>
+
+    <!-- Rearrange the demographics fields -->
+    <xpath expr="/form//field[@name=&quot;du&quot;]" position="replace" />
+    <xpath expr="/form//label[@name=&quot;du&quot;]" position="replace" />
+    <xpath expr="/form//field[@name=&quot;marital_status&quot;]" position="replace" />
+    <xpath expr="/form//label[@name=&quot;marital_status&quot;]" position="replace" />
+    <xpath expr="/form//field[@name=&quot;sex&quot;]" position="after">
+        <label name="marital_status"/>
+        <field name="marital_status"/>
+        <label name="du"/>
+        <field name="du"/>
+    </xpath>
+
+    <!-- Insurance gets its own tab -->
     <xpath expr="/form/notebook/page[@id=&quot;party_gnuhealth&quot;]" position="after">
         <page string="Insurance" id="party_person_insurance" states="{'invisible': Not(Bool(Eval('is_person')))}">
             <field name="insurance" colspan="4" />
         </page>
     </xpath>
 
-    <xpath expr="/form/notebook/page[@id=&quot;party_gnuhealth&quot;]/group[@id=&quot;person_details&quot;]/group" position="replace">
-        <group id="person_detail_x" yfill="1" col="3">
-            <group yfill="0" id="party_person_name_parts" string="Name">
-                <label name="unidentified" />
-                <field name="unidentified" />
-                <label name="party_warning_ack" />
-                <field name="party_warning_ack" />
-                <newline />
-                <label name="lastname"/>
-                <field name="lastname"/>
-                <label name="firstname"/>
-                <field name="firstname"/>
-                <label name="middlename"/>
-                <field name="middlename"/>
-                <label name="suffix"/>
-                <field name="suffix"/>
-                <label name="alias"/>
-                <field name="alias"/>
-                <label name="maiden_name" />
-                <field name="maiden_name" />
-                <newline /><separator colspan="4" id="sep1289" /><newline />
-                <label name="mother_maiden_name" />
-                <field name="mother_maiden_name" />
-                <label name="father_name" />
-                <field name="father_name" />
-                
-            </group>
-            <newline />
-            <group yfill="0" id="person_demographics" string="Demographics">
-                <label name="sex"/>
-                <field name="sex"/>
-                <label name="dob"/>
-                <field name="dob"/>
-                <label name="marital_status"/>
-                <field name="marital_status"/>
-                <label name="du"/>
-                <field name="du"/>
-                <label name="education"/>
-                <field name="education"/>
-                <label name="occupation"/>
-                <field name="occupation"/>
-                <label name="citizenship"/>
-                <field name="citizenship"/>
-                <label name="residence"/>
-                <field name="residence"/>
-                <label name="ethnic_group"/>
-                <field name="ethnic_group"/>
-                <label name="alternative_identification"/>
-                <field name="alternative_identification"/>
-            </group>        
-        </group>
+    <xpath expr="/form/group[@id=&quot;checkboxes&quot;]" position="replace" />
+
+    <xpath expr="/form/notebook/page[@id=&quot;party_gnuhealth&quot;]/group[@id=&quot;person_details&quot;]/group[@id=&quot;person_demographics&quot;]" position="replace_attributes">
+        <group yfill="1" id="person_demographics" string="Name and Demographics" />
+    </xpath>
+    <xpath expr="/form/notebook/page[@id=&quot;party_gnuhealth&quot;]/group[@id=&quot;person_details&quot;]/group[@id=&quot;person_demographics&quot;]/label[@name=&quot;dob&quot;]" position="before">
+        <label name="unidentified" />
+        <field name="unidentified" />
+<!--                 <label name="party_warning_ack" />
+        <field name="party_warning_ack" /> -->
+        <newline />
+        <label name="lastname"/>
+        <field name="lastname"/>
+        <label name="firstname"/>
+        <field name="firstname"/>
+        <label name="middlename"/>
+        <field name="middlename"/>
+<!--                 <label name="suffix"/>
+        <field name="suffix"/> -->
+        <label name="alias"/>
+        <field name="alias"/>
+        <label name="maiden_name" />
+        <field name="maiden_name" />
+        <newline /><separator colspan="4" id="sep1289" /><newline />
+        <label name="mother_maiden_name" />
+        <field name="mother_maiden_name" />
+        <label name="father_name" />
+        <field name="father_name" />
+        <newline /><separator colspan="4" id="sep1290" /><newline />
     </xpath>
 
-    <xpath expr="/form/notebook/page[@id=&quot;party_gnuhealth&quot;]/group[@id=&quot;person_details&quot;]/newline[last()]" position="after">
-        <field colspan="4" name="alternative_ids" />
-        <!-- ToDo: Figure out how to make this list taller. At least 3 rows -->
-    </xpath>
-
+    <!-- Rename the General tab to Contact -->
     <xpath expr="/form/notebook/page[@id=&quot;general&quot;]" position="replace_attributes">
         <page string="Contact" id="general" />
     </xpath>
 
+    <!-- Replace the ref field with the UPI field that shows NN as needed -->
     <xpath expr="/form/field[@name=&quot;ref&quot;]" position="replace">
         <field name="upi" />
+        <label name="active"/>
+        <field name="active" xexpand="0" width="25"/>
     </xpath>
 
 </data>

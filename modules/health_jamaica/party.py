@@ -90,6 +90,8 @@ class PartyPatient(ModelSQL, ModelView):
 
     alt_ids = fields.Function(fields.Char('Alternate IDs'), 'get_alt_ids',
         searcher='search_alt_ids')
+    medical_record_num = fields.Function(fields.Char('Medical Record Num.'),
+        'get_alt_ids', searcher='search_alt_ids')
     marital_status_display = fields.Function(fields.Char('Marital Status'),
                                              'get_marital_status_display')
 
@@ -100,10 +102,10 @@ class PartyPatient(ModelSQL, ModelView):
         # Error Message
         cls._error_messages.update({
             'future_dob_error':
-                '== Error ==\n\nDate of birth cannot be in the future.',
-            'unidentified_party_warning':
-                '== Indentity Verification ==\n\n'
-                'Please enter an Alternative ID or leave Undentified checked.\n'
+                'Future Birth Error\n\nDate of birth cannot be in the future.',
+            'unidentified_or_altid':
+                'Indentity Verification Error\n\n'
+                'Please enter an Alternate ID or check Undentified.\n'
         })
 
         # field behaviour modifications
@@ -122,6 +124,7 @@ class PartyPatient(ModelSQL, ModelView):
         # field label modifications
         cls.ref.string = "UPI"
         cls.insurance.string = "Insurance Plans"
+        cls.alternative_ids.string = 'Alternate IDs'
 
         # help text mods
         cls.ref.help = "Unique Party Indentifier"

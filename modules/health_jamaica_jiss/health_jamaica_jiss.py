@@ -29,7 +29,7 @@ from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.transaction import Transaction
 from datetime import datetime, date
-from ..health_jamaica.health_jamaica import (ThisInstitution)
+from ..health_jamaica.party import (ThisInstitution)
 from ..health_jamaica.tryton_utils import get_timezone
 
 __all__ = ['Jiss']

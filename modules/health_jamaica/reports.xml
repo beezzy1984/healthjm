@@ -2,7 +2,7 @@
 <tryton>
 	<data>
 	<!-- Generic Start End Date Wizard View -->
-		<record model="ir.ui.view" id="healthjm_wizard_startenddate">
+		<record model="ir.ui.view" id="view_startenddate_generic">
 			<field name="model">healthjm.report.startenddate_generic</field>
 			<field name="type">form</field>
 			<field name="name">wizard-startenddate</field>
@@ -22,7 +22,7 @@
 		<record model="ir.ui.view" id="healthjm_form_patientregister_report_start">
 				<field name="model">healthjm.report.patientregister.start</field>
 				<field name="type">form</field>
-				<field name="name">report_patientregister_start</field>
+				<field name="name">wizard-patientregister_report_start</field>
 		</record>
 		<!-- Wizard to contain start and output report -->
 		<record model="ir.action.wizard" id="healthjm_wizard_patientregister">
@@ -33,7 +33,7 @@
 		<menuitem id="menu_report_patientregister"
 			name="Patient Evaluation Register"
 			parent="health.gnuhealth_reporting_menu" sequence="2"
-			action="action_patientregister_wizard"
+			action="healthjm_wizard_patientregister"
 			icon="gnuhealth-list" />
 
 	<!-- Update the default Appointment report -->

@@ -1,4 +1,4 @@
-from trytond.pool import pool
+from trytond.pool import Pool
 from .models import Newborn
 
 

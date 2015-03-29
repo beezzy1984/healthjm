@@ -64,7 +64,6 @@
 			<field name="inherit" ref="party.address_view_form"/>
 			<field name="name">form-address</field>
 		</record>
-		<!--  --  -->
 
 		<!-- Patient Evaluation -->
 		<record model="ir.ui.view" id="healthjm_form_patient_evaluation">

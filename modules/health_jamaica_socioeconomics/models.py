@@ -50,7 +50,6 @@ class PatientData(ModelSQL, ModelView):
         cls.ses.string = "Socioeconomic Class"
 
 
-
 class OccupationalGroup(ModelSQL, ModelView):
     '''Occupational Group'''
     __name__ = 'gnuhealth.occupation'

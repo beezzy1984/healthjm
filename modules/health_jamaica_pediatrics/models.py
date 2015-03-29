@@ -20,4 +20,5 @@ class Newborn (ModelSQL, ModelView):
         cls.sex.selection = SEX_OPTIONS
         cls.sex.string = 'Sex at birth'
 
-        cls.newborn_sex.field.selection = SEX_OPTIONS
+        cls.newborn_sex = fields.Function(fields.Selection(SEX_OPTIONS, 'Sex'),
+                                          'get_newborn_sex')
