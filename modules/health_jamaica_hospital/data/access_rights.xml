@@ -1,0 +1,137 @@
+<?xml version="1.0" ?>
+<tryton>
+    <data>
+        <record id="mnu_health_inpatient_gnuhealth_inpatient_menu_group_13" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health_inpatient.gnuhealth_inpatient_menu"/>
+            <field name="group" ref="health_jamaica_primarycare.group_13"/>
+        </record>
+        <record id="mnu_health_inpatient_gnuhealth_inpatient_menu_group_12" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health_inpatient.gnuhealth_inpatient_menu"/>
+            <field name="group" ref="health_jamaica_primarycare.group_12"/>
+        </record>
+        <record id="mnu_health_inpatient_gnuhealth_inpatient_menu_group_10" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health_inpatient.gnuhealth_inpatient_menu"/>
+            <field name="group" ref="health_jamaica_primarycare.group_10"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-building_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.building')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-or_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.or')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-unit_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.unit')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-ward_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.ward')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-bed_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.bed')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-bed_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.bed')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-building_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.building')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-or_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.or')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-unit_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.unit')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-ward_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.ward')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-bed_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.bed')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-building_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.building')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-or_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.or')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-unit_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.unit')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-hospital-ward_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="health_jamaica_primarycare.group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.ward')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+    </data>
+</tryton>

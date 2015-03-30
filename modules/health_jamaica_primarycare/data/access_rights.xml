@@ -1,0 +1,1333 @@
+<?xml version="1.0" ?>
+<tryton>
+    <data>
+        <record id="group_11" model="res.group">
+            <field name="name">Registration Clerk</field>
+        </record>
+        <record id="group_13" model="res.group">
+            <field name="name">Medical Records</field>
+        </record>
+        <record id="group_12" model="res.group">
+            <field name="name">Medical Records Supervisor</field>
+        </record>
+        <record id="group_10" model="res.group">
+            <field name="name">Physician</field>
+        </record>
+        <record id="mnu_party_menu_address_form_group_11" model="ir.ui.menu-res.group">
+            <field name="menu" ref="party.menu_address_form"/>
+            <field name="group" ref="group_11"/>
+        </record>
+        <record id="mnu_health_gnuhealth_appointment_menu_group_11" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_appointment_menu"/>
+            <field name="group" ref="group_11"/>
+        </record>
+        <record id="mnu_health_gnuhealth_menu_group_11" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_menu"/>
+            <field name="group" ref="group_11"/>
+        </record>
+        <record id="mnu_party_menu_party_form_group_11" model="ir.ui.menu-res.group">
+            <field name="menu" ref="party.menu_party_form"/>
+            <field name="group" ref="group_11"/>
+        </record>
+        <record id="mnu_party_menu_party_group_11" model="ir.ui.menu-res.group">
+            <field name="menu" ref="party.menu_party"/>
+            <field name="group" ref="group_11"/>
+        </record>
+        <record id="mnu_health_gnuhealth_patients_menu_group_11" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_patients_menu"/>
+            <field name="group" ref="group_11"/>
+        </record>
+        <record id="mnu_party_menu_address_form_group_13" model="ir.ui.menu-res.group">
+            <field name="menu" ref="party.menu_address_form"/>
+            <field name="group" ref="group_13"/>
+        </record>
+        <record id="mnu_health_gnuhealth_appointment_menu_group_13" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_appointment_menu"/>
+            <field name="group" ref="group_13"/>
+        </record>
+        <record id="mnu_health_gnuhealth_menu_group_13" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_menu"/>
+            <field name="group" ref="group_13"/>
+        </record>
+        <record id="mnu_party_menu_party_form_group_13" model="ir.ui.menu-res.group">
+            <field name="menu" ref="party.menu_party_form"/>
+            <field name="group" ref="group_13"/>
+        </record>
+        <record id="mnu_party_menu_party_group_13" model="ir.ui.menu-res.group">
+            <field name="menu" ref="party.menu_party"/>
+            <field name="group" ref="group_13"/>
+        </record>
+        <record id="mnu_health_gnuhealth_patients_menu_group_13" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_patients_menu"/>
+            <field name="group" ref="group_13"/>
+        </record>
+        <record id="mnu_health_gnuhealth_reporting_menu_group_13" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_reporting_menu"/>
+            <field name="group" ref="group_13"/>
+        </record>
+        <record id="mnu_party_menu_address_form_group_12" model="ir.ui.menu-res.group">
+            <field name="menu" ref="party.menu_address_form"/>
+            <field name="group" ref="group_12"/>
+        </record>
+        <record id="mnu_health_gnuhealth_appointment_menu_group_12" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_appointment_menu"/>
+            <field name="group" ref="group_12"/>
+        </record>
+        <record id="mnu_health_gnuhealth_menu_group_12" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_menu"/>
+            <field name="group" ref="group_12"/>
+        </record>
+        <record id="mnu_party_menu_party_form_group_12" model="ir.ui.menu-res.group">
+            <field name="menu" ref="party.menu_party_form"/>
+            <field name="group" ref="group_12"/>
+        </record>
+        <record id="mnu_party_menu_party_group_12" model="ir.ui.menu-res.group">
+            <field name="menu" ref="party.menu_party"/>
+            <field name="group" ref="group_12"/>
+        </record>
+        <record id="mnu_health_gnuhealth_patients_menu_group_12" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_patients_menu"/>
+            <field name="group" ref="group_12"/>
+        </record>
+        <record id="mnu_health_gnuhealth_prescription_menu_group_12" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_prescription_menu"/>
+            <field name="group" ref="group_12"/>
+        </record>
+        <record id="mnu_product_menu_main_product_group_12" model="ir.ui.menu-res.group">
+            <field name="menu" ref="product.menu_main_product"/>
+            <field name="group" ref="group_12"/>
+        </record>
+        <record id="mnu_health_gnuhealth_reporting_menu_group_12" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_reporting_menu"/>
+            <field name="group" ref="group_12"/>
+        </record>
+        <record id="mnu_party_menu_address_form_group_10" model="ir.ui.menu-res.group">
+            <field name="menu" ref="party.menu_address_form"/>
+            <field name="group" ref="group_10"/>
+        </record>
+        <record id="mnu_health_gnuhealth_appointment_menu_group_10" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_appointment_menu"/>
+            <field name="group" ref="group_10"/>
+        </record>
+        <record id="mnu_health_gnuhealth_menu_group_10" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_menu"/>
+            <field name="group" ref="group_10"/>
+        </record>
+        <record id="mnu_party_menu_party_form_group_10" model="ir.ui.menu-res.group">
+            <field name="menu" ref="party.menu_party_form"/>
+            <field name="group" ref="group_10"/>
+        </record>
+        <record id="mnu_party_menu_party_group_10" model="ir.ui.menu-res.group">
+            <field name="menu" ref="party.menu_party"/>
+            <field name="group" ref="group_10"/>
+        </record>
+        <record id="mnu_health_gnuhealth_patients_menu_group_10" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_patients_menu"/>
+            <field name="group" ref="group_10"/>
+        </record>
+        <record id="mnu_health_gnuhealth_reporting_menu_group_10" model="ir.ui.menu-res.group">
+            <field name="menu" ref="health.gnuhealth_reporting_menu"/>
+            <field name="group" ref="group_10"/>
+        </record>
+        <record id="ma_gnuhealth-appointment_group_11" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_11"/>
+            <field name="model" search="[('model','=', 'gnuhealth.appointment')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-family_group_11" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_11"/>
+            <field name="model" search="[('model','=', 'gnuhealth.family')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-family_member_group_11" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_11"/>
+            <field name="model" search="[('model','=', 'gnuhealth.family_member')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-insurance_group_11" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_11"/>
+            <field name="model" search="[('model','=', 'gnuhealth.insurance')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient_group_11" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_11"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-appointment_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.appointment')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-directions_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.directions')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-dose-unit_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.dose.unit')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-drug-form_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.drug.form')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-drug-route_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.drug.route')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-ethnicity_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.ethnicity')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-family_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.family')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-family_member_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.family_member')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-insurance_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.insurance')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-insurance-plan_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.insurance.plan')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-medicament_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.medicament')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-medicament-category_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.medicament.category')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-medication-dosage_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.medication.dosage')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-occupation_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.occupation')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-operational_area_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.operational_area')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-operational_sector_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.operational_sector')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-pathology_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.pathology')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-pathology-category_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.pathology.category')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient-disease_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient.disease')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient-evaluation_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient.evaluation')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient-medication_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient.medication')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-healthprofessional_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.healthprofessional')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-prescription-line_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.prescription.line')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-prescription-order_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.prescription.order')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-procedure_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.procedure')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-sequences_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.sequences')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-specialty_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.specialty')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-vaccination_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'gnuhealth.vaccination')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_country-post_office_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'country.post_office')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_country-district_community_group_13" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_13"/>
+            <field name="model" search="[('model','=', 'country.district_community')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-appointment_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.appointment')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-directions_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.directions')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-dose-unit_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.dose.unit')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-drug-form_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.drug.form')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-drug-route_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.drug.route')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-ethnicity_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.ethnicity')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-family_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.family')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-family_member_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.family_member')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-insurance-plan_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.insurance.plan')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient-disease_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient.disease')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient-evaluation_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient.evaluation')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient-medication_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient.medication')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-prescription-line_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.prescription.line')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-prescription-order_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.prescription.order')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-procedure_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.procedure')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-sequences_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.sequences')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-specialty_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.specialty')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-vaccination_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.vaccination')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-insurance_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.insurance')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-medicament_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.medicament')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-medicament-category_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.medicament.category')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-medication-dosage_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.medication.dosage')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-occupation_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.occupation')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-operational_area_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.operational_area')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-operational_sector_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.operational_sector')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-pathology_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.pathology')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-pathology-category_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.pathology.category')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-healthprofessional_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'gnuhealth.healthprofessional')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_country-post_office_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'country.post_office')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_country-district_community_group_12" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_12"/>
+            <field name="model" search="[('model','=', 'country.district_community')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_country-post_office_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'country.post_office')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_country-district_community_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'country.district_community')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-appointment_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.appointment')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-directions_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.directions')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-dose-unit_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.dose.unit')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-drug-form_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.drug.form')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-drug-route_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.drug.route')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-ethnicity_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.ethnicity')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-family_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.family')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-family_member_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.family_member')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-insurance_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.insurance')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-insurance-plan_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.insurance.plan')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-medicament_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.medicament')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-medicament-category_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.medicament.category')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-medication-dosage_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.medication.dosage')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-occupation_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.occupation')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-operational_area_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.operational_area')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-operational_sector_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.operational_sector')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-pathology_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.pathology')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-pathology-category_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.pathology.category')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient-disease_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient.disease')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient-evaluation_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient.evaluation')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-patient-medication_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.patient.medication')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-healthprofessional_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.healthprofessional')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-prescription-line_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.prescription.line')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-prescription-order_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.prescription.order')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-procedure_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.procedure')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-sequences_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.sequences')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-specialty_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.specialty')]"/>
+            <field eval="False" name="perm_delete"/>
+            <field eval="False" name="perm_create"/>
+        </record>
+        <record id="ma_gnuhealth-vaccination_group_10" model="ir.model.access">
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_write"/>
+            <field name="group" ref="group_10"/>
+            <field name="model" search="[('model','=', 'gnuhealth.vaccination')]"/>
+            <field eval="True" name="perm_delete"/>
+            <field eval="True" name="perm_create"/>
+        </record>
+        <record id="fa_party-party-vat_country_group_11" model="ir.model.field.access">
+            <field name="group" ref="group_11"/>
+            <field name="field" search="[('name','=','vat_country'),('model.model','=','party.party')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_party-party-is_institution_group_11" model="ir.model.field.access">
+            <field name="group" ref="group_11"/>
+            <field name="field" search="[('name','=','is_institution'),('model.model','=','party.party')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_party-party-is_healthprof_group_11" model="ir.model.field.access">
+            <field name="group" ref="group_11"/>
+            <field name="field" search="[('name','=','is_healthprof'),('model.model','=','party.party')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_party-party-is_insurance_company_group_11" model="ir.model.field.access">
+            <field name="group" ref="group_11"/>
+            <field name="field" search="[('name','=','is_insurance_company'),('model.model','=','party.party')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_party-party-is_pharmacy_group_11" model="ir.model.field.access">
+            <field name="group" ref="group_11"/>
+            <field name="field" search="[('name','=','is_pharmacy'),('model.model','=','party.party')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_party-party-vat_code_group_11" model="ir.model.field.access">
+            <field name="group" ref="group_11"/>
+            <field name="field" search="[('name','=','vat_code'),('model.model','=','party.party')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_party-party-ref_group_11" model="ir.model.field.access">
+            <field name="group" ref="group_11"/>
+            <field name="field" search="[('name','=','ref'),('model.model','=','party.party')]"/>
+            <field eval="True" name="perm_write"/>
+            <field eval="True" name="perm_read"/>
+            <field eval="True" name="perm_create"/>
+            <field eval="True" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-loc_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','loc'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-loc_verbal_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','loc_verbal'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-loc_motor_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','loc_motor'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-loc_eyes_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','loc_eyes'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-mood_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','mood'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-memory_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','memory'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-judgment_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','judgment'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-vocabulary_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','vocabulary'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-object_recognition_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','object_recognition'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-praxis_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','praxis'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-orientation_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','orientation'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-calculation_ability_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','calculation_ability'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-abstraction_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','abstraction'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-knowledge_current_events_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','knowledge_current_events'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-violent_group_13" model="ir.model.field.access">
+            <field name="group" ref="group_13"/>
+            <field name="field" search="[('name','=','violent'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-loc_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','loc'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-loc_verbal_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','loc_verbal'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-loc_motor_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','loc_motor'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-loc_eyes_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','loc_eyes'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-mood_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','mood'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-memory_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','memory'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-judgment_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','judgment'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-vocabulary_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','vocabulary'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-object_recognition_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','object_recognition'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-praxis_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','praxis'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-orientation_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','orientation'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-calculation_ability_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','calculation_ability'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-abstraction_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','abstraction'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-knowledge_current_events_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','knowledge_current_events'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-violent_group_12" model="ir.model.field.access">
+            <field name="group" ref="group_12"/>
+            <field name="field" search="[('name','=','violent'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-loc_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','loc'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-loc_verbal_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','loc_verbal'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-loc_motor_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','loc_motor'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-loc_eyes_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','loc_eyes'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-mood_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','mood'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="True" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-memory_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','memory'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-judgment_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','judgment'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-vocabulary_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','vocabulary'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-object_recognition_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','object_recognition'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-praxis_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','praxis'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-orientation_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','orientation'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-calculation_ability_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','calculation_ability'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-abstraction_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','abstraction'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-knowledge_current_events_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','knowledge_current_events'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+        <record id="fa_gnuhealth-patient-evaluation-violent_group_10" model="ir.model.field.access">
+            <field name="group" ref="group_10"/>
+            <field name="field" search="[('name','=','violent'),('model.model','=','gnuhealth.patient.evaluation')]"/>
+            <field eval="False" name="perm_write"/>
+            <field eval="False" name="perm_read"/>
+            <field eval="False" name="perm_create"/>
+            <field eval="False" name="perm_delete"/>
+        </record>
+    </data>
+</tryton>
