@@ -8,7 +8,7 @@ from trytond.model import ModelView, ModelStorage, fields
 from trytond.pool import Pool
 from trytond.pyson import Eval, Bool
 
-from ..health_jamaica.health_jamaica import (SEX_OPTIONS, MARITAL_STATUSES)
+from ..health_jamaica.party import (SEX_OPTIONS, MARITAL_STATUSES)
 from tryton_synchronisation import UUID
 
 __all__ = ('RemoteParty',)

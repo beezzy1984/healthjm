@@ -2,7 +2,7 @@
 
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool
-from ..health_jamaica.health_jamaica import ThisInstitution
+from ..health_jamaica.party import ThisInstitution
 
 class HealthProfessional(ModelSQL, ModelView):
     'Health Professional'
