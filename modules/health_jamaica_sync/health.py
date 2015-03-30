@@ -3,7 +3,7 @@ from tryton_synchronisation import SyncMixin, SyncUUIDMixin, SyncMode
 from trytond.model import ModelSQL
 from trytond.pool import PoolMeta
 from trytond.transaction import Transaction
-__all__ = ['Party', 'PartyAddress', 'OccupationalGroup', 'OperationalArea',
+__all__ = ['Party', 'PartyAddress', 'OperationalArea',
     'OperationalSector', 'DomiciliaryUnit', 'AlternativePersonID',
     'MedicalSpecialty', 'HealthInstitution', 'HealthInstitutionSpecialties',
     'HospitalUnit', 'HospitalWard', 'HealthProfessional',
@@ -66,13 +66,6 @@ class PostOffice(SyncMixin):
 
 class DistrictCommunity(SyncMixin):
     __name__ = 'country.district_community'
-    __metaclass__ = PoolMeta
-    unique_id_column = 'code'
-    sync_mode = SyncMode.none
-
-class OccupationalGroup(SyncMixin):
-    '''Occupational Group'''
-    __name__ = 'gnuhealth.occupation'
     __metaclass__ = PoolMeta
     unique_id_column = 'code'
     sync_mode = SyncMode.none

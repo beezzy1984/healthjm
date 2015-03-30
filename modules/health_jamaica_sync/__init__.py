@@ -12,7 +12,6 @@ def register():
         DistrictCommunity,
         Party,
         PartyAddress,
-        OccupationalGroup,
         OperationalArea,
         OperationalSector,
         DomiciliaryUnit,
