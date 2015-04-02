@@ -40,7 +40,7 @@
 		</record>
 
 		<menuitem action="act_remote_party" id="sync_menu_remote_party"
-			parent="party.menu_party_form" icon="healthjm-masterindex" sequence="3" />
+			parent="party.menu_party" icon="healthjm-masterindex" sequence="2" />
 
         <!-- Add "Local Health Professionals" menu -->
     
