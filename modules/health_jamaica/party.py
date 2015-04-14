@@ -94,6 +94,8 @@ class PartyPatient(ModelSQL, ModelView):
         'get_alt_ids', searcher='search_alt_ids')
     marital_status_display = fields.Function(fields.Char('Marital Status'),
                                              'get_marital_status_display')
+    # party_warning_ack = fields.Function(Fields.Boolean('Identity verified'),
+    #                                     'get_party_warning_ack')
 
     @classmethod
     def __setup__(cls):
@@ -151,7 +153,8 @@ class PartyPatient(ModelSQL, ModelView):
         '''validates that a party being entered as verified has an alt-id
         if there is no alt-id, then the party should be labeled as unidentified
         '''
-        if len(self.alternative_ids) == 0 and not self.unidentified:
+        if (self.is_person and self.is_patient and
+            len(self.alternative_ids) == 0 and not self.unidentified):
             self.raise_user_error('unidentified_or_altid')
 
 
@@ -186,11 +189,11 @@ class PartyPatient(ModelSQL, ModelView):
         fld, operator, operand = clause
         if (isinstance(operand, six.string_types) and
             NNre.match(operand)):
-            # searching for NN- records, so auto-append verified=False
+            # searching for NN- records, so auto-append unidentified=True
             operand = u''.join(NNre.split(operand))
             if operand == u'%%': operand = '%'
             return ['AND', ('ref',operator, operand),
-                           ('party_warning_ack','=', False)]
+                           ('unidentified','=', True)]
         else:
             return [replace_clause_column(clause, 'ref')]
 

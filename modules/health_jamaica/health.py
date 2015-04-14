@@ -25,7 +25,7 @@ from trytond.model import ModelView, ModelSQL, fields
 from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
 from trytond.pool import Pool
 from .tryton_utils import (negate_clause, replace_clause_column, is_not_synchro,
-                           update_states)
+                           update_states, get_timezone)
 
 __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'HealthInstitutionSpecialties', 'HealthProfessional',

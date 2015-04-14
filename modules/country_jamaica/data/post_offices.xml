@@ -945,7 +945,7 @@
 		<record id="jmpo_P12B933" model="country.post_office">
 			<field name="code">P12B933</field>
 			<field name="subdivision" ref="country.jm-12" />
-			<field name="name">Christian P.O.</field>
+			<field name="name">Christiana P.O.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
 		<record id="jmpo_P1277CD" model="country.post_office">
