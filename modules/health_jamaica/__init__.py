@@ -37,6 +37,7 @@ def register():
         PartyAddress,
         PatientData,
         Insurance,
+        OperationalSector,
         HealthInstitution,
         HealthInstitutionSpecialties,
         HealthProfessional,

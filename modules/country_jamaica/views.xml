@@ -12,5 +12,20 @@
 			<field name="type">tree</field>
 			<field name="name">tree-district_community</field>
 		</record>
+
+		<!-- Disable Saint Andrew Subdivision and rename Kingston -->
+<!-- 		<record model="country.subdivision" id="country.jm-02">
+            <field name="name">Saint Andrew</field>
+            <field name="code">JM-02</field>
+            <field name="type">parish</field>
+            <field name="country" ref="country.jm"/>
+            <field name="active" eval="False" />
+		</record> -->
+		<record model="country.subdivision" id="country.jm-01">
+            <field name="name">Kingston &amp; Saint Andrew</field>
+            <field name="code">JM-01</field>
+            <field name="type">parish</field>
+            <field name="country" ref="country.jm"/>
+		</record>
 	</data>
 </tryton>

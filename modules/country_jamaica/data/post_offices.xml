@@ -183,7 +183,7 @@
 		<record id="jmpo_P01B5A9" model="country.post_office">
 			<field name="code">P01B5A9</field>
 			<field name="subdivision" ref="country.jm-01" />
-			<field name="name">St. Peters P.O.</field>
+			<field name="name">Saint Peters P.O.</field>
 			<field name="inspectorate">KSAC</field>
 		</record>
 		<record id="jmpo_P010536" model="country.post_office">
@@ -327,7 +327,7 @@
 		<record id="jmpo_P14E439" model="country.post_office">
 			<field name="code">P14E439</field>
 			<field name="subdivision" ref="country.jm-14" />
-			<field name="name">Harkers Hall P.O</field>
+			<field name="name">Harkers Hall P.O.</field>
 			<field name="inspectorate">SPANISH TOWN</field>
 		</record>
 		<record id="jmpo_P1418B8" model="country.post_office">
@@ -645,7 +645,7 @@
 		<record id="jmpo_P13BB53" model="country.post_office">
 			<field name="code">P13BB53</field>
 			<field name="subdivision" ref="country.jm-13" />
-			<field name="name">Tollgate P.O.</field>
+			<field name="name">Tollg Gate P.O.</field>
 			<field name="inspectorate">MAYPEN</field>
 		</record>
 		<record id="jmpo_P134041" model="country.post_office">
@@ -687,7 +687,7 @@
 		<record id="jmpo_G133E05" model="country.post_office">
 			<field name="code">G133E05</field>
 			<field name="subdivision" ref="country.jm-13" />
-			<field name="name">Coffee  Piece P.A.</field>
+			<field name="name">Coffee Piece P.A.</field>
 			<field name="inspectorate">MAYPEN</field>
 		</record>
 		<record id="jmpo_G13216A" model="country.post_office">
@@ -867,7 +867,7 @@
 		<record id="jmpo_G137DAE" model="country.post_office">
 			<field name="code">G137DAE</field>
 			<field name="subdivision" ref="country.jm-13" />
-			<field name="name">St.Gregory P.A.</field>
+			<field name="name">Saint Gregory P.A.</field>
 			<field name="inspectorate">MAYPEN</field>
 		</record>
 		<record id="jmpo_G135A19" model="country.post_office">
@@ -903,7 +903,7 @@
 		<record id="jmpo_G13AD61" model="country.post_office">
 			<field name="code">G13AD61</field>
 			<field name="subdivision" ref="country.jm-13" />
-			<field name="name">Whitney  P.A.</field>
+			<field name="name">Whitney P.A.</field>
 			<field name="inspectorate">MAYPEN</field>
 		</record>
 		<record id="jmpo_G134606" model="country.post_office">
@@ -915,13 +915,13 @@
 		<record id="jmpo_P13A51C" model="country.post_office">
 			<field name="code">P13A51C</field>
 			<field name="subdivision" ref="country.jm-13" />
-			<field name="name">Spaldings P. O.</field>
+			<field name="name">Spaldings P.O.</field>
 			<field name="inspectorate">MAYPEN</field>
 		</record>
 		<record id="jmpo_P076789" model="country.post_office">
 			<field name="code">P076789</field>
 			<field name="subdivision" ref="country.jm-07" />
-			<field name="name">Wait -A -BIT P.O.</field>
+			<field name="name">Wait-A-Bit P.O.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
 		<record id="jmpo_P072925" model="country.post_office">
@@ -969,7 +969,7 @@
 		<record id="jmpo_P12D85B" model="country.post_office">
 			<field name="code">P12D85B</field>
 			<field name="subdivision" ref="country.jm-12" />
-			<field name="name">Cross Key P.O.</field>
+			<field name="name">Cross Keys P.O.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
 		<record id="jmpo_P12FE08" model="country.post_office">
@@ -1040,8 +1040,8 @@
 		</record>
 		<record id="jmpo_P1217FA" model="country.post_office">
 			<field name="code">P1217FA</field>
-			<field name="subdivision" ref="country.jm-12" />
-			<field name="name">Myersville P.O</field>
+			<field name="subdivision" ref="country.jm-11" />
+			<field name="name">Myersville P.O.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
 		<record id="jmpo_P125616" model="country.post_office">
@@ -1059,7 +1059,7 @@
 		<record id="jmpo_P127B60" model="country.post_office">
 			<field name="code">P127B60</field>
 			<field name="subdivision" ref="country.jm-12" />
-			<field name="name">New Port P.O.</field>
+			<field name="name">Newport P.O.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
 		<record id="jmpo_P127A2F" model="country.post_office">
@@ -1071,7 +1071,7 @@
 		<record id="jmpo_P120B8A" model="country.post_office">
 			<field name="code">P120B8A</field>
 			<field name="subdivision" ref="country.jm-11" />
-			<field name="name">Pepper P.O</field>
+			<field name="name">Pepper P.O.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
 		<record id="jmpo_P12E7D1" model="country.post_office">
@@ -1125,7 +1125,7 @@
 		<record id="jmpo_G12E229" model="country.post_office">
 			<field name="code">G12E229</field>
 			<field name="subdivision" ref="country.jm-12" />
-			<field name="name">Blue Mountain  P.A.</field>
+			<field name="name">Blue Mountain P.A.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
 		<record id="jmpo_G127269" model="country.post_office">
@@ -1683,7 +1683,7 @@
 		<record id="jmpo_G11A03F" model="country.post_office">
 			<field name="code">G11A03F</field>
 			<field name="subdivision" ref="country.jm-11" />
-			<field name="name">St. Pauls P.A.</field>
+			<field name="name">Saint Pauls P.A.</field>
 			<field name="inspectorate">BLACK RIVER</field>
 		</record>
 		<record id="jmpo_G11C797" model="country.post_office">
@@ -1701,7 +1701,7 @@
 		<record id="jmpo_G11FA9C" model="country.post_office">
 			<field name="code">G11FA9C</field>
 			<field name="subdivision" ref="country.jm-11" />
-			<field name="name">Wilson Run  P.A.</field>
+			<field name="name">Wilson Run P.A.</field>
 			<field name="inspectorate">BLACK RIVER</field>
 		</record>
 		<record id="jmpo_G11EADC" model="country.post_office">
@@ -1773,7 +1773,7 @@
 		<record id="jmpo_P10E468" model="country.post_office">
 			<field name="code">P10E468</field>
 			<field name="subdivision" ref="country.jm-10" />
-			<field name="name">Grange Hill P. O.</field>
+			<field name="name">Grange Hill P.O.</field>
 			<field name="inspectorate">SAVANNA LA MAR</field>
 		</record>
 		<record id="jmpo_P109DBD" model="country.post_office">
@@ -1803,7 +1803,7 @@
 		<record id="jmpo_P1056A2" model="country.post_office">
 			<field name="code">P1056A2</field>
 			<field name="subdivision" ref="country.jm-10" />
-			<field name="name">Mount Peto P. O.</field>
+			<field name="name">Mount Peto P.O.</field>
 			<field name="inspectorate">SAVANNA LA MAR</field>
 		</record>
 		<record id="jmpo_P101A5E" model="country.post_office">
@@ -1827,13 +1827,13 @@
 		<record id="jmpo_P10E87B" model="country.post_office">
 			<field name="code">P10E87B</field>
 			<field name="subdivision" ref="country.jm-10" />
-			<field name="name">Savanna - La - Mar P.O.</field>
+			<field name="name">Savanna-la-mar P.O.</field>
 			<field name="inspectorate">SAVANNA LA MAR</field>
 		</record>
 		<record id="jmpo_P10A473" model="country.post_office">
 			<field name="code">P10A473</field>
 			<field name="subdivision" ref="country.jm-10" />
-			<field name="name">St.Leonards P.O.</field>
+			<field name="name">Saint Leonards P.O.</field>
 			<field name="inspectorate">SAVANNA LA MAR</field>
 		</record>
 		<record id="jmpo_P101CF0" model="country.post_office">
@@ -1959,7 +1959,7 @@
 		<record id="jmpo_P08255A" model="country.post_office">
 			<field name="code">P08255A</field>
 			<field name="subdivision" ref="country.jm-08" />
-			<field name="name">Adelphi P.O</field>
+			<field name="name">Adelphi P.O.</field>
 			<field name="inspectorate">MONTEGO BAY</field>
 		</record>
 		<record id="jmpo_P085208" model="country.post_office">
@@ -2361,7 +2361,7 @@
 		<record id="jmpo_P066331" model="country.post_office">
 			<field name="code">P066331</field>
 			<field name="subdivision" ref="country.jm-06" />
-			<field name="name">Gibraltor P.O.</field>
+			<field name="name">Gibraltar P.O.</field>
 			<field name="inspectorate">ST ANNS BAY</field>
 		</record>
 		<record id="jmpo_P067800" model="country.post_office">
@@ -2427,7 +2427,7 @@
 		<record id="jmpo_P065444" model="country.post_office">
 			<field name="code">P065444</field>
 			<field name="subdivision" ref="country.jm-06" />
-			<field name="name">St. Ann's Bay P.O.</field>
+			<field name="name">Saint Ann's Bay P.O.</field>
 			<field name="inspectorate">ST ANNS BAY</field>
 		</record>
 		<record id="jmpo_P06E30F" model="country.post_office">
@@ -2547,13 +2547,13 @@
 		<record id="jmpo_G06ADFC" model="country.post_office">
 			<field name="code">G06ADFC</field>
 			<field name="subdivision" ref="country.jm-06" />
-			<field name="name">St. D'acre P.A.</field>
+			<field name="name">Saint D'acre P.A.</field>
 			<field name="inspectorate">ST ANNS BAY</field>
 		</record>
 		<record id="jmpo_G06E5D4" model="country.post_office">
 			<field name="code">G06E5D4</field>
 			<field name="subdivision" ref="country.jm-06" />
-			<field name="name">Stugre Town P.A.</field>
+			<field name="name">Sturge Town P.A.</field>
 			<field name="inspectorate">ST ANNS BAY</field>
 		</record>
 		<record id="jmpo_G0632CF" model="country.post_office">
@@ -2672,8 +2672,8 @@
 		</record>
 		<record id="jmpo_P0527D8" model="country.post_office">
 			<field name="code">P0527D8</field>
-			<field name="subdivision" ref="country.jm-05" />
-			<field name="name">Moneague  P.O.</field>
+			<field name="subdivision" ref="country.jm-06" />
+			<field name="name">Moneague P.O.</field>
 			<field name="inspectorate">PORT MARIA</field>
 		</record>
 		<record id="jmpo_P05C0E1" model="country.post_office">
@@ -2703,7 +2703,7 @@
 		<record id="jmpo_P0528F1" model="country.post_office">
 			<field name="code">P0528F1</field>
 			<field name="subdivision" ref="country.jm-05" />
-			<field name="name">Richmond  P.O.</field>
+			<field name="name">Richmond P.O.</field>
 			<field name="inspectorate">PORT MARIA</field>
 		</record>
 		<record id="jmpo_P05983D" model="country.post_office">
@@ -2715,7 +2715,7 @@
 		<record id="jmpo_P0570E8" model="country.post_office">
 			<field name="code">P0570E8</field>
 			<field name="subdivision" ref="country.jm-05" />
-			<field name="name">Union  Hill  P.O.</field>
+			<field name="name">Union Hill P.O.</field>
 			<field name="inspectorate">PORT MARIA</field>
 		</record>
 		<record id="jmpo_P05845B" model="country.post_office">
@@ -2733,7 +2733,7 @@
 		<record id="jmpo_P05617D" model="country.post_office">
 			<field name="code">P05617D</field>
 			<field name="subdivision" ref="country.jm-05" />
-			<field name="name">Windsor  Castle P.O.</field>
+			<field name="name">Windsor Castle P.O.</field>
 			<field name="inspectorate">PORT MARIA</field>
 		</record>
 		<record id="jmpo_P05B5EA" model="country.post_office">
@@ -3105,25 +3105,25 @@
 		<record id="jmpo_P048110" model="country.post_office">
 			<field name="code">P048110</field>
 			<field name="subdivision" ref="country.jm-04" />
-			<field name="name">Swift River P.O</field>
+			<field name="name">Swift River P.O.</field>
 			<field name="inspectorate">PORT ANTONIO</field>
 		</record>
 		<record id="jmpo_P040B08" model="country.post_office">
 			<field name="code">P040B08</field>
 			<field name="subdivision" ref="country.jm-04" />
-			<field name="name">Trinity Ville P.O.</field>
+			<field name="name">Trinityville P.O.</field>
 			<field name="inspectorate">PORT ANTONIO</field>
 		</record>
 		<record id="jmpo_P04DA30" model="country.post_office">
 			<field name="code">P04DA30</field>
 			<field name="subdivision" ref="country.jm-04" />
-			<field name="name">St. Margarets Bay P.O.</field>
+			<field name="name">Saint Margarets Bay P.O.</field>
 			<field name="inspectorate">PORT ANTONIO</field>
 		</record>
 		<record id="jmpo_P049989" model="country.post_office">
 			<field name="code">P049989</field>
 			<field name="subdivision" ref="country.jm-04" />
-			<field name="name">Whitehoreses P.O.</field>
+			<field name="name">White Horses P.O.</field>
 			<field name="inspectorate">PORT ANTONIO</field>
 		</record>
 		<record id="jmpo_P03B021" model="country.post_office">

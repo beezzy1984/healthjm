@@ -31,7 +31,7 @@ __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'HealthInstitutionSpecialties', 'HealthProfessional',
            'HealthProfessionalSpecialties', 'Appointment', 'ProcedureCode',
            'PathologyGroup', 'Pathology', 'DiagnosticHypothesis',
-           'PatientEvaluation']
+           'PatientEvaluation', 'OperationalSector']
 
 class PatientData(ModelSQL, ModelView):
     '''Patient related information'''
@@ -491,3 +491,9 @@ class PatientEvaluation(ModelSQL, ModelView):
         return super(PatientEvaluation, cls).write(evaluations, vals)
 
 
+class OperationalSector(ModelSQL, ModelView):
+    'Operational Sector'
+    __name__ = 'gnuhealth.operational_sector'
+
+    subdivision = fields.Many2One('country.subdivision', 'Parish/Province',
+                                  required=True)

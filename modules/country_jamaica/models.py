@@ -57,9 +57,8 @@ class PostOffice(ModelSQL, ModelView):
                        ('JM-02',))
         standrew = cursor.fetchone()
         if standrew:
-            sql = ['UPDATE country_subdivision set name=%s where code=%s',
-                   'DELETE from country_subdivision where code=%s' ]
-            parms = [('Kingston & Saint Andrew', 'JM-01'), ('JM-02',)]
+            sql = ['DELETE from country_subdivision where code=%s']
+            parms = [('JM-02',)]
             for query, query_param in zip(sql, parms):
                 cursor.execute(query, query_param)
             cursor.commit()
