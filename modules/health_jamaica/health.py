@@ -179,6 +179,10 @@ class HealthInstitution(ModelSQL, ModelView):
     'Health Institution'
     __name__ = 'gnuhealth.institution'
 
+    latitude = fields.Numeric('Latitude', digits=(3, 14))
+    longitude = fields.Numeric('Longitude', digits=(4, 14))
+    altitude = fields.Numeric('Altitude (in meters)', digits=(4,3))
+
     @classmethod
     def __setup__(cls):
         cls.main_specialty = fields.Function(
@@ -497,3 +501,6 @@ class OperationalSector(ModelSQL, ModelView):
 
     subdivision = fields.Many2One('country.subdivision', 'Parish/Province',
                                   required=True)
+
+    def get_rec_name(self, name):
+        return ' - '.join([self.subdivision.name, self.name])
