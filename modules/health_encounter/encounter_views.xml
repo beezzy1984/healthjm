@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tryton>
+    <data>
+        <!-- Encounter Views -->
+        <record model="ir.ui.view" id="health_view_tree_encounter">
+            <field name="model">gnuhealth.encounter</field>
+            <field name="type">tree</field>
+            <field name="name">tree_encounter</field>
+        </record>
+        <record model="ir.ui.view" id="health_view_form_encounter">
+            <field name="model">gnuhealth.encounter</field>
+            <field name="type">form</field>
+            <field name="name">form_encounter</field>
+        </record>
+
+        <record model="ir.action.act_window" id="health_actwin_encounter">
+            <field name="name">Patient Encounters</field>
+            <field name="res_model">gnuhealth.encounter</field>
+        </record>
+
+        <record model="ir.action.act_window.view" id="health_actview_encounter_tree">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="health_view_tree_encounter"/>
+            <field name="act_window" ref="health_actwin_encounter"/>
+        </record>
+
+        <record model="ir.action.act_window.view" id="act_gnuhealth_patient_rounding_form">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="health_view_form_encounter"/>
+            <field name="act_window" ref="health_actwin_encounter"/>
+        </record>
+
+        <menuitem action="health_actwin_encounter"
+            id="health_menu_encounter_main" icon="gnuhealth-list"
+            parent="health.gnuhealth_menu" />
+
+
+        <!-- Encounter Component Tree -->
+        <record model="ir.ui.view" id="health_view_tree_encounter_component">
+            <field name="model">gnuhealth.encounter.component</field>
+            <field name="type">tree</field>
+            <field name="name">tree_components</field>
+        </record>
+
+
+    </data>
+</tryton>
