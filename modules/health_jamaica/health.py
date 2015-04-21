@@ -63,6 +63,8 @@ class PatientData(ModelSQL, ModelView):
         'get_unidentified',
         searcher='search_unidentified'
     )
+    def get_rec_name(self, name):
+        return self.name.name
 
     def get_person_field(self, field_name):
         return getattr(self.name, field_name)
