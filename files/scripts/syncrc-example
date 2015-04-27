@@ -1,0 +1,13 @@
+
+# This is a shell fragment
+# Don't put space between variable names and =
+# e.g. SYNC_ID=10       yes
+#      SYNC_ID = 10     no
+
+SYNC_ID=<number>
+SYNC_PARTNER='fqdn.of.instance'
+BROKER_URL="amqp://un:pwd@rabbit_host:5672/vhostname"
+SYNC_WAIT=300 # seconds
+LOGDIR=/path/to/log/folder
+VIRTUAL_ENV="/path/to/virtualenv"
+SYNC_ENV="/path/to/folder/that/contains-syncconf.py"
