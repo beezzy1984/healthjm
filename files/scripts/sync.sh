@@ -61,7 +61,7 @@ start_celery(){
     fi
 
     if $celeryfg ; then
-        echo "Running celery in foregroung ..."
+        echo "Running celery in foreground ..."
     else
         WORKER_OPTS="$WORKER_OPTS -D -f ${LOGDIR}/worker.log"
         # make the worker go into the background
@@ -132,12 +132,11 @@ cycle_all(){
         for SYNC_CMD in ${SYNC_COMMANDS}; do
             called=false
             while !($called); do
-                if [ -n "$(celery -b $BROKER_URL inspect active | head -2 | tail -1|grep -Ee '^ +- empty -$')" ]
-                then
-                    if [ -f $cyclefile ]; then
-                        celery_call $SYNC_CMD
-                        called=true
-                    fi
+                can_call="$(celery -b $BROKER_URL inspect active)"
+                can_call=$(echo "$can_call"|head -2|tail -1|grep -Ee '^ +- empty -$')
+                if [ -n "$can_call" -a -f $cyclefile ]; then
+                    celery_call $SYNC_CMD
+                    called=true
                     sleep 5
                 else
                     sleep 10
@@ -215,7 +214,6 @@ _show_usage(){
 
 while getopts "$SHORTOPTS" flag
     do
-        echo "the flag is ]$flag["
         case $flag in
 
             d|debug)
