@@ -1,0 +1,68 @@
+upstream tryton_jsonrpc {
+        server 127.0.1.1:7991;
+        server 127.0.1.1:7992;
+}
+
+upstream tryton_xmlrpc {
+        server 127.0.1.1:7891;
+        server 127.0.1.1:7892;
+}
+
+upstream tryton_webdav {
+        server 127.0.1.1:7791;
+        server 127.0.1.1:7792;
+}
+
+server {
+        listen   8000;
+        server_name  master.devpool;
+
+        ssl  on;
+        ssl_certificate /path/to/cert.pem;
+        ssl_certificate_key /path/to/key.pem;
+
+        client_max_body_size 100M;
+
+        # access_log /var/log/nginx/moh-jsonrpc.log;
+
+        location / {
+                proxy_pass http://tryton_jsonrpc;
+                proxy_set_header Host $http_host;
+        }
+}
+
+server {
+        listen   8001;
+        server_name  master.devpool;
+
+        ssl  on;
+        ssl_certificate /path/to/cert.pem;
+        ssl_certificate_key /path/to/key.pem;
+
+        client_max_body_size 100M;
+
+        # access_log /var/log/nginx/moh-xmlrpc.log;
+
+        location / {
+                proxy_pass http://tryton_xmlrpc;
+                proxy_set_header Host $http_host;
+        }
+}
+
+server {
+        listen   8002;
+        server_name  master.devpool;
+
+        ssl  on;
+        ssl_certificate /path/to/cert.pem;
+        ssl_certificate_key /path/to/key.pem;
+
+        client_max_body_size 100M;
+
+        # access_log /var/log/nginx/moh-webdav.log;
+
+        location / {
+                proxy_pass http://tryton_xmlrpc;
+                proxy_set_header Host $http_host;
+        }
+}

@@ -40,8 +40,10 @@ class RemoteParty(ModelView, ModelStorage):
         cls.__rpc__['fetch_remote_party'] = RPC(readonly=False)
         if not hasattr(cls, '_xcache'):
             cls._xcache = LRUDict(RECORD_CACHE_SIZE)
-        cls._target_model = Pool().get('party.party')
-        cls._du_model = Pool().get('gnuhealth.du')
+        pool = Pool()
+        cls._target_model = pool.get('party.party')
+        cls._du_model = pool.get('gnuhealth.du')
+        cls._patient_model = pool.get('gnuhealth.patient')
 
     @classmethod
     def read(cls, ids, fields_names=None):
@@ -72,11 +74,11 @@ class RemoteParty(ModelView, ModelStorage):
             result2 = Party.search_master(dplus + domain, offset, 
                                           100 if limit>100 else limit, order,
                                     fields_names=['name', 'alt_ids', 'upi',
-                                                  # 'is_patient', 'is_healthprof', 'is_institution',
+                                                  'is_patient', #'is_healthprof', 'is_institution',
                                                   'sex', 'father_name', 'mother_maiden_name',
                                                   'dob','party_warning_ack', 'maiden_name',
                                                   'marital_status', 'du.uuid',
-                                                  'du.full_address',
+                                                  'du.full_address','ref',
                                                   'alias','create_date', 'id',
                                                   'activation_date', 'write_date'])
                                     # fields_names=['code', 'create_date', 
@@ -114,10 +116,12 @@ class RemoteParty(ModelView, ModelStorage):
 
     @classmethod
     def fetch_remote_party(cls, ids):
-        party_codes, du_codes = [],[]
+        party_codes, du_codes, patient_codes = [],[], []
         for c in cls.read(ids, ['code', 'du_code']):
             if c.get('code'):
                 party_codes.append(c['code'])
+            if c.get('ref', False) and c.get('is_patient', False):
+                patient_codes.append(c['ref'])
             if c.get('du_code'):
                 du_codes.append(c['du_code'])
 
@@ -125,18 +129,23 @@ class RemoteParty(ModelView, ModelStorage):
             cls._du_model.pull_master_record(du_codes)
         if party_codes:
             cls._target_model.pull_master_record(party_codes)
+        if patient_codes:
+            cls._patient_model.pull_master_record(patient_codes)
+            # search for a pull the evaluations and appointments too
+            # Appointment = 
 
-        if du_codes or party_codes:
-            import celery_synchronisation as cs
-            try:
-                import syncconf
-                cs.celery.config_from_object(syncconf)
-            except ImportError:
-                pass 
-                # no celery config, we probably can't make the call
-                # but we're gonna make the call anyways and hope it flies
-            cs.synchronise_new.apply_async()
-            cs.synchronise_push_all.apply_async()
+
+        # if du_codes or party_codes:
+        #     import celery_synchronisation as cs
+        #     try:
+        #         import syncconf
+        #         cs.celery.config_from_object(syncconf)
+        #     except ImportError:
+        #         pass 
+        #         # no celery config, we probably can't make the call
+        #         # but we're gonna make the call anyways and hope it flies
+        #     cs.synchronise_new.apply_async()
+        #     cs.synchronise_push_all.apply_async()
 
         return 'switch tree'
 
