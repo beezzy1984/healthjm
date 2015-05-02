@@ -32,6 +32,7 @@ class RemoteParty(ModelView, ModelStorage):
                                                     'invisible':Bool(Eval('sex') == 'm')})
     du_code = UUID('DU_uuid')
     du_address = fields.Text('Address', states=RO)
+    marked_for_import = fields.Boolean('Import party')
 
     
     @classmethod

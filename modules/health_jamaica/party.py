@@ -26,7 +26,7 @@ from datetime import date, datetime
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool
 from trytond.transaction import Transaction
-from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
+from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or, In
 
 ThisInstitution = lambda : Pool().get('gnuhealth.institution').get_institution()
 
@@ -75,8 +75,10 @@ class PartyPatient(ModelSQL, ModelView):
         help="Middle name or names of Patient")
     maiden_name = fields.Char(
         'Maiden Name', 
-        states={'invisible':Or(Not(Equal(Eval('marital_status'), 'm')),
-                               Equal(Eval('sex'), 'm'))})
+        states={'invisible':Or(Not(In(Eval('marital_status'),
+                                      ['m','c','w','d','x'])),
+                               Equal(Eval('sex'), 'm'))}
+        )
     mother_maiden_name = fields.Char("Mother's Maiden Name", states=_STATES, 
         depends=_DEPENDS, help="Mother's Maiden Name")
     father_name = fields.Char("Father's Name", states=_STATES,
@@ -221,6 +223,12 @@ class PartyPatient(ModelSQL, ModelView):
                 else:
                     a_type = id_type_map.get(altid.alternative_id_type,
                                              altid.alternative_id_type)
+                    if (altid.alternative_id_type == 'medical_record' and
+                        altid.issuing_institution) :
+                        a_type = '{} MRN'.format(
+                                     altid.issuing_institution.name.name)
+                    else:
+                        a_type = 'Unknown MRN'
                     altids.append('{} {}'.format(a_type, altid.code))
             return '; '.join(altids)
 
