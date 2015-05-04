@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<form string="Master Index - Import">
+    <label name="parties" xfill="1" xalign="0" />
+    <newline />
+    <field name="parties" colspan="5" />
+</form>

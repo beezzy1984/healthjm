@@ -69,8 +69,8 @@ class PatientRegisterWizard(Wizard):
             Button('Generate Report', 'generate_report', 'tryton-ok',
                     default=True),
         ])
-    generate_report = \
-        StateAction('health_jamaica.healthjm_report_patientregister')
+    generate_report = StateAction(
+                            'health_jamaica.healthjm_report_patientregister')
 
 
     def transition_generate_report(self):

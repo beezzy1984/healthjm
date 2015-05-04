@@ -1,46 +1,21 @@
 <?xml version="1.0"?>
 <tryton>
-	<data>
-		<!-- Master Index Icon -->
-		<record model="ir.ui.icon" id="jmsync_icon_masterindex">
-			<field name="name">healthjm-masterindex</field>
-			<field name="path">icons/masterindex.svg</field>
-		</record>
-		<!-- Local Health Professionals -->
-		<record model="ir.ui.icon" id="jmsync_icon_local-healthprof">
-			<field name="name">healthjm-healthprofessional</field>
-			<field name="path">icons/local-doctor.svg</field>
-		</record>
-
-		<!-- Master Index Window Parent -->
-		<record model="ir.action.act_window" id="act_remote_party">
-			<field name="name">Master Index</field>
-			<field name="res_model">party.party.remote</field>
-		</record>
-		<!-- Remote Party aka Master Index Tree -->
-		<record model="ir.ui.view" id="remote_party_tree">
-			<field name="model">party.party.remote</field>
-			<field name="type">tree</field>
-			<field name="name">remote_party_tree</field>
-		</record>
-		<record model="ir.action.act_window.view" id="act_remote_party_tree">
-			<field name="sequence" eval="10" />
-			<field name="view" ref="remote_party_tree" />
-			<field name="act_window" ref="act_remote_party" />
-		</record>
-		<record model="ir.ui.view" id="remote_party_form">
-			<field name="model">party.party.remote</field>
-			<field name="type">form</field>
-			<field name="name">remote_party_form</field>
-		</record>
-		<record model="ir.action.act_window.view" id="act_remote_party_form">
-			<field name="sequence" eval="20" />
-			<field name="view" ref="remote_party_form" />
-			<field name="act_window" ref="act_remote_party" />
-		</record>
-
-		<menuitem action="act_remote_party" id="sync_menu_remote_party"
-			parent="party.menu_party" icon="healthjm-masterindex" sequence="2" />
+    <data>
+        <!-- Master Index Icon -->
+        <record model="ir.ui.icon" id="jmsync_icon_masterindex">
+            <field name="name">healthjm-masterindex</field>
+            <field name="path">icons/masterindex.svg</field>
+        </record>
+        <!-- Local Health Professionals -->
+        <record model="ir.ui.icon" id="jmsync_icon_local-healthprof">
+            <field name="name">healthjm-healthprofessional</field>
+            <field name="path">icons/local-doctor.svg</field>
+        </record>
+        <!-- Remote Party Import  -->
+        <record model="ir.ui.icon" id="jmsync_icon_do_import">
+            <field name="name">remote-party-import</field>
+            <field name="path">icons/remote-party-import.svg</field>
+        </record>
 
         <!-- Add "Local Health Professionals" menu -->
     
@@ -55,5 +30,57 @@
             action="act_local_healthprof_tree" id="menu_local_healthprofs"/>
 
 
-	</data>
+        <!-- Master Index Window Parent -->
+        <record model="ir.action.act_window" id="act_remote_party">
+            <field name="name">Master Index</field>
+            <field name="res_model">party.party.remote</field>
+        </record>
+        <!-- Remote Party aka Master Index -->
+        <record model="ir.ui.view" id="remote_party_tree">
+            <field name="model">party.party.remote</field>
+            <field name="type">tree</field>
+            <field name="name">tree-remote_party</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_remote_party_tree">
+            <field name="sequence" eval="10" />
+            <field name="view" ref="remote_party_tree" />
+            <field name="act_window" ref="act_remote_party" />
+        </record>
+        <record model="ir.ui.view" id="remote_party_form">
+            <field name="model">party.party.remote</field>
+            <field name="type">form</field>
+            <field name="name">form-remote_party</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_remote_party_form">
+            <field name="sequence" eval="20" />
+            <field name="view" ref="remote_party_form" />
+            <field name="act_window" ref="act_remote_party" />
+        </record>
+
+        <menuitem action="act_remote_party" id="sync_menu_remote_party"
+            parent="party.menu_party" icon="healthjm-masterindex" sequence="2" />
+
+        <!-- Remote Party Import Wizards and Views -->
+        <record model="ir.ui.view" id="remote_party_import_start">
+            <field name="model">party.party.remote_import.start</field>
+            <field name="type">form</field>
+            <field name="name">form-remote_party_import_start</field>
+        </record>
+        <record model="ir.ui.view" id="remote_party_import_done">
+            <field name="model">party.party.remote_import.done</field>
+            <field name="type">form</field>
+            <field name="name">form-remote_party_import_done</field>
+        </record>
+        <record model="ir.action.wizard" id="remote_party_import_wizard">
+            <field name="name">Import marked records</field>
+            <field name="wiz_name">party.party.remote_import.wizard</field>
+        </record>
+        <record model="ir.action.keyword" id="act_remote_party_import">
+            <field name="action" ref="remote_party_import_wizard"/>
+            <field name="keyword">form_action</field>
+            <field name="model">party.party.remote,-1</field>
+        </record>
+        <!-- End of Remote Party Import Stuff -->
+
+    </data>
 </tryton>
