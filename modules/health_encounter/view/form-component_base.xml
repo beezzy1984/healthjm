@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form string="Component">
+    <notebook>
+        <page id="page_component_summary" string="Summary"
+            states="{'invisible':Not(Greater(Eval('id'), 0))}">
+            <label name="critical_info" />
+            <field name="critical_info" />
+            <newline />
+            <label name="report_info" xalign="0" xexpand="1" />
+            <newline />
+            <field name="report_info" />
+        </page>
+        <page id="page_component_form" string="Details" col="12">
+            
+            <label name="notes" xexpand="1" xalign="0" />
+            <newline />
+            <field name="notes" rowspan="3" />
+        </page>
+
+    </notebook>
+    <newline />
+    <group id="component_buttons" rowspan="2" col="">
+        <label name="performed_by" />
+        <field name="perfomed_by" />
+        <label name="start_time" />
+        <field name="start_time" />
+    </group>
+</form>

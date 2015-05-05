@@ -56,6 +56,10 @@ class PatientEncounter(ModelSQL, ModelView):
     def sign_finish(cls, encounters):
         signing_hp = HealthProfessional().get_health_professional()
         # Change the state of the evaluation to "Done"
+
+        #ToDO: set all the not-done components to DONE as well and sign
+        # the unsigned ones
+        
         cls.write(encounters, {
             'state': 'signed',
             'signed_by': signing_hp,

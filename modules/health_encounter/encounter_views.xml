@@ -42,6 +42,36 @@
             <field name="name">tree_components</field>
         </record>
 
+        <!-- Encounter Component Base Form -->
+        <record model="ir.ui.view" id="health_view_form_encounter_component">
+            <field name="model">gnuhealth.encounter.component</field>
+            <field name="type">form</field>
+            <field name="name">form-component_base</field>
+        </record>
+
+        <!-- Anthopometry Component Form -->
+        <record model="ir.ui.view" id="health_view_form_anthropometry">
+            <field name="inherit" ref="health_view_form_encounter_component" />
+            <field name="model">gnuhealth.encounter.anthropometry</field>
+            <field name="type">form</field>
+            <field name="name">form-component_anthropometry</field>
+        </record>
+
+        <!-- Ambulatory Component Form -->
+        <record model="ir.ui.view" id="health_view_form_ambulatory">
+            <field name="inherit" ref="health_view_form_encounter_component" />
+            <field name="model">gnuhealth.encounter.ambulatory</field>
+            <field name="type">form</field>
+            <field name="name">form-component_ambulatory</field>
+        </record>
+
+        <!-- Clinical Component Form -->
+        <record model="ir.ui.view" id="health_view_form_clinical">
+            <field name="inherit" ref="health_view_form_encounter_component" />
+            <field name="model">gnuhealth.encounter.clinical</field>
+            <field name="type">form</field>
+            <field name="name">form-component_clinical</field>
+        </record>
 
     </data>
 </tryton>
