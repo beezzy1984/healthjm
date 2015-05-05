@@ -188,6 +188,7 @@ class PartyPatient(ModelSQL, ModelView):
 
     @classmethod
     def search_upi(cls, field_name, clause):
+        # TODO: Fix this to work for 'in' and 'like' clauses
         fld, operator, operand = clause
         if (isinstance(operand, six.string_types) and
             NNre.match(operand)):
