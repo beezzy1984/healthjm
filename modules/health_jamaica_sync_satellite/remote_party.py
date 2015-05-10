@@ -2,7 +2,7 @@
 
 import time
 from trytond.cache import LRUDict
-from trytond.const import OPERATORS, RECORD_CACHE_SIZE
+from trytond.const import OPERATORS
 from trytond.rpc import RPC
 from trytond.model import ModelView, ModelStorage, fields
 from trytond.wizard import (Wizard, StateView, Button, StateTransition,
@@ -17,6 +17,7 @@ __all__ = ('RemoteParty', 'RemotePartyImportStart', 'RemotePartyImportDone',
            'RemotePartyImport')
 RO = {'readonly':True}
 RELATED_LIMIT = 100
+RECORD_CACHE_SIZE = 500
 # the maximum number of related record types we'll fetch in the foreground
 
 class RemoteParty(ModelView, ModelStorage):
