@@ -9,4 +9,9 @@ def register():
         EncounterAmbulatory,
         # EncounterClinical,
         EncounterComponent,
+        ChooseComponentTypeView,
         module='health_encounter', type_='model')
+
+    Pool.register(
+        ChooseComponentWizard,
+        module='health_encounter', type_='wizard')

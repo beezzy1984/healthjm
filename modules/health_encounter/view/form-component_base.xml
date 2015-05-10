@@ -2,7 +2,7 @@
 <form string="Component">
     <notebook>
         <page id="page_component_summary" string="Summary"
-            states="{'invisible':Not(Greater(Eval('id'), 0))}">
+            states="{'invisible': Not(Bool(Eval('critical_info')))}">
             <label name="critical_info" />
             <field name="critical_info" />
             <newline />
@@ -14,14 +14,14 @@
             
             <label name="notes" xexpand="1" xalign="0" />
             <newline />
-            <field name="notes" rowspan="3" />
+            <field name="notes" yexpand="1" />
         </page>
 
     </notebook>
     <newline />
-    <group id="component_buttons" rowspan="2" col="">
+    <group id="component_buttons" rowspan="2" col="8">
         <label name="performed_by" />
-        <field name="perfomed_by" />
+        <field name="performed_by" />
         <label name="start_time" />
         <field name="start_time" />
     </group>

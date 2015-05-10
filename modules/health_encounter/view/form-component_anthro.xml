@@ -4,22 +4,24 @@
         <form string="Anthropometry" />
     </xpath>
     <xpath expr="//label[@name=&quot;notes&quot;]" position="before">
-        <group id="anthro_fields" col="6">
-        <label name="height" />
-        <field name="height" />
-        <label name="weight" />
-        <field name="weight" />
-        <label name="bmi" />
-        <field name="bmi" />
+        <group id="anthro_fields" col="7" colspan="12">
+            <label name="height" />
+            <field name="height" />
+            <label name="weight" />
+            <field name="weight" />
+            <label name="bmi" />
+            <field name="bmi" />
+            <newline />
+            <label name="abdominal_circ" />
+            <field name="abdominal_circ" />
+            <label name="hip" />
+            <field name="hip" />
+            <label name="whr" />
+            <field name="whr" />
+            <newline />
+            <label name="head_circumference" colspan="3" />
+            <field name="head_circumference" />
+        </group>
         <newline />
-        <label name="abdominal_circ" />
-        <field name="abdominal_circ" />
-        <label name="hip" />
-        <field name="hip" />
-        <label name="whr" />
-        <field name="whr" />
-        <newline />
-        <label name="head_circumfrence" />
-        <field name="head_circumfrence" />
     </xpath>
 </data>

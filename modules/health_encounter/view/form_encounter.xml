@@ -17,7 +17,7 @@
     </group>
     <notebook>
         <page id="nbpage_encounter_components" string="Components">
-            <field name="components" />
+            <field name="components" readonly="1" />
         </page>
         <page id="nbpage_encounter_report" string="Summary">
             <field name="summary" />
