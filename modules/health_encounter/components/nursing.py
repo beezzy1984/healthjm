@@ -77,8 +77,7 @@ class EncounterAnthro(BaseComponent):
         return ' '.join(citxt)
 
     def get_report_info(self, name):
-        title = 'Anthropometric Measurements'
-        lines = []
+        lines = [('== Anthropometric Measurements ==',)]
         if self.height:
             lines.append(
                 ['* height: %7.2fcm'%(self.height),
@@ -88,22 +87,25 @@ class EncounterAnthro(BaseComponent):
             lines.append(
                 ['* weight: %7.2fkg'%(self.weight),
                  '(%5.2flbs)'%(self.weight * METRIC_CONV['weight'])])
-        if self.bmi:
-            lines.append(['* body mass index: %7.2f'%(self.bmi)])
-        if self.waist:
+        if self.abdominal_circ:
             lines.append(
                 ['* waist: %7.2f'%(self.abdominal_circ),
                  '(%5.2fin)'%(self.abdominal_circ * METRIC_CONV['length'])])
         if self.hip:
             lines.append(['* hip: %7.2f'%(self.hip),
                           '(%5.2fin)'%(self.hip * METRIC_CONV['length'])])
-        if self.whr:
-            lines.append(['* waist to hip ratio: %5.2f'%(self.whr)])
         if self.head_circumference:
             lines.append(['* head : %7.2f'%(self.head_circumference),
              '(%5.2fin)'%(self.head_circumference * METRIC_CONV['length'])])
-        
-        lines.insert(0, ['==', title, '==\n'])
+
+        if self.whr or self.bmi:
+            lines.append(('',))
+            if self.bmi:
+                lines.append(['* body mass index: %7.2f'%(self.bmi)])
+            if self.whr:
+                lines.append(['* waist to hip ratio: %5.2f'%(self.whr)])
+        if self.notes:
+            lines.extend([('\n=== Notes ===',), (str(self.notes), )])
         return '\n'.join([' '.join(x) for x in lines])
 
 
@@ -200,21 +202,25 @@ class EncounterAmbulatory(BaseComponent):
         return ", ".join(line)
 
     def get_report_info(self, name):
-        lines = [['== Vital Signs ==\n']]
+        lines = [['== Vital Signs ==']]
+        if self.dehydration:
+            lines.append(('* Dehydrated',))
         if self.temperature:
-            lines.append(['* Temperature:', '%4.2f°C'%self.temperature])
+            lines.append(('* Temperature:', '%4.2f°C'%self.temperature))
         if self.systolic and self.diastolic:
-            lines.append(['* Blood Pressure:',
-                        '%3.0f/%3.0f'%(self.systolic,self.diastolic)])
+            lines.append(('* Blood Pressure:',
+                        '%3.0f/%3.0f'%(self.systolic,self.diastolic)))
         if self.bpm:
-            lines.append(['* Heart Rate:','%dbpm'%self.bpm])
+            lines.append(('* Heart Rate:','%dbpm'%self.bpm))
         if self.respiratory_rate:
-            lines.append(['* Respiratory Rate: %d'%self.respiratory_rate])
+            lines.append(('* Respiratory Rate: %d'%self.respiratory_rate))
         if self.osat:
-            lines.append(['* Oxygen Saturation: %d'%self.osat])
+            lines.append(('* Oxygen Saturation: %d'%self.osat))
 
         # ToDo: Put in the Glucose and Lipids fields
 
+        if self.notes:
+            lines.extend([['\n=== Notes ==='], [str(self.notes)]])
         return '\n'.join([' '.join(x) for x in lines])
         # return details of the data contained in this component as plain text
         # no length limit
