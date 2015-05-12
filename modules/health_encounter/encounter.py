@@ -114,5 +114,6 @@ class PatientEncounter(ModelSQL, ModelView):
     def get_encounter_summary(self, name):
         summary_texts = []
         for component in self.components:
-            summary_texts.append(component.report_info)
+            real_component = component.union_unshard(component.id)
+            summary_texts.append(real_component.report_info)
         return '\n\n'.join(summary_texts)

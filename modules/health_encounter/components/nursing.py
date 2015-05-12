@@ -222,5 +222,3 @@ class EncounterAmbulatory(BaseComponent):
         if self.notes:
             lines.extend([['\n=== Notes ==='], [str(self.notes)]])
         return '\n'.join([' '.join(x) for x in lines])
-        # return details of the data contained in this component as plain text
-        # no length limit
