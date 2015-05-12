@@ -2,17 +2,16 @@
 <form string="Component">
     <group id="encounter_header" col="8">
         <field name="encounter" colspan="6" />
-        <field name="critical_info" />
+        <field name="critical_info" invisible="1" />
     </group>
     <notebook>
-        <page id="page_component_summary" string="Summary"
+        <page id="page_component_summary" string="Summary" col="6"
             states="{'invisible': Not(Bool(Eval('critical_info')))}">
-            <label name="critical_info" />
-            <field name="critical_info" />
+            <field name="critical_info" colspan="6" />
             <newline />
             <label name="report_info" xalign="0" xexpand="1" />
             <newline />
-            <field name="report_info" />
+            <field name="report_info" colspan="6" />
         </page>
         <page id="page_component_form" string="Details" col="12">
             

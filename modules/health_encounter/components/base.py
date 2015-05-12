@@ -19,7 +19,7 @@ class BaseComponent(ModelSQL, ModelView):
         "supervisor about this session. It will be shown in red in the "
         "encounter", states=SIGNED_STATES)
     notes = fields.Text('Notes', states = SIGNED_STATES)
-    critical_info = fields.Char('Critical Info', readonly=True,
+    critical_info = fields.Char('Summary', readonly=True,
                                 depends=['notes'])
     report_info = fields.Function(fields.Text('Report'), 'get_report_info')
 
@@ -75,7 +75,8 @@ class BaseComponent(ModelSQL, ModelView):
 class EncounterComponent(UnionMixin, BaseComponent):
     'Component'
     __name__ = 'gnuhealth.encounter.component'
-
+    component_type = fields.Function(fields.Char('Type'),
+                                     'get_component_type_name')
     start_time_time = fields.Function(fields.Time('Start'),
                                       'get_start_time_time')
 
@@ -101,6 +102,15 @@ class EncounterComponent(UnionMixin, BaseComponent):
         # return self.start_time.strftime('%H:%M')
         return self.start_time.time()
 
+    def get_component_type_name(self, name):
+        titles = [
+            'Anthro',
+            'Vitals'
+        ]
+        recid, title_index = divmod(self.id, len(titles))
+        return titles[title_index]
+
+
     @classmethod
     @ModelView.button
     def btn_open(cls, components, *a, **k):
@@ -112,16 +122,8 @@ class EncounterComponent(UnionMixin, BaseComponent):
         ModelData = pool.get('ir.model.data')
         Action = pool.get('ir.action')
 
-        # module, fs_id = action.split('.')
-        
-        # return action_id
         # we're only gonna act for the first component passed in
-        print('%s\ncomponents= %ss\nargs = %s\n kwargs = %s\n%s' % ('*'*80, repr(components), 
-                                        repr(a), repr(k), '*'*80))
         for comp in components:
-            # real_comp = cls.union_unshard(comp.id)
-            # model = real_comp.__name__
-            # fs_id = model_act_map[model]
             fs_id = 'health_wizard_encounter_edit_component'
             action_id = Action.get_action_id(
                 ModelData.get_id('health_encounter', fs_id))
@@ -186,7 +188,7 @@ def model2dict(record, fields=None):
         value = getattr(record, field_name, None)
         if field._type in ('many2one', 'reference'):
             out[field_name] = value.id
-        elif field._type in ('one2many','function'):
+        elif field._type in ('one2many'):
             continue
         else:
             out[field_name] = value
@@ -250,8 +252,7 @@ class EditComponentWizard(Wizard):
         if 'critical_info' not in fields:
             fields.append('critical_info')
         data = model2dict(state_model, fields)
-        if not data['critical_info']:
-            data['critical_info'] = state_model.make_critical_info()
+        data['critical_info'] = state_model.make_critical_info()
         model = Pool().get(component.__name__)
         next_state = state_name
         # try:
