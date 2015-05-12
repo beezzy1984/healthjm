@@ -4,6 +4,11 @@ from trytond.model import ModelView, ModelSQL, fields
 from .base import BaseComponent, SIGNED_STATES
 from trytond.transaction import Transaction
 
+METRIC_CONV={
+    'length': (1/2.54),
+    'weight':2.20462262
+}
+
 class EncounterAnthro(BaseComponent):
     'Anthropometry'
     __name__ = 'gnuhealth.encounter.anthropometry'
@@ -56,10 +61,50 @@ class EncounterAnthro(BaseComponent):
             whr = 0
         return whr
 
-    def __init__(self, id=None, **kwargs):
-        print('%s\nAnthro-init with id=%s and \nkwargs = %s\n\n'%('*'*80, str(id), repr(kwargs)))
-        print('\ncontext = %s\n%s'%(Transaction().context, '*'*80))
-        super(EncounterAnthro, self).__init__(id, **kwargs)
+    @classmethod
+    def get_critical_info_fields(cls):
+        '''
+        return the list of field names that are used to calculate
+        the critical_info summary field
+        '''
+        return ['weight', 'height', 'hip', 'abdominal_circ']
+
+    def make_critical_info(self):
+        citxt = ['%5.2f'%self.weight, 'kg', 'x', '%5.1f'%self.height, 'cm',
+                 '=', '(BMI) %5.2f'%self.bmi]
+        # return a single line, no more than 140 chars to describe the details
+        # of what's happening in the measurements in this component
+        return ' '.join(citxt)
+
+    def get_report_info(self, name):
+        title = 'Anthropometric Measurements'
+        lines = []
+        if self.height:
+            lines.append(
+                ['* height: %7.2fcm'%(self.height),
+                '(%2.0fft %2.0fin)'%divmod(self.height * METRIC_CONV['length'],
+                                            12)])
+        if self.weight:
+            lines.append(
+                ['* weight: %7.2fkg'%(self.weight),
+                 '(%5.2flbs)'%(self.weight * METRIC_CONV['weight'])])
+        if self.bmi:
+            lines.append(['* body mass index: %7.2f'%(self.bmi)])
+        if self.waist:
+            lines.append(
+                ['* waist: %7.2f'%(self.abdominal_circ),
+                 '(%5.2fin)'%(self.abdominal_circ * METRIC_CONV['length'])])
+        if self.hip:
+            lines.append(['* hip: %7.2f'%(self.hip),
+                          '(%5.2fin)'%(self.hip * METRIC_CONV['length'])])
+        if self.whr:
+            lines.append(['* waist to hip ratio: %5.2f'%(self.whr)])
+        if self.head_circumference:
+            lines.append(['* head : %7.2f'%(self.head_circumference),
+             '(%5.2fin)'%(self.head_circumference * METRIC_CONV['length'])])
+        
+        lines.insert(0, ['==', title, '==\n'])
+        return '\n'.join([' '.join(x) for x in lines])
 
 
 
@@ -129,4 +174,47 @@ class EncounterAmbulatory(BaseComponent):
     # def __setup__(cls):
     #     super(EncounterAmbulatory, cls).__setup__()
     #     cls.temperature.string = "Temperature (°C)"
+    @classmethod
+    def get_critical_info_fields(cls):
+        '''
+        return the list of field names that are used to calculate
+        the critical_info summary field
+        '''
+        return ['temperature', 'dehydration', 'systolic', 'diastolic',
+                'bpm', 'respiratory_rate', 'osat']
 
+    def make_critical_info(self):
+        line = []
+        if self.dehydration:
+            line.append('DHy') # ToDo: Find proper code for dehydrated
+        if self.temperature:
+            line.append('%4.2f°C'%self.temperature)
+        if self.systolic and self.diastolic:
+            line.append('bp %3.0f/%3.0f'%(self.systolic,self.diastolic))
+        if self.bpm:
+            line.append('heart %dbpm'%self.bpm)
+        if self.respiratory_rate:
+            line.append('breath %d'%self.respiratory_rate)
+        if self.osat:
+            line.append('ox %d'%self.osat)
+        return ", ".join(line)
+
+    def get_report_info(self, name):
+        lines = [['== Vital Signs ==\n']]
+        if self.temperature:
+            lines.append(['* Temperature:', '%4.2f°C'%self.temperature])
+        if self.systolic and self.diastolic:
+            lines.append(['* Blood Pressure:',
+                        '%3.0f/%3.0f'%(self.systolic,self.diastolic)])
+        if self.bpm:
+            lines.append(['* Heart Rate:','%dbpm'%self.bpm])
+        if self.respiratory_rate:
+            lines.append(['* Respiratory Rate: %d'%self.respiratory_rate])
+        if self.osat:
+            lines.append(['* Oxygen Saturation: %d'%self.osat])
+
+        # ToDo: Put in the Glucose and Lipids fields
+
+        return '\n'.join([' '.join(x) for x in lines])
+        # return details of the data contained in this component as plain text
+        # no length limit

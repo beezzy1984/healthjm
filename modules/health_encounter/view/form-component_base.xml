@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form string="Component">
+    <group id="encounter_header" col="8">
+        <field name="encounter" colspan="6" />
+        <field name="critical_info" />
+    </group>
     <notebook>
         <page id="page_component_summary" string="Summary"
             states="{'invisible': Not(Bool(Eval('critical_info')))}">

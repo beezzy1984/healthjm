@@ -30,13 +30,10 @@ class BaseComponent(ModelSQL, ModelView):
         cls._order_name = 'start_time'
         cls.critical_info.depends = cls.get_critical_info_fields()
 
-    def __init__(self, id=None, **kwargs):
-        # import pdb; pdb.set_trace()
-        # t = Transaction()
-        # if id is None:
-        #     id = t.context.get('_mm_id', None)
-        print('%s\ninit with id=%s and \nkwargs = %s\n%s'%('*'*80, str(id), repr(kwargs), '*'*80))
-        super(BaseComponent, self).__init__(id, **kwargs)
+    @staticmethod
+    def default_performed_by():
+        HealthProfessional = Pool().get('gnuhealth.healthprofessional')
+        return HealthProfessional.get_health_professional()
 
     @classmethod
     def get_critical_info_fields(cls):
@@ -45,11 +42,6 @@ class BaseComponent(ModelSQL, ModelView):
         the critical_info summary field
         '''
         return ['notes']
-
-    @staticmethod
-    def default_performed_by():
-        HealthProfessional = Pool().get('gnuhealth.healthprofessional')
-        return HealthProfessional.get_health_professional()
 
     def make_critical_info(self):
         return ""
@@ -127,15 +119,12 @@ class EncounterComponent(UnionMixin, BaseComponent):
         print('%s\ncomponents= %ss\nargs = %s\n kwargs = %s\n%s' % ('*'*80, repr(components), 
                                         repr(a), repr(k), '*'*80))
         for comp in components:
-            real_comp = cls.union_unshard(comp.id)
-            model = real_comp.__name__
-            fs_id = model_act_map[model]
+            # real_comp = cls.union_unshard(comp.id)
+            # model = real_comp.__name__
+            # fs_id = model_act_map[model]
+            fs_id = 'health_wizard_encounter_edit_component'
             action_id = Action.get_action_id(
                 ModelData.get_id('health_encounter', fs_id))
-            t = Transaction()
-            t.set_context(_mm_id=real_comp.id)
-            print('%s\ncontext = %s\n%s'%('*'*80, Transaction().context, '*'*80))
-            # import pdb; pdb.set_trace()
             return action_id
 
 
@@ -167,8 +156,7 @@ class ChooseComponentWizard(Wizard):
                 # states={'readonly':Not(Bool(Eval('num_selected')))})
     ])
     selected = StateTransition()
-    opener = StateAction(
-                            'health_encounter.health_actwin_encounter_base')
+    opener = StateAction('health_encounter.health_actwin_encounter_base')
 
     # def transition_open_chosen_component(self):
     #     return 'end'
@@ -186,8 +174,90 @@ class ChooseComponentWizard(Wizard):
         selected_component = 'ambulatory'
         act = 'health_encounter.health_actwin_encounter'
         return_action = '_'.join([act, selected_component])
-        print "%s\naction = %s\n%s"%('*'*80, action, '*'*80)
         return action, data
-        # return ('health_jamaica_sync_satellite.remote_party_import_wizard',{})
+
+def model2dict(record, fields=None):
+    '''rudimentary utility that copies fields from a record into a dict'''
+    out = {}
+    if fields is None:
+        pass # ToDo: Process record._fields to get a sensible list
+    for field_name in fields:
+        field = record._fields[field_name]
+        value = getattr(record, field_name, None)
+        if field._type in ('many2one', 'reference'):
+            out[field_name] = value.id
+        elif field._type in ('one2many','function'):
+            continue
+        else:
+            out[field_name] = value
+    return out
 
 
+class CStateView(StateView):
+    def __init__(self, component_type_name):
+        model = 'gnuhealth.encounter.%s'%component_type_name
+        view = 'health_encounter.health_view_form_encounter_%s'%component_type_name
+        buttons = [
+            Button('Cancel', 'end', 'tryton-cancel'),
+            Button('Save', 'save_x', 'tryton-save'),
+            Button('Sign', 'sign_x', 'health-certify')
+        ]
+        super(CStateView, self).__init__(model, view, buttons)
+
+    def get_defaults(self, wiz, state_name, fields):
+        _real_comp = wiz._component_data['obj']
+        return model2dict(_real_comp, fields)
+
+
+
+class EditComponentWizard(Wizard):
+    'Edit Component'
+    __name__ = 'gnuhealth.encounter.component_editor.wizard'
+    start = StateTransition()
+    ambulatory = CStateView('ambulatory')
+    anthropometry = CStateView('anthropometry')
+    save_x = StateTransition()
+    sign_x = StateTransition()
+
+    def __init__(self, sessionid):
+        super(EditComponentWizard, self).__init__(sessionid)
+        t = Transaction()
+        comp_id = t.context.get('active_id')
+        real_comp = EncounterComponent.union_unshard(comp_id)
+        self._component_data = {'model':real_comp.__name__, 'id': real_comp.id,
+                                'obj': real_comp}
+
+    def transition_start(self):
+        # t = Transaction()
+        # comp_id = t.context.get('active_id')
+        # real_comp = EncounterComponent.union_unshard(comp_id)
+        comp_model = self._component_data['model']
+        typename = comp_model.split('.')[-1]
+        modstate = getattr(self, typename)
+        return typename
+
+
+    def transition_sign_x(self):
+        return 'end'
+
+    def transition_save_x(self):
+        component = self._component_data['obj']
+        state_name = component.__name__.split('.')[-1]
+        state_model = getattr(self, state_name)
+        state = self.states[state_name]
+        view = state.get_view()
+        fields = view['fields'].keys()
+        if 'critical_info' not in fields:
+            fields.append('critical_info')
+        data = model2dict(state_model, fields)
+        if not data['critical_info']:
+            data['critical_info'] = state_model.make_critical_info()
+        model = Pool().get(component.__name__)
+        next_state = state_name
+        # try:
+        model.write([component], data)
+        next_state = 'end'
+        # except:
+        #     raise
+        
+        return next_state

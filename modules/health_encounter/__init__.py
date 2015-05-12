@@ -14,4 +14,5 @@ def register():
 
     Pool.register(
         ChooseComponentWizard,
+        EditComponentWizard,
         module='health_encounter', type_='wizard')

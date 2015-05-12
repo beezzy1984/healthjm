@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tryton>
     <data>
+        <!-- Certificate/Sign Icon -->
+        <record model="ir.ui.icon" id="gnuhealth_icon_certify">
+            <field name="name">health-certify</field>
+            <field name="path">icons/application-certificate.svg</field>
+        </record>
         <!-- Encounter Views -->
         <record model="ir.ui.view" id="health_view_tree_encounter">
             <field name="model">gnuhealth.encounter</field>
@@ -46,6 +51,11 @@
             <field name="name">Add a Component</field>
             <field name="wiz_name">gnuhealth.encounter.component_chooser.wizard</field>
         </record>
+        <record model="ir.action.wizard" id="health_wizard_encounter_edit_component">
+            <field name="name">Edit Component</field>
+            <field name="wiz_name">gnuhealth.encounter.component_editor.wizard</field>
+        </record>
+        
 
         <!-- Encounter Component Wizard Launcher = Tree action -->
         <record model="ir.action.keyword" id="act_component_tree_chooser">
