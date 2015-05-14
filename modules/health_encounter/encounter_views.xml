@@ -56,22 +56,11 @@
         </record>
 
         <!-- Encounter Component Wizard -->
-        <record model="ir.action.wizard" id="health_wizard_encounter_choose_component">
-            <field name="name">Add a Component</field>
-            <field name="wiz_name">gnuhealth.encounter.component_chooser.wizard</field>
-        </record>
         <record model="ir.action.wizard" id="health_wizard_encounter_edit_component">
             <field name="name">Edit Component</field>
             <field name="wiz_name">gnuhealth.encounter.component_editor.wizard</field>
         </record>
-        
 
-        <!-- Encounter Component Wizard Launcher = Tree action -->
-        <record model="ir.action.keyword" id="act_component_tree_chooser">
-            <field name="action" ref="health_wizard_encounter_choose_component"/>
-            <field name="keyword">tree_action</field>
-            <field name="model">gnuhealth.encounter.component,-1</field>
-        </record>
         <!-- And form action for the encounter itself -->
         <record model="ir.action.keyword" id="act_encounter_component_tree_chooser">
             <field name="action" ref="health_wizard_encounter_choose_component"/>

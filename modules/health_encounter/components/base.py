@@ -152,44 +152,7 @@ class ChooseComponentTypeView(ModelView):
         ]
 
 
-class ChooseComponentWizard(Wizard):
-    'Choose Component'
-    __name__ = 'gnuhealth.encounter.component_chooser.wizard'
-    start = StateView(
-        'gnuhealth.encounter.component_chooser',
-        'health_encounter.health_form_component_chooser', [
-         Button('Cancel', 'end', 'tryton-cancel'),
-         Button('Next', 'selected', 'tryton-ok', default=True)
-                # states={'readonly':Not(Bool(Eval('num_selected')))})
-    ])
-    selected = StateTransition()
-    opener = StateAction('health_encounter.health_actwin_encounter_base')
-
-    # def transition_open_chosen_component(self):
-    #     return 'end'
-    def transition_selected(self):
-        # import pdb; pdb.set_trace()
-        ct = self.start.component_type
-        self.opener.action_id = 'health_encounter.health_actwin_encounter_'+ct
-        return 'opener'
-
-    def __init__(self, sessionid):
-        super(ChooseComponentWizard, self).__init__(sessionid)
-        t = Transaction()
-        SS='*'*80
-        print('%s\nChooser_Context = %s\n%s'%(SS, repr(t.context), SS))
-
-    # @staticmethod
-    # def do_opener(action):
-    #     # check which component is selected in self.start
-    #     data = {}
-    #     # selected_component = self.start.component_type
-    #     selected_component = 'ambulatory'
-    #     act = 'health_encounter.health_actwin_encounter'
-    #     return_action = '_'.join([act, selected_component])
-    #     return action, data
-
-def model2dict(record, fields=None):
+def model2dict(record, fields=None, with_one2many=True):
     '''rudimentary utility that copies fields from a record into a dict'''
     out = {}
     if fields is None:
@@ -206,7 +169,10 @@ def model2dict(record, fields=None):
             else :
                 out[field_name] = value
         elif field._type in ('one2many'):
-            out[field_name] = [x.id for x in value]
+            if with_one2many and value:
+                out[field_name] = [x.id for x in value]
+            elif with_one2many:
+                out[field_name] = []
         else:
             out[field_name] = value
     return out
@@ -286,27 +252,29 @@ class EditComponentWizard(Wizard):
         return 'end'
 
     def transition_save_x(self):
-        import pdb; pdb.set_trace()
-        component = self._component_data['obj']
-        state_name = component.__name__.split('.')[-1]
+        model = self._component_data['model']
+        component = None
+        if model == 'gnuhealth.encounter':
+            state_name = self.selector.component_type
+        else:
+            compid = self._component_data['active_id']
+            component = EncounterComponent.union_unshard(compid)
+            state_name = component.__name__.split('.')[-1]
         state_model = getattr(self, state_name)
-        state = self.states[state_name]
-        view = state.get_view()
-        fields = view['fields'].keys()
-        if 'critical_info' not in fields:
-            fields.append('critical_info')
         state_model.critical_info = state_model.make_critical_info()
-        data = model2dict(state_model, fields)
-        model = Pool().get(component.__name__)
-        next_state = state_name
-        # try:
-        if component.id > 0:
+        # next_state = state_name #set to return there on error
+        if component:
+            state = self.states[state_name]
+            view = state.get_view()
+            field_names = view['fields'].keys()
+            if 'critical_info' not in field_names:
+                field_names.append('critical_info')
+            data = model2dict(state_model, field_names, False)
+            model = Pool().get(component.__name__)
+            SS='*'*80
+            print('%s\nabout to write data = \n%s\n\n%s'%(SS,repr(data), SS))
             model.write([component], data)
         else:
-            # model.create([data])
             state_model.save()
         next_state = 'end'
-        # except:
-        #     raise
-        
         return next_state
