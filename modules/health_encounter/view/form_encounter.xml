@@ -28,12 +28,13 @@
         <field name="start_time" />
         <label name="end_time" />
         <field name="end_time" />
-        <label name="institution" />
-        <field name="institution" colspan="2" />
+        <button name="add_component" string="Add component"
+            icon="health-list-add"/>
     </group>
     <newline />
     <group col="6" id="g_encounter_action" >
-        <label string=" " colspan="3" />
+        <label name="institution" />
+        <field name="institution" colspan="2" />
         <field name="state" width="80" />
         <button name="sign_finish" help="Sign this encounter." string="Sign" icon="tryton-go-next" confirm="Having validated this encounter, do you want to sign it?"/>
         <button name="set_done" help="Set the encounter as being done." string="Finish" icon="tryton-go-next" confirm="Do you want to end this encounter? Only the next appointment may be set afterward."/>
