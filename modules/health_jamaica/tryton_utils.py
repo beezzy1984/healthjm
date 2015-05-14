@@ -70,6 +70,19 @@ def get_start_of_day(d, tz=None):
 def get_start_of_next_day(d, tz=None):
     return get_start_of_day(d+timedelta(1), tz)
 
+def localtime(current):
+    '''returns a datetime object with local timezone. naive datetime
+    assumed to be in utc'''
+    tz = get_timezone()
+    if current.tzinfo is None:
+        # assume it's utc. convert it to timezone aware
+        cdt = datetime(*current.timetuple()[:6], tzinfo=pytz.UTC,
+                       microsecond=current.microsecond)
+    else:
+        cdt = current
+    return cdt.astimezone(tz)
+
+
 def get_dob(age, ref_date=None):
     '''returns the oldest date of birth for the age passed in'''
     if ref_date is None:
@@ -84,6 +97,7 @@ def get_age_in_years(dob, ref_date=None):
     ref_date = ref_date or date.today()
     full_age = relativedelta(ref_date, dob)
     return full_age.years
+
 
 
 def get_epi_week(d=None):
