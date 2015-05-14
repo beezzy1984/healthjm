@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+    <xpath expr="/form" position="replace_attributes">
+        <form string="Clinic" />
+    </xpath>
+    <xpath expr="//label[@name=&quot;notes&quot;]" position="before">
+        <group id="clinic_signs" colspan="12">
+            <field name="signs_symptoms" />
+        </group>
+        <newline />
+        <group id="clinic_diagnosis" col="12" colspan="12">
+            <!-- <label name="diagnosis" colspan="1" xalign="0" /> -->
+            <group id="clinic_diag_diag" colspan="12" string="Presumptive Diagnosis" col="11">
+            <field name="diagnosis" colspan="11" xexpand="1" />
+            </group>
+            <newline />
+            <field name="secondary_conditions" colspan="6" />
+            <field name="diagnostic_hypothesis" colspan="6" />
+            <newline />
+            <field name="procedures" colspan="12" />
+        </group>
+        <newline />
+    </xpath>
+</data>

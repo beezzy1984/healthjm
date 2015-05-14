@@ -7,7 +7,11 @@ def register():
         PatientEncounter,
         EncounterAnthro,
         EncounterAmbulatory,
-        # EncounterClinical,
+        EncounterClinical,
+        Directions,
+        SecondaryCondition,
+        DiagnosticHypothesis,
+        SignsAndSymptoms,
         EncounterComponent,
         ChooseComponentTypeView,
         module='health_encounter', type_='model')

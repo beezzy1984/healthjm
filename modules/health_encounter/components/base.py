@@ -5,11 +5,13 @@ from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.wizard import (Wizard, StateView, Button, StateTransition,
                             StateAction)
+from trytond.modules.health_jamaica import tryton_utils as utils
 
 SIGNED_STATES = {'readonly': Bool(Eval('signed_by'))}
 
 class BaseComponent(ModelSQL, ModelView):
-    encounter = fields.Many2One('gnuhealth.encounter', 'Encounter')
+    encounter = fields.Many2One('gnuhealth.encounter', 'Encounter',
+                                readonly=True)
     start_time = fields.DateTime('Start')
     sign_time = fields.DateTime('Finish', readonly=True)
     signed_by = fields.Many2One('gnuhealth.healthprofessional', 'Signed by', 
@@ -95,39 +97,42 @@ class EncounterComponent(UnionMixin, BaseComponent):
     def union_models():
         return [
             'gnuhealth.encounter.anthropometry',
-            'gnuhealth.encounter.ambulatory'
+            'gnuhealth.encounter.ambulatory',
+            'gnuhealth.encounter.clinical'
         ]
 
     def get_start_time_time(self, name):
         # return self.start_time.strftime('%H:%M')
-        return self.start_time.time()
+        return utils.localtime(self.start_time).time()
 
     def get_component_type_name(self, name):
         titles = [
             'Anthro',
-            'Vitals'
+            'Vitals',
+            'Clinical'
         ]
         recid, title_index = divmod(self.id, len(titles))
         return titles[title_index]
 
+    def get_report_info(self, name):
+        real_component = self.union_unshard(self.id)
+        return real_component.get_report_info(name)
 
     @classmethod
-    @ModelView.button
+    @ModelView.button_action(
+        'health_encounter.health_wizard_encounter_edit_component')
     def btn_open(cls, components, *a, **k):
-        model_act_map = {
-            'gnuhealth.encounter.ambulatory':'health_actwin_encounter_ambulatory',
-            'gnuhealth.encounter.anthropometry':'health_actwin_encounter_anthropometry'
-        }
-        pool = Pool()
-        ModelData = pool.get('ir.model.data')
-        Action = pool.get('ir.action')
+        pass
+        # pool = Pool()
+        # ModelData = pool.get('ir.model.data')
+        # Action = pool.get('ir.action')
 
-        # we're only gonna act for the first component passed in
-        for comp in components:
-            fs_id = 'health_wizard_encounter_edit_component'
-            action_id = Action.get_action_id(
-                ModelData.get_id('health_encounter', fs_id))
-            return action_id
+        # # we're only gonna act for the first component passed in
+        # for comp in components:
+        #     fs_id = 'health_wizard_encounter_edit_component'
+        #     action_id = Action.get_action_id(
+        #         ModelData.get_id('health_encounter', fs_id))
+        #     return action_id
 
 
 class ChooseComponentTypeView(ModelView):
@@ -143,7 +148,7 @@ class ChooseComponentTypeView(ModelView):
         return [
             ('ambulatory', 'Nursing (Ambulatory)'),
             ('anthropometry', 'Antrhopometry'),
-            # ('clinical', 'Clinical')
+            ('clinical', 'Clinical')
         ]
 
 
@@ -168,28 +173,40 @@ class ChooseComponentWizard(Wizard):
         self.opener.action_id = 'health_encounter.health_actwin_encounter_'+ct
         return 'opener'
 
-    @staticmethod
-    def do_opener(action):
-        # check which component is selected in self.start
-        data = {}
-        # selected_component = self.start.component_type
-        selected_component = 'ambulatory'
-        act = 'health_encounter.health_actwin_encounter'
-        return_action = '_'.join([act, selected_component])
-        return action, data
+    def __init__(self, sessionid):
+        super(ChooseComponentWizard, self).__init__(sessionid)
+        t = Transaction()
+        SS='*'*80
+        print('%s\nChooser_Context = %s\n%s'%(SS, repr(t.context), SS))
+
+    # @staticmethod
+    # def do_opener(action):
+    #     # check which component is selected in self.start
+    #     data = {}
+    #     # selected_component = self.start.component_type
+    #     selected_component = 'ambulatory'
+    #     act = 'health_encounter.health_actwin_encounter'
+    #     return_action = '_'.join([act, selected_component])
+    #     return action, data
 
 def model2dict(record, fields=None):
     '''rudimentary utility that copies fields from a record into a dict'''
     out = {}
     if fields is None:
         pass # ToDo: Process record._fields to get a sensible list
-    for field_name in fields:
+    field_names = fields[:]
+    if 'id' not in field_names:
+        field_names.insert(0, 'id')
+    for field_name in field_names:
         field = record._fields[field_name]
         value = getattr(record, field_name, None)
         if field._type in ('many2one', 'reference'):
-            out[field_name] = value.id
+            if value:
+                out[field_name] = value.id 
+            else :
+                out[field_name] = value
         elif field._type in ('one2many'):
-            continue
+            out[field_name] = [x.id for x in value]
         else:
             out[field_name] = value
     return out
@@ -211,38 +228,65 @@ class CStateView(StateView):
         return model2dict(_real_comp, fields)
 
 
-
 class EditComponentWizard(Wizard):
     'Edit Component'
     __name__ = 'gnuhealth.encounter.component_editor.wizard'
     start = StateTransition()
+    selector = StateView(
+        'gnuhealth.encounter.component_chooser',
+        'health_encounter.health_form_component_chooser', [
+         Button('Cancel', 'end', 'tryton-cancel'),
+         Button('Next', 'selected', 'tryton-ok', default=True)
+                # states={'readonly':Not(Bool(Eval('num_selected')))})
+    ])
+    selected = StateTransition()
     ambulatory = CStateView('ambulatory')
     anthropometry = CStateView('anthropometry')
+    clinical = CStateView('clinical')
     save_x = StateTransition()
     sign_x = StateTransition()
 
     def __init__(self, sessionid):
         super(EditComponentWizard, self).__init__(sessionid)
-        t = Transaction()
-        comp_id = t.context.get('active_id')
-        real_comp = EncounterComponent.union_unshard(comp_id)
-        self._component_data = {'model':real_comp.__name__, 'id': real_comp.id,
-                                'obj': real_comp}
+        tact = Transaction()
+        active_model = tact.context.get('active_model')
+        active_id = tact.context.get('active_id')
+        self._component_data = {'model':active_model, 'active_id': active_id}
 
     def transition_start(self):
-        # t = Transaction()
-        # comp_id = t.context.get('active_id')
-        # real_comp = EncounterComponent.union_unshard(comp_id)
-        comp_model = self._component_data['model']
-        typename = comp_model.split('.')[-1]
-        modstate = getattr(self, typename)
-        return typename
+        model = self._component_data['model']
+        if model == 'gnuhealth.encounter':
+            # going to the selector
+            return 'selector'
+        else:
+            compid = self._component_data['active_id']
+            real_component = EncounterComponent.union_unshard(compid)
+            typename = real_component.__name__.split('.')[-1]
+            self._component_data.update(obj=real_component,
+                                        id=real_component.id)
+            return typename
 
+    def transition_selected(self):
+        # import pdb; pdb.set_trace()
+        comp_type = self.selector.component_type
+        ComponentModel = Pool().get('gnuhealth.encounter.%s'%comp_type)
+        encounter_id = self._component_data['active_id']
+        component_data = {'encounter':encounter_id}
+        view = self.states[comp_type].get_view()
+        field_names = view['fields'].keys()
+        if 'id' in field_names:
+            del field_names[field_names.index['id']]
+        component_data.update(ComponentModel.default_get(field_names))
+
+        real_component = ComponentModel(**component_data)
+        self._component_data.update(obj=real_component)
+        return comp_type
 
     def transition_sign_x(self):
         return 'end'
 
     def transition_save_x(self):
+        import pdb; pdb.set_trace()
         component = self._component_data['obj']
         state_name = component.__name__.split('.')[-1]
         state_model = getattr(self, state_name)
@@ -251,12 +295,16 @@ class EditComponentWizard(Wizard):
         fields = view['fields'].keys()
         if 'critical_info' not in fields:
             fields.append('critical_info')
+        state_model.critical_info = state_model.make_critical_info()
         data = model2dict(state_model, fields)
-        data['critical_info'] = state_model.make_critical_info()
         model = Pool().get(component.__name__)
         next_state = state_name
         # try:
-        model.write([component], data)
+        if component.id > 0:
+            model.write([component], data)
+        else:
+            # model.create([data])
+            state_model.save()
         next_state = 'end'
         # except:
         #     raise
