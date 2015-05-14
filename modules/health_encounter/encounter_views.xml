@@ -6,6 +6,15 @@
             <field name="name">health-certify</field>
             <field name="path">icons/application-certificate.svg</field>
         </record>
+        <!-- Add and minus icons -->
+        <record model="ir.ui.icon" id="gnuhealth_icon_list_add">
+            <field name="name">health-list-add</field>
+            <field name="path">icons/list-add.svg</field>
+        </record>
+        <record model="ir.ui.icon" id="gnuhealth_icon_list_remove">
+            <field name="name">health-list-remove</field>
+            <field name="path">icons/list-remove.svg</field>
+        </record>
         <!-- Encounter Views -->
         <record model="ir.ui.view" id="health_view_tree_encounter">
             <field name="model">gnuhealth.encounter</field>
@@ -137,7 +146,7 @@
             <field name="name">form-component_clinical</field>
         </record>
         <record model="ir.action.act_window" id="health_actwin_encounter_clinical">
-            <field name="name">Anthropometry</field>
+            <field name="name">Clinical</field>
             <field name="res_model">gnuhealth.encounter.clinical</field>
         </record>
         <record model="ir.action.act_window.view" id="health_act_encounter_component_clinical">

@@ -1,9 +1,11 @@
 
 from datetime import datetime
 from trytond.model import ModelView, ModelSQL, fields
-from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
+from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or, Greater
 from trytond.pool import Pool
 from trytond.modules.health import HealthInstitution, HealthProfessional
+from trytond.modules.health_jamaica import tryton_utils as utils
+
 
 class PatientEncounter(ModelSQL, ModelView):
     'Patient Encounter'
@@ -76,6 +78,12 @@ class PatientEncounter(ModelSQL, ModelView):
             # 'end_time': dateime.now()
         })
 
+    @classmethod
+    @ModelView.button_action(
+        'health_encounter.health_wizard_encounter_edit_component')
+    def add_component(cls, components, *a, **k):
+        pass
+
     @staticmethod
     def default_start_time():
         return datetime.now()
@@ -100,9 +108,15 @@ class PatientEncounter(ModelSQL, ModelView):
 
         cls._buttons.update({
             'set_done': {'invisible': Not(Equal(Eval('state'), 'in_progress'))},
-            'sign_finish': {'invisible': Not(Equal(Eval('state'), 'done'))}
+            'sign_finish': {'invisible': Not(Equal(Eval('state'), 'done'))},
+            'add_component':{'readonly': Greater(0,Eval('id',-1))}
             })
 
+    def get_rec_name(self, name):
+        localstart = utils.localtime(self.start_time)
+        return "EV%05d %s (%s) on %s"%(self.id, self.patient.name.name,
+                                       self.patient.name.upi,
+                                       localstart.ctime())
 
     def get_person_patient_field(self, name):
         if name in ['upi', 'sex_display']:
