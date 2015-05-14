@@ -33,6 +33,35 @@ class EncounterClinical(BaseComponent):
         help='Procedures / Actions to take',
         states = STATES)
 
+    def make_critical_info(self):
+        out = []
+        if self.signs_symptoms:
+            out.extend([
+                'Signs:',
+                ';'.join([x.clinical.code for x in self.signs_symptoms])])
+        if self.diagnosis:
+            out.append(' - '.join([self.diagnosis.code, self.diagnosis.name]))
+        if self.diagnostic_hypothesis:
+            if self.diagnosis:
+                out.append('or')
+            else:
+                out.append('DDx')
+            out.append(';'.join([x.pathology.code
+                                 for x in self.diagnostic_hypothesis]))
+        if self.procedures:
+            out.append('Procedures:')
+            if len(self.procedures) <= 2:
+                out.append(
+                    '; '.join(['%s-%s'%(x.procedure.name,
+                                        x.procedure.description)
+                              for x in self.procedures])
+                )
+            else:
+                out.append(';'.join(x.procedure.name for x in self.procedures))
+        return ', '.join(out)
+
+
+
 # Modification to GNU Health Default classes to point them here instead 
 class RewireEvaluationPointer(ModelSQL):
     clinical_component = fields.Many2One('gnuhealth.encounter.clinical',
