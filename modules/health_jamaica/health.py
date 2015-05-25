@@ -355,9 +355,9 @@ class Appointment(ModelSQL, ModelView):
                             ('appointment_date','<=',comp_enddate)]
                 if appt.id:
                     search_terms.append(('id','!=',appt.id))
-
                 others = cls.search(search_terms)
-            
+            else:
+                others = []
             if others and is_not_synchro(): # pop up the warning but not during sync
                 # setup warning params
                 other_specialty = others[0].speciality.name
