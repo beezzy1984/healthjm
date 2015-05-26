@@ -38,7 +38,7 @@
     </xpath>
 
     <!-- Insurance gets its own tab -->
-    <xpath expr="/form/notebook/page[@id=&quot;party_gnuhealth&quot;]" position="after">
+    <xpath expr="/form/notebook/page[@id=&quot;general&quot;]" position="after">
         <page string="Insurance" id="party_person_insurance" states="{'invisible': Not(Bool(Eval('is_person')))}">
             <field name="insurance" colspan="4" />
         </page>
