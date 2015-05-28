@@ -23,7 +23,7 @@
             <field name="summary" />
         </page>
         <page id="nbpage_encounter_hidden" string="Appointment"
-            states="{'invisible':0}">
+            states="{'invisible': False}">
             <field name="appointment" readonly="1" />
         </page>
     </notebook>
