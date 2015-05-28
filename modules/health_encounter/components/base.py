@@ -9,18 +9,21 @@ from trytond.modules.health_jamaica import tryton_utils as utils
 
 SIGNED_STATES = {'readonly': Bool(Eval('signed_by'))}
 
+
 class BaseComponent(ModelSQL, ModelView):
     encounter = fields.Many2One('gnuhealth.encounter', 'Encounter',
                                 readonly=True)
     start_time = fields.DateTime('Start')
     sign_time = fields.DateTime('Finish', readonly=True)
-    signed_by = fields.Many2One('gnuhealth.healthprofessional', 'Signed by', 
+    signed_by = fields.Many2One('gnuhealth.healthprofessional', 'Signed by',
                                 readonly=True)
     performed_by = fields.Many2One('gnuhealth.healthprofessional', 'Clinician')
-    warning = fields.Boolean('Warning', help="Check this box to alert the "
-        "supervisor about this session. It will be shown in red in the "
-        "encounter", states=SIGNED_STATES)
-    notes = fields.Text('Notes', states = SIGNED_STATES)
+    warning = fields.Boolean(
+        'Warning',
+        help="Check this box to alert the supervisor about this session."
+        " It will be shown in red in the encounter",
+        states=SIGNED_STATES)
+    notes = fields.Text('Notes', states=SIGNED_STATES)
     critical_info = fields.Char('Summary', readonly=True,
                                 depends=['notes'])
     report_info = fields.Function(fields.Text('Report'), 'get_report_info')
@@ -91,7 +94,7 @@ class EncounterComponent(UnionMixin, BaseComponent):
         else:
             cls._buttons = {}
 
-        cls._buttons['btn_open'] = {'readonly':Eval(False)}
+        cls._buttons['btn_open'] = {'readonly': Eval(False)}
 
     @staticmethod
     def union_models():
@@ -138,7 +141,7 @@ class EncounterComponent(UnionMixin, BaseComponent):
 class ChooseComponentTypeView(ModelView):
     'Choose Component'
     __name__ = 'gnuhealth.encounter.component_chooser'
-    component_type = fields.Selection('component_type_selection', 
+    component_type = fields.Selection('component_type_selection',
                                       'Component Type')
 
     @classmethod
@@ -156,7 +159,7 @@ def model2dict(record, fields=None, with_one2many=True):
     '''rudimentary utility that copies fields from a record into a dict'''
     out = {}
     if fields is None:
-        pass # ToDo: Process record._fields to get a sensible list
+        pass  # ToDo: Process record._fields to get a sensible list
     field_names = fields[:]
     if 'id' not in field_names:
         field_names.insert(0, 'id')
@@ -165,8 +168,8 @@ def model2dict(record, fields=None, with_one2many=True):
         value = getattr(record, field_name, None)
         if field._type in ('many2one', 'reference'):
             if value:
-                out[field_name] = value.id 
-            else :
+                out[field_name] = value.id
+            else:
                 out[field_name] = value
         elif field._type in ('one2many'):
             if with_one2many and value:
@@ -178,20 +181,28 @@ def model2dict(record, fields=None, with_one2many=True):
     return out
 
 
-class CStateView(StateView):
-    def __init__(self, component_type_name):
-        model = 'gnuhealth.encounter.%s'%component_type_name
-        view = 'health_encounter.health_view_form_encounter_%s'%component_type_name
+class ComponentStateView(StateView):
+    '''use this StateView to get the boilerplate that sets up the
+    appropriate instance of the component for creation or editing.'''
+    def __init__(self, model_name, view_id):
         buttons = [
             Button('Cancel', 'end', 'tryton-cancel'),
             Button('Save', 'save_x', 'tryton-save'),
             Button('Sign', 'sign_x', 'health-certify')
         ]
-        super(CStateView, self).__init__(model, view, buttons)
+        super(ComponentStateView, self).__init__(model_name, view_id, buttons)
 
     def get_defaults(self, wiz, state_name, fields):
         _real_comp = wiz._component_data['obj']
         return model2dict(_real_comp, fields)
+
+
+class CStateView(ComponentStateView):
+    def __init__(self, component_type_name):
+        model = 'gnuhealth.encounter.%s' % component_type_name
+        view = 'health_encounter.health_view_form_encounter_%s' % (
+            component_type_name)
+        super(CStateView, self).__init__(model, view)
 
 
 class EditComponentWizard(Wizard):
@@ -201,10 +212,11 @@ class EditComponentWizard(Wizard):
     selector = StateView(
         'gnuhealth.encounter.component_chooser',
         'health_encounter.health_form_component_chooser', [
-         Button('Cancel', 'end', 'tryton-cancel'),
-         Button('Next', 'selected', 'tryton-ok', default=True)
-                # states={'readonly':Not(Bool(Eval('num_selected')))})
-    ])
+            Button('Cancel', 'end', 'tryton-cancel'),
+            Button('Next', 'selected', 'tryton-ok', default=True)
+                      # states={'readonly':Not(Bool(Eval('num_selected')))})
+        ]
+    )
     selected = StateTransition()
     ambulatory = CStateView('ambulatory')
     anthropometry = CStateView('anthropometry')
@@ -217,7 +229,7 @@ class EditComponentWizard(Wizard):
         tact = Transaction()
         active_model = tact.context.get('active_model')
         active_id = tact.context.get('active_id')
-        self._component_data = {'model':active_model, 'active_id': active_id}
+        self._component_data = {'model': active_model, 'active_id': active_id}
 
     def transition_start(self):
         model = self._component_data['model']
@@ -235,9 +247,9 @@ class EditComponentWizard(Wizard):
     def transition_selected(self):
         # import pdb; pdb.set_trace()
         comp_type = self.selector.component_type
-        ComponentModel = Pool().get('gnuhealth.encounter.%s'%comp_type)
+        ComponentModel = Pool().get('gnuhealth.encounter.%s' % comp_type)
         encounter_id = self._component_data['active_id']
-        component_data = {'encounter':encounter_id}
+        component_data = {'encounter': encounter_id}
         view = self.states[comp_type].get_view()
         field_names = view['fields'].keys()
         if 'id' in field_names:
@@ -271,8 +283,6 @@ class EditComponentWizard(Wizard):
                 field_names.append('critical_info')
             data = model2dict(state_model, field_names, False)
             model = Pool().get(component.__name__)
-            SS='*'*80
-            print('%s\nabout to write data = \n%s\n\n%s'%(SS,repr(data), SS))
             model.write([component], data)
         else:
             state_model.save()

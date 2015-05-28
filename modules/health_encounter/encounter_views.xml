@@ -61,13 +61,6 @@
             <field name="wiz_name">gnuhealth.encounter.component_editor.wizard</field>
         </record>
 
-        <!-- And form action for the encounter itself -->
-        <record model="ir.action.keyword" id="act_encounter_component_tree_chooser">
-            <field name="action" ref="health_wizard_encounter_choose_component"/>
-            <field name="keyword">form_action</field>
-            <field name="model">gnuhealth.encounter,-1</field>
-        </record>
-
         <!-- Encounter Component Tree -->
         <record model="ir.ui.view" id="health_view_tree_encounter_component">
             <field name="model">gnuhealth.encounter.component</field>

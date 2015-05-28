@@ -22,46 +22,47 @@
 import re
 import random
 import uuid
-from datetime import date, datetime
+from datetime import date
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool
 from trytond.transaction import Transaction
-from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or, In
+from trytond.pyson import Eval, Not, Bool, Equal, Or, In
 
-ThisInstitution = lambda : Pool().get('gnuhealth.institution').get_institution()
+ThisInstitution = lambda: Pool().get('gnuhealth.institution').get_institution()
 
-from .tryton_utils import is_not_synchro
+from .tryton_utils import is_not_synchro, make_selection_display
 
 _DEPENDS = ['is_person']
 SEX_OPTIONS = [('m', 'Male'), ('f', 'Female'), ('u', 'Unknown')]
 MARITAL_STATUSES = [
-        ('s', 'Single'),
-        ('m', 'Married'),
-        ('c', 'Living with partner'),
-        ('v', 'Visiting'),
-        ('w', 'Widowed'),
-        ('d', 'Divorced'),
-        ('x', 'Separated'),
-        ('n', 'Not Applicable'),
-        ('u', 'Unknown')]
+    ('s', 'Single'),
+    ('m', 'Married'),
+    ('c', 'Living with partner'),
+    ('v', 'Visiting'),
+    ('w', 'Widowed'),
+    ('d', 'Divorced'),
+    ('x', 'Separated'),
+    ('n', 'Not Applicable'),
+    ('u', 'Unknown')]
 ALTERNATIVE_ID_TYPES = [
-        ('trn','TRN'),
-        ('medical_record', 'Medical Record'),
-        ('pathID','PATH ID'),
-        ('gojhcard','GOJ Health Card'),
-        ('votersid','GOJ Voter\'s ID'),
-        ('birthreg', 'Birth Registration ID'),
-        ('ninnum', 'NIN #'),
-        ('passport', 'Passport'),
-        ('jm_license', 'Drivers License (JM)'),
-        ('nonjm_license', 'Drivers License (non-JM)'),
-        ('other', 'Other')]
+    ('trn', 'TRN'),
+    ('medical_record', 'Medical Record'),
+    ('pathID ','PATH ID'),
+    ('gojhcard', 'GOJ Health Card'),
+    ('votersid', 'GOJ Voter\'s ID'),
+    ('birthreg', 'Birth Registration ID'),
+    ('ninnum', 'NIN #'),
+    ('passport', 'Passport'),
+    ('jm_license', 'Drivers License (JM)'),
+    ('nonjm_license', 'Drivers License (non-JM)'),
+    ('other', 'Other')]
 
 NNre = re.compile('(%?)NN-(.*)', re.I)
 
 _STATES = {
     'invisible': Not(Bool(Eval('is_person'))),
 }
+
 
 class PartyPatient(ModelSQL, ModelView):
     'Party'

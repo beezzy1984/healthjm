@@ -2,13 +2,13 @@
 <form string="Patient Encounter">
     <group col="10" id="encounter_ident_header">
         <field name="patient" colspan="3"/>
-        <label string="UPI/MR#" />
-        <field name="upi" width="60"/>
+        <label string="UPI/MRN" id="lbl_upimrn" />
+        <field name="upi" width="70"/>
         <field name="medical_record_num" width="40" />
         <label name="sex_display" />
-        <field name="sex_display" width="40" />
+        <field name="sex_display" width="35" />
         <label name="age" />
-        <field name="age" width="40"/>
+        <field name="age" width="35"/>
     </group>
     <newline />
     <group col="4" id="encounter_prico" >
@@ -21,6 +21,10 @@
         </page>
         <page id="nbpage_encounter_report" string="Summary">
             <field name="summary" />
+        </page>
+        <page id="nbpage_encounter_hidden" string="Appointment"
+            states="{'invisible':0}">
+            <field name="appointment" readonly="1" />
         </page>
     </notebook>
     <group col="9" id="g_encounter_tail">

@@ -11,15 +11,16 @@ class PatientEncounter(ModelSQL, ModelView):
     'Patient Encounter'
     __name__ = 'gnuhealth.encounter'
 
-    STATES = {'readonly':Or(Equal(Eval('state'), 'signed'),
-                            Equal(Eval('state'), 'done'))}
+    STATES = {'readonly': Or(Equal(Eval('state'), 'signed'),
+                             Equal(Eval('state'), 'done'))}
     SIGNED_STATES = {'readonly': Equal(Eval('state'), 'signed')}
 
-    state = fields.Selection([
-        ('in_progress', 'In progress'),
-        ('done', 'Done'),
-        ('signed', 'Signed'),
-        ], 'State', readonly=True, sort=False)
+    state = fields.Selection(
+        [('in_progress', 'In progress'),
+         ('done', 'Done'),
+         ('signed', 'Signed')],
+        'State', readonly=True, sort=False
+    )
     patient = fields.Many2One('gnuhealth.patient', 'Patient', required=True,
                               states=STATES)
     primary_complaint = fields.Char('Primary complaint', states=STATES)
@@ -31,7 +32,7 @@ class PatientEncounter(ModelSQL, ModelView):
         'gnuhealth.appointment', 'Appointment',
         domain=[('patient', '=', Eval('patient'))], depends=['patient'],
         help='Enter or select the appointment related to this encounter',
-        states = STATES)
+        states=STATES)
     next_appointment = fields.Many2One(
             'gnuhealth.appointment', 'Next Appointment',
             domain=[('patient', '=', Eval('patient'))],
@@ -61,7 +62,7 @@ class PatientEncounter(ModelSQL, ModelView):
 
         #ToDO: set all the not-done components to DONE as well and sign
         # the unsigned ones
-        
+
         cls.write(encounters, {
             'state': 'signed',
             'signed_by': signing_hp,
@@ -110,7 +111,7 @@ class PatientEncounter(ModelSQL, ModelView):
             'set_done': {'invisible': Not(Equal(Eval('state'), 'in_progress'))},
             'sign_finish': {'invisible': Not(Equal(Eval('state'), 'done'))},
             'add_component':{'readonly': Greater(0,Eval('id',-1))}
-            })
+        })
 
     def get_rec_name(self, name):
         localstart = utils.localtime(self.start_time)
