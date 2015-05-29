@@ -1,10 +1,8 @@
 from datetime import datetime
 from trytond.model import ModelView, ModelSQL, fields, UnionMixin
-from trytond.pyson import Eval, Not, Bool
+from trytond.pyson import Eval, Bool
 from trytond.pool import Pool
-from trytond.transaction import Transaction
-from trytond.wizard import (Wizard, StateView, Button, StateTransition,
-                            StateAction)
+
 from trytond.modules.health_jamaica import tryton_utils as utils
 
 SIGNED_STATES = {'readonly': Bool(Eval('signed_by'))}
@@ -49,21 +47,16 @@ class BaseComponent(ModelSQL, ModelView):
         return ['notes']
 
     def make_critical_info(self):
-        return ""
         # return a single line, no more than 140 chars to describe the details
         # of what's happening in the measurements in this component
+        return ""
 
     def get_report_info(self, name):
-        return ""
         # return details of the data contained in this component as plain text
         # no length limit
+        return ""
 
-    # @classmethod
-    # def write(cls, components, vals, *args):
-    #     critical_fields = set(cls.get_critical_info_fields())
-    #     for component,val in zip(components, vals):
-    #         if set(val.keys())&critical_fields:
-    def on_change_with_critical_info(self,*arg, **kwarg):
+    def on_change_with_critical_info(self, *arg, **kwarg):
         return self.make_critical_info()
 
     @staticmethod
@@ -75,6 +68,63 @@ class BaseComponent(ModelSQL, ModelView):
     def mark_done(cls, components):
         pass
         # save the component and set the state to done
+
+
+class EncounterComponentType(ModelSQL, ModelView):
+    'Encounter Component'
+    __name__ = 'gnuhealth.encounter.component_model'
+    name = fields.Char('Type Name')
+    code = fields.Char('Code', size=15,
+                       help="Short name Displayed in the first column of the"
+                       "encounter. Maximum 15 characters")
+    model = fields.Char('Model name', help='e.g. gnuhealth.encounter.clinical',
+                        required=True)
+    view_form = fields.Char('View name', required=True,
+                            help='full xml id of view, e.g. module.xml_id')
+    ordering = fields.Integer('Display order')
+    active = fields.Boolean('Active')
+
+    @classmethod
+    def __setup__(cls):
+        super(EncounterComponentType, cls).__setup__()
+        cls._order = [('ordering', 'ASC'), ('name', 'ASC')]
+
+    @classmethod
+    def register_type(cls, model_class, view):
+        # first check if it was previously registered and deactivated
+        registration = cls.search([('model', '=', model_class.__name__),
+                                   ('view_form', '=', view)])
+        if registration:
+            registration = cls.browse(registration)
+            if not registration.active:
+                cls.write(registration, {'active': True})
+        else:
+            cdata = {'model': model_class.__name__, 'view_form': view}
+            cdata['name'] = ''.join(filter(None,
+                                           model_class.__doc__.split('\n'))[:1])
+            cdata['code'] = cdata['name'][:15]
+
+            # we need to create the registration
+            cls.create([cdata])
+        return True
+
+    @classmethod
+    def get_selection_list(cls):
+        '''returns a list of active Encounter component types in a tuple
+        of (id, Name, Code)'''
+        etypes = cls.search_read([('active', '=', True)],
+                                 fields_names=['id', 'name', 'code'])
+        return [(x['id'], x['name'], x['code']) for x in etypes]
+
+    @classmethod
+    def get_view_name(cls, ids):
+        if not isinstance(ids, (list, tuple)):
+            ids = [ids]
+        # ids = map(int, ids)
+        forms = cls.read(ids, fields_names=['view_form'])
+        if forms:
+            return forms[0]['view_form']
+        return None
 
 
 class EncounterComponent(UnionMixin, BaseComponent):
@@ -98,22 +148,19 @@ class EncounterComponent(UnionMixin, BaseComponent):
 
     @staticmethod
     def union_models():
-        return [
-            'gnuhealth.encounter.anthropometry',
-            'gnuhealth.encounter.ambulatory',
-            'gnuhealth.encounter.clinical'
-        ]
+        models = EncounterComponentType.search_read([('active', '=', True)],
+                                                    fields_names=('model'),
+                                                    order=[('id', 'ASC')])
+        return [x['model'] for x in models]
 
     def get_start_time_time(self, name):
         # return self.start_time.strftime('%H:%M')
         return utils.localtime(self.start_time).time()
 
     def get_component_type_name(self, name):
-        titles = [
-            'Anthro',
-            'Vitals',
-            'Clinical'
-        ]
+        id_names = EncounterComponentType.get_selection_list()
+        id_names.sort(key=lambda x: x[0])
+        titles = [x[2] for x in id_names]
         recid, title_index = divmod(self.id, len(titles))
         return titles[title_index]
 
@@ -126,165 +173,3 @@ class EncounterComponent(UnionMixin, BaseComponent):
         'health_encounter.health_wizard_encounter_edit_component')
     def btn_open(cls, components, *a, **k):
         pass
-        # pool = Pool()
-        # ModelData = pool.get('ir.model.data')
-        # Action = pool.get('ir.action')
-
-        # # we're only gonna act for the first component passed in
-        # for comp in components:
-        #     fs_id = 'health_wizard_encounter_edit_component'
-        #     action_id = Action.get_action_id(
-        #         ModelData.get_id('health_encounter', fs_id))
-        #     return action_id
-
-
-class ChooseComponentTypeView(ModelView):
-    'Choose Component'
-    __name__ = 'gnuhealth.encounter.component_chooser'
-    component_type = fields.Selection('component_type_selection',
-                                      'Component Type')
-
-    @classmethod
-    def component_type_selection(cls):
-        # ToDo: make a better way to turn-on and off component types
-        # maybe some kind of registration system
-        return [
-            ('ambulatory', 'Nursing (Ambulatory)'),
-            ('anthropometry', 'Antrhopometry'),
-            ('clinical', 'Clinical')
-        ]
-
-
-def model2dict(record, fields=None, with_one2many=True):
-    '''rudimentary utility that copies fields from a record into a dict'''
-    out = {}
-    if fields is None:
-        pass  # ToDo: Process record._fields to get a sensible list
-    field_names = fields[:]
-    if 'id' not in field_names:
-        field_names.insert(0, 'id')
-    for field_name in field_names:
-        field = record._fields[field_name]
-        value = getattr(record, field_name, None)
-        if field._type in ('many2one', 'reference'):
-            if value:
-                out[field_name] = value.id
-            else:
-                out[field_name] = value
-        elif field._type in ('one2many'):
-            if with_one2many and value:
-                out[field_name] = [x.id for x in value]
-            elif with_one2many:
-                out[field_name] = []
-        else:
-            out[field_name] = value
-    return out
-
-
-class ComponentStateView(StateView):
-    '''use this StateView to get the boilerplate that sets up the
-    appropriate instance of the component for creation or editing.'''
-    def __init__(self, model_name, view_id):
-        buttons = [
-            Button('Cancel', 'end', 'tryton-cancel'),
-            Button('Save', 'save_x', 'tryton-save'),
-            Button('Sign', 'sign_x', 'health-certify')
-        ]
-        super(ComponentStateView, self).__init__(model_name, view_id, buttons)
-
-    def get_defaults(self, wiz, state_name, fields):
-        _real_comp = wiz._component_data['obj']
-        return model2dict(_real_comp, fields)
-
-
-class CStateView(ComponentStateView):
-    def __init__(self, component_type_name):
-        model = 'gnuhealth.encounter.%s' % component_type_name
-        view = 'health_encounter.health_view_form_encounter_%s' % (
-            component_type_name)
-        super(CStateView, self).__init__(model, view)
-
-
-class EditComponentWizard(Wizard):
-    'Edit Component'
-    __name__ = 'gnuhealth.encounter.component_editor.wizard'
-    start = StateTransition()
-    selector = StateView(
-        'gnuhealth.encounter.component_chooser',
-        'health_encounter.health_form_component_chooser', [
-            Button('Cancel', 'end', 'tryton-cancel'),
-            Button('Next', 'selected', 'tryton-ok', default=True)
-                      # states={'readonly':Not(Bool(Eval('num_selected')))})
-        ]
-    )
-    selected = StateTransition()
-    ambulatory = CStateView('ambulatory')
-    anthropometry = CStateView('anthropometry')
-    clinical = CStateView('clinical')
-    save_x = StateTransition()
-    sign_x = StateTransition()
-
-    def __init__(self, sessionid):
-        super(EditComponentWizard, self).__init__(sessionid)
-        tact = Transaction()
-        active_model = tact.context.get('active_model')
-        active_id = tact.context.get('active_id')
-        self._component_data = {'model': active_model, 'active_id': active_id}
-
-    def transition_start(self):
-        model = self._component_data['model']
-        if model == 'gnuhealth.encounter':
-            # going to the selector
-            return 'selector'
-        else:
-            compid = self._component_data['active_id']
-            real_component = EncounterComponent.union_unshard(compid)
-            typename = real_component.__name__.split('.')[-1]
-            self._component_data.update(obj=real_component,
-                                        id=real_component.id)
-            return typename
-
-    def transition_selected(self):
-        # import pdb; pdb.set_trace()
-        comp_type = self.selector.component_type
-        ComponentModel = Pool().get('gnuhealth.encounter.%s' % comp_type)
-        encounter_id = self._component_data['active_id']
-        component_data = {'encounter': encounter_id}
-        view = self.states[comp_type].get_view()
-        field_names = view['fields'].keys()
-        if 'id' in field_names:
-            del field_names[field_names.index['id']]
-        component_data.update(ComponentModel.default_get(field_names))
-
-        real_component = ComponentModel(**component_data)
-        self._component_data.update(obj=real_component)
-        return comp_type
-
-    def transition_sign_x(self):
-        return 'end'
-
-    def transition_save_x(self):
-        model = self._component_data['model']
-        component = None
-        if model == 'gnuhealth.encounter':
-            state_name = self.selector.component_type
-        else:
-            compid = self._component_data['active_id']
-            component = EncounterComponent.union_unshard(compid)
-            state_name = component.__name__.split('.')[-1]
-        state_model = getattr(self, state_name)
-        state_model.critical_info = state_model.make_critical_info()
-        # next_state = state_name #set to return there on error
-        if component:
-            state = self.states[state_name]
-            view = state.get_view()
-            field_names = view['fields'].keys()
-            if 'critical_info' not in field_names:
-                field_names.append('critical_info')
-            data = model2dict(state_model, field_names, False)
-            model = Pool().get(component.__name__)
-            model.write([component], data)
-        else:
-            state_model.save()
-        next_state = 'end'
-        return next_state
