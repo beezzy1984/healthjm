@@ -47,7 +47,7 @@ MARITAL_STATUSES = [
 ALTERNATIVE_ID_TYPES = [
     ('trn', 'TRN'),
     ('medical_record', 'Medical Record'),
-    ('pathID ','PATH ID'),
+    ('pathID ', 'PATH ID'),
     ('gojhcard', 'GOJ Health Card'),
     ('votersid', 'GOJ Voter\'s ID'),
     ('birthreg', 'Birth Registration ID'),
@@ -75,12 +75,12 @@ class PartyPatient(ModelSQL, ModelView):
     middlename = fields.Char('Middle Name', states=_STATES, depends=_DEPENDS,
         help="Middle name or names of Patient")
     maiden_name = fields.Char(
-        'Maiden Name', 
+        'Maiden Name',
         states={'invisible':Or(Not(In(Eval('marital_status'),
                                       ['m','c','w','d','x'])),
                                Equal(Eval('sex'), 'm'))}
         )
-    mother_maiden_name = fields.Char("Mother's Maiden Name", states=_STATES, 
+    mother_maiden_name = fields.Char("Mother's Maiden Name", states=_STATES,
         depends=_DEPENDS, help="Mother's Maiden Name")
     father_name = fields.Char("Father's Name", states=_STATES,
                               depends=_DEPENDS, help="Father's Name")
@@ -211,7 +211,7 @@ class PartyPatient(ModelSQL, ModelView):
         if (field_name == 'medical_record_num'):
             for altid in self.alternative_ids:
                 if (altid.alternative_id_type == 'medical_record' and
-                    (altid.issuing_institution and 
+                    (altid.issuing_institution and
                      altid.issuing_institution.id==here)):
                     return altid.code
             return '--'
@@ -311,7 +311,7 @@ class AlternativePersonID (ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(AlternativePersonID, cls).__setup__()
-        
+
         cls.alternative_id_type.selection = ALTERNATIVE_ID_TYPES[:]
         cls._error_messages.update({
             'invalid_trn':'Invalid format for TRN',
@@ -359,12 +359,11 @@ class AlternativePersonID (ModelSQL, ModelView):
                     alternative_id.raise_user_error(
                                         'mismatched_issue_expiry',
                                         (alternative_id.type_display,))
-            if (not alternative_id.expiry_date and 
+            if (not alternative_id.expiry_date and
                 alternative_id.alternative_id_type in cls.expiry_required):
                     alternative_id.raise_user_error(
                                         'expiry_date_required',
                                         (alternative_id.type_display,))
-
 
     def check_format(self):
         format_tester = self.format_test.get(self.alternative_id_type, False)
@@ -373,7 +372,6 @@ class AlternativePersonID (ModelSQL, ModelView):
                 pass
             else:
                 error_msg = 'invalid_{}'.format(self.alternative_id_type)
-                if not self._error_messages.has_key(error_msg):
+                if error_msg not in self._error_messages:
                     error_msg = 'invalid_format'
                 self.raise_user_error(error_msg, (self.type_display,))
-
