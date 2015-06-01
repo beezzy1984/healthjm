@@ -71,17 +71,18 @@ class PartyPatient(ModelSQL, ModelView):
     upi = fields.Function(fields.Char('UPI', help='Unique Party Identifier'),
                           'get_upi_display', searcher='search_upi')
     firstname = fields.Char('First name', states=_STATES, depends=_DEPENDS,
-        select=True)
+                            select=True)
     middlename = fields.Char('Middle Name', states=_STATES, depends=_DEPENDS,
-        help="Middle name or names of Patient")
+                             help="Middle name or names of Patient")
     maiden_name = fields.Char(
         'Maiden Name',
-        states={'invisible':Or(Not(In(Eval('marital_status'),
-                                      ['m','c','w','d','x'])),
-                               Equal(Eval('sex'), 'm'))}
+        states={'invisible': Or(Not(In(Eval('marital_status'),
+                                       ['m','c','w','d','x'])),
+                                Equal(Eval('sex'), 'm'))}
         )
     mother_maiden_name = fields.Char("Mother's Maiden Name", states=_STATES,
-        depends=_DEPENDS, help="Mother's Maiden Name")
+                                     depends=_DEPENDS,
+                                     help="Mother's Maiden Name")
     father_name = fields.Char("Father's Name", states=_STATES,
                               depends=_DEPENDS, help="Father's Name")
     sex_display = fields.Function(fields.Char('Sex'), 'get_sex_display')
@@ -130,6 +131,7 @@ class PartyPatient(ModelSQL, ModelView):
         cls.ref.string = "UPI"
         cls.insurance.string = "Insurance Plans"
         cls.alternative_ids.string = 'Alternate IDs'
+        cls.dob.string = 'Date of Birth'
 
         # help text mods
         cls.ref.help = "Unique Party Indentifier"
@@ -157,7 +159,7 @@ class PartyPatient(ModelSQL, ModelView):
         if there is no alt-id, then the party should be labeled as unidentified
         '''
         if (self.is_person and self.is_patient and
-            len(self.alternative_ids) == 0 and not self.unidentified):
+                len(self.alternative_ids) == 0 and not self.unidentified):
             self.raise_user_error('unidentified_or_altid')
 
 
@@ -191,11 +193,11 @@ class PartyPatient(ModelSQL, ModelView):
     def search_upi(cls, field_name, clause):
         # TODO: Fix this to work for 'in' and 'like' clauses
         fld, operator, operand = clause
-        if (isinstance(operand, six.string_types) and
-            NNre.match(operand)):
+        if (isinstance(operand, six.string_types) and NNre.match(operand)):
             # searching for NN- records, so auto-append unidentified=True
             operand = u''.join(NNre.split(operand))
-            if operand == u'%%': operand = '%'
+            if operand == u'%%':
+                operand = '%'
             return ['AND', ('ref',operator, operand),
                            ('unidentified','=', True)]
         else:

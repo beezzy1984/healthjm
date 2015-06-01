@@ -5,6 +5,9 @@
     <xpath expr="/form" position="replace_attributes" >
         <form string="Party" col="6" cursor="lastname" />
     </xpath>
+    <!-- Lose the AltID checkbox -->
+    <xpath expr="/form//field[@name=&quot;alternative_identification&quot;]" position="replace" />
+    <xpath expr="/form//label[@name=&quot;alternative_identification&quot;]" position="replace" />
 
     <!-- Same for the lastname field -->
     <xpath expr="/form/label[@name='lastname']" position="replace" />
@@ -47,11 +50,12 @@
     <xpath expr="/form/group[@id=&quot;checkboxes&quot;]" position="replace" />
 
     <xpath expr="/form/notebook/page[@id=&quot;party_gnuhealth&quot;]/group[@id=&quot;person_details&quot;]/group[@id=&quot;person_demographics&quot;]" position="replace_attributes">
-        <group yfill="1" id="person_demographics" string="Name and Demographics" />
+        <group yfill="1" id="person_demographics" string="Name and Demographics"/>
     </xpath>
     <xpath expr="/form/notebook/page[@id=&quot;party_gnuhealth&quot;]/group[@id=&quot;person_details&quot;]/group[@id=&quot;person_demographics&quot;]/label[@name=&quot;dob&quot;]" position="before">
         <label name="unidentified" />
         <field name="unidentified" />
+        <field name="alternative_identification" invisible="1" />
 <!--                 <label name="party_warning_ack" />
         <field name="party_warning_ack" /> -->
         <newline />
@@ -67,11 +71,11 @@
         <field name="alias"/>
         <label name="maiden_name" />
         <field name="maiden_name" />
-        <newline /><separator colspan="4" id="sep1289" /><newline />
-        <label name="mother_maiden_name" />
-        <field name="mother_maiden_name" />
+        <newline /><separator colspan="4" id="sep1289" string="" /><newline />
         <label name="father_name" />
         <field name="father_name" />
+        <label name="mother_maiden_name" />
+        <field name="mother_maiden_name" />
         <newline /><separator colspan="4" id="sep1290" /><newline />
     </xpath>
 
