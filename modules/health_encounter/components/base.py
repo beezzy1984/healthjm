@@ -9,6 +9,9 @@ SIGNED_STATES = {'readonly': Bool(Eval('signed_by'))}
 
 
 class BaseComponent(ModelSQL, ModelView):
+    '''All components should inherit from this class. It's not a real
+    model as it is not registered in the pool. It defines the fields
+    needed for a model to be a valid component. '''
     encounter = fields.Many2One('gnuhealth.encounter', 'Encounter',
                                 readonly=True)
     start_time = fields.DateTime('Start')
@@ -70,9 +73,16 @@ class BaseComponent(ModelSQL, ModelView):
         # save the component and set the state to done
 
 
+class UnknownEncounterComponentType(Exception):
+    pass
+
+
 class EncounterComponentType(ModelSQL, ModelView):
-    'Encounter Component'
-    __name__ = 'gnuhealth.encounter.component_model'
+    '''Encounter Component
+    Stores encounter component type definitions. The Encounter models
+    and views use this model to determine which components are available
+    '''
+    __name__ = 'gnuhealth.encounter.component_type'
     name = fields.Char('Type Name')
     code = fields.Char('Code', size=15,
                        help="Short name Displayed in the first column of the"
@@ -112,12 +122,22 @@ class EncounterComponentType(ModelSQL, ModelView):
     def get_selection_list(cls):
         '''returns a list of active Encounter component types in a tuple
         of (id, Name, Code)'''
-        etypes = cls.search_read([('active', '=', True)],
-                                 fields_names=['id', 'name', 'code'])
-        return [(x['id'], x['name'], x['code']) for x in etypes]
+        try:
+            return cls._component_type_list
+        except AttributeError:
+            pass
+        ectypes = cls.search_read(
+            [('active', '=', True)],
+            fields_names=['id', 'name', 'code'],
+            order=[('ordering', 'ASC'), ('name', 'ASC')])
+        cls._component_type_list = [(x['id'], x['name'], x['code'])
+                                    for x in ectypes]
+        return cls._component_type_list
 
     @classmethod
     def get_view_name(cls, ids):
+        '''returns the name of the view used to edit/display a
+        component type'''
         if not isinstance(ids, (list, tuple)):
             ids = [ids]
         # ids = map(int, ids)
@@ -128,7 +148,9 @@ class EncounterComponentType(ModelSQL, ModelView):
 
 
 class EncounterComponent(UnionMixin, BaseComponent):
-    'Component'
+    '''Component
+    The unionized encounter component. This is the model to which the
+    encounter points its One2Many field. '''
     __name__ = 'gnuhealth.encounter.component'
     component_type = fields.Function(fields.Char('Type'),
                                      'get_component_type_name')
@@ -149,7 +171,7 @@ class EncounterComponent(UnionMixin, BaseComponent):
     @staticmethod
     def union_models():
         models = EncounterComponentType.search_read([('active', '=', True)],
-                                                    fields_names=('model'),
+                                                    fields_names=['model'],
                                                     order=[('id', 'ASC')])
         return [x['model'] for x in models]
 

@@ -1,10 +1,11 @@
 
-
+import re
 from trytond.wizard import (Wizard, StateView, Button, StateTransition)
 from trytond.pool import Pool
 from trytond.model import ModelView, fields
 from trytond.transaction import Transaction
-from .base import EncounterComponentType, EncounterComponent
+from .base import (EncounterComponentType, EncounterComponent,
+                   UnknownEncounterComponentType)
 
 
 def model2dict(record, fields=None, with_one2many=True):
@@ -64,8 +65,8 @@ class ComponentStateView(StateView):
 class CStateView(ComponentStateView):  # initialise a StateView from DB
     def __init__(self, component_type_id):
         mvd = EncounterComponentType.read([int(component_type_id)],
-                                          fields_names=['model', 'view_name'])
-        super(CStateView, self).__init__(mvd['model'], view['view_name'])
+                                          fields_names=['model', 'view_form'])
+        super(CStateView, self).__init__(mvd[0]['model'], mvd[0]['view_form'])
 
 
 class EditComponentWizard(Wizard):
@@ -77,34 +78,43 @@ class EditComponentWizard(Wizard):
         'health_encounter.health_form_component_chooser', [
             Button('Cancel', 'end', 'tryton-cancel'),
             Button('Next', 'selected', 'tryton-ok', default=True)
-                      # states={'readonly':Not(Bool(Eval('num_selected')))})
         ]
     )
     selected = StateTransition()
-    # ambulatory = CStateView('ambulatory')
-    # anthropometry = CStateView('anthropometry')
-    # clinical = CStateView('clinical')
     save_x = StateTransition()
     sign_x = StateTransition()
+    _component_data = {}
 
     def __init__(self, sessionid):
         super(EditComponentWizard, self).__init__(sessionid)
         tact = Transaction()
         active_model = tact.context.get('active_model')
         active_id = tact.context.get('active_id')
-        self._component_data = {'model': active_model, 'active_id': active_id}
+        txtonly = re.compile('([A-Za-z]+)')
+        fix = lambda x: '_'.join([p.lower() for p in txtonly.findall(x)])
+        component_types = dict([(x[0], fix(x[2])) for x in
+                                EncounterComponentType.get_selection_list()])
+
+        self._component_data = {'model': active_model, 'active_id': active_id,
+                                'typenames': component_types}
 
     def _make_component_state_view(self, component_type_id, model_name=None):
         component_view = None
-        if component_type_id:
-            component_view = CStateView(component_type_id)
-        elif model_name:
+
+        if not component_type_id and model_name:
             cvm = EncounterComponentType.search([('model', '=', model_name)])
-            if cvm:
-                component_view = CStateView(cvm[0])
-        if component_view:
-            self.states['component'] = component_view
-        return component_view
+            try:
+                component_type_id = cvm[0]
+            except IndexError:  # there is no component type for this model
+                raise UnknownEncounterComponentType(model_name)
+            # component_key = self._component_data['typenames'][component_type_id]
+
+        # if component_key not in self.states:
+
+        component_view = CStateView(component_type_id)
+        self.states['component'] = component_view
+
+        return 'component'
 
     def transition_start(self):
         model = self._component_data['model']
@@ -114,15 +124,18 @@ class EditComponentWizard(Wizard):
         else:
             compid = self._component_data['active_id']
             real_component = EncounterComponent.union_unshard(compid)
-            self._make_component_state_view(0, real_component.__name__)
+            statename = self._make_component_state_view(False,
+                                                        real_component.__name__)
             # typename = real_component.__name__.split('.')[-1]
+            setattr(self, statename, real_component)
             self._component_data.update(obj=real_component,
                                         id=real_component.id)
-            return 'component'
+            return statename
 
     def transition_selected(self):
-        # import pdb; pdb.set_trace()
-        state = self._make_component_state_view(self.selector.component_type)
+        statename = self._make_component_state_view(
+            self.selector.component_type)
+        state = self.states[statename]
         ComponentModel = Pool().get(state.model_name)
         encounter_id = self._component_data['active_id']
         component_data = {'encounter': encounter_id}
@@ -133,8 +146,9 @@ class EditComponentWizard(Wizard):
         component_data.update(ComponentModel.default_get(field_names))
 
         real_component = ComponentModel(**component_data)
+        setattr(self, statename, real_component)
         self._component_data.update(obj=real_component)
-        return 'component'
+        return statename
 
     def transition_sign_x(self):
         return 'end'
@@ -142,11 +156,11 @@ class EditComponentWizard(Wizard):
     def transition_save_x(self):
         model = self._component_data['model']
         component = None
-        # state_name = 'component'
+        state_name = 'component'
         if model != 'gnuhealth.encounter':
             compid = self._component_data['active_id']
             component = EncounterComponent.union_unshard(compid)
-        state_model = self.component
+        state_model = getattr(self, state_name)
         state_model.critical_info = state_model.make_critical_info()
         # next_state = state_name #set to return there on error
         if component:

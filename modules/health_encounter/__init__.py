@@ -4,6 +4,7 @@ from .components import *
 
 def register():
     Pool.register(
+        EncounterComponentType,
         PatientEncounter,
         EncounterAnthro,
         EncounterAmbulatory,
