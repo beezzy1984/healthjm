@@ -129,32 +129,32 @@ class EncounterAmbulatory(BaseComponent):
     glycemia = fields.Float(
         'Glycemia',
         help='Last blood glucose level. Can be an approximate value.',
-        states = SIGNED_STATES)
+        states=SIGNED_STATES)
 
     hba1c = fields.Float(
         'Glycated Hemoglobin',
         help='Last Glycated Hb level. Can be an approximate value.',
-        states = SIGNED_STATES)
+        states=SIGNED_STATES)
 
     cholesterol_total = fields.Integer(
         'Last Cholesterol',
         help='Last cholesterol reading. Can be an approximate value',
-        states = SIGNED_STATES)
+        states=SIGNED_STATES)
 
     hdl = fields.Integer(
         'Last HDL',
         help='Last HDL Cholesterol reading. Can be an approximate value',
-        states = SIGNED_STATES)
+        states=SIGNED_STATES)
 
     ldl = fields.Integer(
         'Last LDL',
         help='Last LDL Cholesterol reading. Can be an approximate value',
-        states = SIGNED_STATES)
+        states=SIGNED_STATES)
 
     tag = fields.Integer(
         'Last TAGs',
         help='Triacylglycerol(triglicerides) level. Can be an approximate.',
-        states = SIGNED_STATES)
+        states=SIGNED_STATES)
 
     malnutrition = fields.Boolean(
         'Malnourished',
@@ -162,15 +162,14 @@ class EncounterAmbulatory(BaseComponent):
         ' associated  to a disease, please encode the correspondent disease'
         ' on the patient disease history. For example, Moderate'
         ' protein-energy malnutrition, E44.0 in ICD-10 coding',
-        states = SIGNED_STATES)
+        states=SIGNED_STATES)
 
-    dehydration = fields.Boolean(
-        'Dehydration',
-        help='Check this box if the patient show signs of dehydration. If'
-        ' associated  to a disease, please encode the  correspondent disease'
-        ' on the patient disease history. For example, Volume Depletion, E86'
-        ' in ICD-10 coding',
-        states = SIGNED_STATES)
+    dehydration = fields.Selection(
+        [(None, 'No'), ('mild', 'Mild'), ('moderate', 'Moderate'),
+         ('severe', 'Severe')],
+        'Dehydration', sort=False,
+        help='If the patient show signs of dehydration.',
+        states=SIGNED_STATES)
 
     # @classmethod
     # def __setup__(cls):
@@ -188,37 +187,39 @@ class EncounterAmbulatory(BaseComponent):
     def make_critical_info(self):
         line = []
         if self.dehydration:
-            line.append('DHy') # ToDo: Find proper code for dehydrated
+            line.append(u'DHy-%s' % self.dehydration)
+            # ToDo: Find proper code for dehydrated
         if self.temperature:
-            line.append('%4.2f°C'%self.temperature)
+            line.append(u'%4.2f°C' % self.temperature)
         if self.systolic and self.diastolic:
-            line.append('bp %3.0f/%3.0f'%(self.systolic,self.diastolic))
+            line.append(u'bp %3.0f/%3.0f' % (self.systolic, self.diastolic))
         if self.bpm:
-            line.append('heart %dbpm'%self.bpm)
+            line.append(u'heart %dbpm' % self.bpm)
         if self.respiratory_rate:
-            line.append('breath %d'%self.respiratory_rate)
+            line.append(u'breath %d' % self.respiratory_rate)
         if self.osat:
-            line.append('ox %d'%self.osat)
-        return ", ".join(line)
+            line.append(u'ox %d' % self.osat)
+        print(repr(line))
+        return u", ".join(line)
 
     def get_report_info(self, name):
         lines = [['== Vital Signs ==']]
         if self.dehydration:
-            lines.append(('* Dehydrated',))
+            lines.append(('* Dehydrated:', self.dehydration))
         if self.temperature:
-            lines.append(('* Temperature:', '%4.2f°C'%self.temperature))
+            lines.append((u'* Temperature:', u'%4.2f°C' % self.temperature))
         if self.systolic and self.diastolic:
             lines.append(('* Blood Pressure:',
-                        '%3.0f/%3.0f'%(self.systolic,self.diastolic)))
+                          '%3.0f/%3.0f' % (self.systolic, self.diastolic)))
         if self.bpm:
-            lines.append(('* Heart Rate:','%dbpm'%self.bpm))
+            lines.append(('* Heart Rate:', '%dbpm' % self.bpm))
         if self.respiratory_rate:
-            lines.append(('* Respiratory Rate: %d'%self.respiratory_rate))
+            lines.append(('* Respiratory Rate: %d' % self.respiratory_rate))
         if self.osat:
-            lines.append(('* Oxygen Saturation: %d'%self.osat))
+            lines.append(('* Oxygen Saturation: %d' % self.osat))
 
         # ToDo: Put in the Glucose and Lipids fields
 
         if self.notes:
             lines.extend([['\n=== Notes ==='], [str(self.notes)]])
-        return '\n'.join([' '.join(x) for x in lines])
+        return u'\n'.join([u' '.join(x) for x in lines])

@@ -13,9 +13,10 @@ class BaseComponent(ModelSQL, ModelView):
     model as it is not registered in the pool. It defines the fields
     needed for a model to be a valid component. '''
     encounter = fields.Many2One('gnuhealth.encounter', 'Encounter',
-                                readonly=True)
-    start_time = fields.DateTime('Start')
-    sign_time = fields.DateTime('Finish', readonly=True)
+                                readonly=True, required=True)
+    start_time = fields.DateTime('Start', required=True)
+    end_time = fields.DateTime('Finish')
+    sign_time = fields.DateTime('Signed', readonly=True)
     signed_by = fields.Many2One('gnuhealth.healthprofessional', 'Signed by',
                                 readonly=True)
     performed_by = fields.Many2One('gnuhealth.healthprofessional', 'Clinician')
@@ -121,16 +122,16 @@ class EncounterComponentType(ModelSQL, ModelView):
     @classmethod
     def get_selection_list(cls):
         '''returns a list of active Encounter component types in a tuple
-        of (id, Name, Code)'''
+        of (id, Name, Code, model)'''
         try:
             return cls._component_type_list
         except AttributeError:
             pass
         ectypes = cls.search_read(
             [('active', '=', True)],
-            fields_names=['id', 'name', 'code'],
+            fields_names=['id', 'name', 'code', 'model'],
             order=[('ordering', 'ASC'), ('name', 'ASC')])
-        cls._component_type_list = [(x['id'], x['name'], x['code'])
+        cls._component_type_list = [(x['id'], x['name'], x['code'], x['model'])
                                     for x in ectypes]
         return cls._component_type_list
 
@@ -170,10 +171,8 @@ class EncounterComponent(UnionMixin, BaseComponent):
 
     @staticmethod
     def union_models():
-        models = EncounterComponentType.search_read([('active', '=', True)],
-                                                    fields_names=['model'],
-                                                    order=[('id', 'ASC')])
-        return [x['model'] for x in models]
+        thelist = EncounterComponentType.get_selection_list()
+        return [x[3] for x in thelist]
 
     def get_start_time_time(self, name):
         # return self.start_time.strftime('%H:%M')
@@ -181,10 +180,8 @@ class EncounterComponent(UnionMixin, BaseComponent):
 
     def get_component_type_name(self, name):
         id_names = EncounterComponentType.get_selection_list()
-        id_names.sort(key=lambda x: x[0])
-        titles = [x[2] for x in id_names]
-        recid, title_index = divmod(self.id, len(titles))
-        return titles[title_index]
+        title_index = self.id % len(id_names)
+        return id_names[title_index][2]
 
     def get_report_info(self, name):
         real_component = self.union_unshard(self.id)

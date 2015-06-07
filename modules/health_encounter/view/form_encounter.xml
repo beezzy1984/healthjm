@@ -23,8 +23,11 @@
             <field name="summary" />
         </page>
         <page id="nbpage_encounter_hidden" string="Appointment"
-            states="{'invisible':0}">
+            states="{'invisible':0}" col="2">
+            <label name="appointment" />
             <field name="appointment" readonly="1" />
+            <label name="next_appointment" />
+            <field name="next_appointment" />
         </page>
     </notebook>
     <group col="9" id="g_encounter_tail">
@@ -41,6 +44,6 @@
         <field name="institution" colspan="2" />
         <field name="state" width="80" />
         <button name="sign_finish" help="Sign this encounter." string="Sign" icon="tryton-go-next" confirm="Having validated this encounter, do you want to sign it?"/>
-        <button name="set_done" help="Set the encounter as being done." string="Finish" icon="tryton-go-next" confirm="Do you want to end this encounter? Only the next appointment may be set afterward."/>
+        <button name="set_done" help="Set the encounter as being done." string="Finish" icon="tryton-go-next" confirm="Do you want to end this encounter?"/>
     </group>
 </form>

@@ -86,7 +86,6 @@ class EditComponentWizard(Wizard):
     _component_data = {}
 
     def __init__(self, sessionid):
-        super(EditComponentWizard, self).__init__(sessionid)
         tact = Transaction()
         active_model = tact.context.get('active_model')
         active_id = tact.context.get('active_id')
@@ -97,6 +96,13 @@ class EditComponentWizard(Wizard):
 
         self._component_data = {'model': active_model, 'active_id': active_id,
                                 'typenames': component_types}
+        real_component = None
+        if active_model != 'gnuhealth.encounter':
+            real_component = EncounterComponent.union_unshard(active_id)
+            self._make_component_state_view(False, real_component.__name__)
+            self._component_data['obj'] = real_component
+        super(EditComponentWizard, self).__init__(sessionid)
+        # setattr(self, statename, real_component)
 
     def _make_component_state_view(self, component_type_id, model_name=None):
         component_view = None
@@ -107,30 +113,18 @@ class EditComponentWizard(Wizard):
                 component_type_id = cvm[0]
             except IndexError:  # there is no component type for this model
                 raise UnknownEncounterComponentType(model_name)
-            # component_key = self._component_data['typenames'][component_type_id]
 
-        # if component_key not in self.states:
-
-        component_view = CStateView(component_type_id)
-        self.states['component'] = component_view
+        if 'component' not in self.states:
+            component_view = CStateView(component_type_id)
+            self.states['component'] = component_view
 
         return 'component'
 
     def transition_start(self):
-        model = self._component_data['model']
-        if model == 'gnuhealth.encounter':
-            # going to the selector
+        if self._component_data['model'] == 'gnuhealth.encounter':
             return 'selector'
         else:
-            compid = self._component_data['active_id']
-            real_component = EncounterComponent.union_unshard(compid)
-            statename = self._make_component_state_view(False,
-                                                        real_component.__name__)
-            # typename = real_component.__name__.split('.')[-1]
-            setattr(self, statename, real_component)
-            self._component_data.update(obj=real_component,
-                                        id=real_component.id)
-            return statename
+            return 'component'
 
     def transition_selected(self):
         statename = self._make_component_state_view(

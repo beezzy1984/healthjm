@@ -1,7 +1,7 @@
 
 from datetime import datetime
 from trytond.model import ModelView, ModelSQL, fields
-from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or, Greater
+from trytond.pyson import Eval, Not, Equal, Or, Greater, In
 from trytond.pool import Pool
 from trytond.modules.health import HealthInstitution, HealthProfessional
 from trytond.modules.health_jamaica import tryton_utils as utils
@@ -12,20 +12,22 @@ class PatientEncounter(ModelSQL, ModelView):
     __name__ = 'gnuhealth.encounter'
 
     STATES = {'readonly': Or(Equal(Eval('state'), 'signed'),
-                             Equal(Eval('state'), 'done'))}
+                             Equal(Eval('state'), 'done'),
+                             Equal(Eval('state'), 'invalid'))}
     SIGNED_STATES = {'readonly': Equal(Eval('state'), 'signed')}
 
     state = fields.Selection(
         [('in_progress', 'In progress'),
          ('done', 'Done'),
-         ('signed', 'Signed')],
+         ('signed', 'Signed'),
+         ('invalid', 'Invalid')],
         'State', readonly=True, sort=False
     )
     patient = fields.Many2One('gnuhealth.patient', 'Patient', required=True,
                               states=STATES)
     primary_complaint = fields.Char('Primary complaint', states=STATES)
     start_time = fields.DateTime('Start', required=True, states=STATES)
-    end_time = fields.DateTime('End', states=SIGNED_STATES)
+    end_time = fields.DateTime('End', states=STATES)
     institution = fields.Many2One('gnuhealth.institution', 'Institution',
                                   required=True)
     appointment = fields.Many2One(
@@ -34,10 +36,11 @@ class PatientEncounter(ModelSQL, ModelView):
         help='Enter or select the appointment related to this encounter',
         states=STATES)
     next_appointment = fields.Many2One(
-            'gnuhealth.appointment', 'Next Appointment',
-            domain=[('patient', '=', Eval('patient'))],
-            depends=['patient'],
-            states = SIGNED_STATES)
+        'gnuhealth.appointment', 'Next Appointment',
+        domain=['OR', ['AND', ('patient', '=', Eval('patient')),
+                       ('state', '=', 'confirmed')], ('state', '=', 'free')],
+        depends=['patient'],
+        states=SIGNED_STATES)
     signed_by = fields.Many2One(
         'gnuhealth.healthprofessional', 'Signed By', readonly=True,
         states={'invisible': Equal(Eval('state'), 'in_progress')},
@@ -48,7 +51,8 @@ class PatientEncounter(ModelSQL, ModelView):
     summary = fields.Function(fields.Text('Summary'), 'get_encounter_summary')
     # Patient identifier fields
     upi = fields.Function(fields.Char('UPI'), getter='get_person_patient_field')
-    medical_record_num = fields.Function(fields.Char('Medical Record Number'),
+    medical_record_num = fields.Function(
+        fields.Char('Medical Record Number'),
         'get_person_patient_field')
     sex_display = fields.Function(fields.Char('Sex'),
                                   'get_person_patient_field')
@@ -72,12 +76,16 @@ class PatientEncounter(ModelSQL, ModelView):
     @classmethod
     @ModelView.button
     def set_done(cls, encounters):
-        signing_hp = HealthProfessional().get_health_professional()
         # Change the state of the evaluation to "Done"
-        cls.write(encounters, {
-            'state': 'done'
-            # 'end_time': dateime.now()
-        })
+        save_data = {'state': 'done'}
+        for encounter in encounters:
+            if encounter.end_time:
+                save_data.update(end_time=encounter.end_time)
+                break
+            else:
+                cls.raise_user_error('end_date_required')
+
+        cls.write(encounters, save_data)
 
     @classmethod
     @ModelView.button_action(
@@ -101,23 +109,26 @@ class PatientEncounter(ModelSQL, ModelView):
     def __setup__(cls):
         super(PatientEncounter, cls).__setup__()
         cls._error_messages.update({
-            'health_professional_warning':
-                'No health professional associated with this user',
+            'health_professional_warning': 'No health professional '
+                'associated with this user',
             'end_date_before_start': 'End time "%(end_time)s" BEFORE'
-                ' start time "%(start_time)s"'
+                ' start time "%(start_time)s"',
+            'end_date_required': 'End time is required for finishing'
         })
 
         cls._buttons.update({
             'set_done': {'invisible': Not(Equal(Eval('state'), 'in_progress'))},
             'sign_finish': {'invisible': Not(Equal(Eval('state'), 'done'))},
-            'add_component':{'readonly': Greater(0,Eval('id',-1))}
+            'add_component': {'readonly': Or(Greater(0, Eval('id', -1)),
+                                             In(Eval('state'),
+                                                ['done', 'signed', 'invalid']))}
         })
 
     def get_rec_name(self, name):
         localstart = utils.localtime(self.start_time)
-        return "EV%05d %s (%s) on %s"%(self.id, self.patient.name.name,
-                                       self.patient.name.upi,
-                                       localstart.ctime())
+        return "EV%05d %s (%s) on %s" % (self.id, self.patient.name.name,
+                                         self.patient.name.upi,
+                                         localstart.ctime())
 
     def get_person_patient_field(self, name):
         if name in ['upi', 'sex_display']:
