@@ -63,6 +63,8 @@ class PatientData(ModelSQL, ModelView):
         'get_unidentified',
         searcher='search_unidentified'
     )
+    full_name = fields.Function(fields.Char('Full name'), 'get_fullname')
+
     def get_rec_name(self, name):
         return self.name.name
 
@@ -71,6 +73,11 @@ class PatientData(ModelSQL, ModelView):
 
     def get_unidentified(self, field_name):
         return self.name.unidentified
+
+    def get_fullname(self, n):
+        return ' '.join(filter(None, [self.name.firstname,
+                                      self.name.middlename,
+                                      self.name.lastname]))
 
     @classmethod
     def search_person_field(cls, field_name, clause):
