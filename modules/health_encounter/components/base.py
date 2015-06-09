@@ -29,6 +29,8 @@ class BaseComponent(ModelSQL, ModelView):
     critical_info = fields.Char('Summary', readonly=True,
                                 depends=['notes'])
     report_info = fields.Function(fields.Text('Report'), 'get_report_info')
+    is_union_comp = fields.Function(fields.Boolean('Unified component'),
+                                    'get_is_union')
 
     @classmethod
     def __setup__(cls):
@@ -59,6 +61,9 @@ class BaseComponent(ModelSQL, ModelView):
         # return details of the data contained in this component as plain text
         # no length limit
         return ""
+
+    def get_is_union(self, name):
+        return False
 
     def on_change_with_critical_info(self, *arg, **kwarg):
         return self.make_critical_info()
@@ -186,6 +191,9 @@ class EncounterComponent(UnionMixin, BaseComponent):
     def get_report_info(self, name):
         real_component = self.union_unshard(self.id)
         return real_component.get_report_info(name)
+
+    def get_is_union(self, name):
+        return True
 
     @classmethod
     @ModelView.button_action(

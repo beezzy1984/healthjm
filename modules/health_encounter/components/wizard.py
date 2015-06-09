@@ -114,9 +114,9 @@ class EditComponentWizard(Wizard):
             except IndexError:  # there is no component type for this model
                 raise UnknownEncounterComponentType(model_name)
 
-        if 'component' not in self.states:
-            component_view = CStateView(component_type_id)
-            self.states['component'] = component_view
+        # if 'component' not in self.states:
+        component_view = CStateView(component_type_id)
+        self.states['component'] = component_view
 
         return 'component'
 

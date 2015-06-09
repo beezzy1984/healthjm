@@ -3,6 +3,7 @@
     <group id="encounter_header" col="8">
         <field name="encounter" colspan="6" />
         <field name="critical_info" invisible="1" />
+        <field name="is_union_comp" invisible="1" />
     </group>
     <notebook>
         <page id="page_component_summary" string="Summary" col="6"
@@ -13,7 +14,8 @@
             <newline />
             <field name="report_info" colspan="6" />
         </page>
-        <page id="page_component_form" string="Details" col="12">
+        <page id="page_component_form" string="Details" col="12" 
+            states="{'invisible': Bool(Eval('is_union_comp'))}">
             
             <label name="notes" xexpand="1" xalign="0" />
             <newline />

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tryton>
     <data>
-
         <!-- Anthopometry Component Form -->
         <record model="ir.ui.view" id="health_view_form_encounter_anthropometry">
             <field name="inherit" ref="health_view_form_encounter_component" />

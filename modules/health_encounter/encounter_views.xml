@@ -83,5 +83,12 @@
             <field name="view" ref="health_view_form_encounter_component"/>
             <field name="act_window" ref="health_actwin_encounter_base"/>
         </record>
+
+        <!-- And tree action for the encounter itself -->
+-        <record model="ir.action.keyword" id="act_encounter_component_tree_chooser">
+-            <field name="action" ref="health_wizard_encounter_edit_component"/>
+-            <field name="keyword">tree_open</field>
+-            <field name="model">gnuhealth.encounter,-1</field>
+-        </record>
     </data>
 </tryton>
