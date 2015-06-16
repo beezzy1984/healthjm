@@ -5,15 +5,18 @@
     </xpath>
     <xpath expr="//label[@name=&quot;notes&quot;]" position="before">
         <group id="clinic_signs" colspan="12">
-            <field name="signs_symptoms" />
+            <field name="signs_symptoms" mode="tree,form" view_ids="health_encounter.tree_signs_and_symptoms,health_encounter.form_signs_and_symptoms" />
         </group>
         <newline />
+        <!-- <label name="diagnosis" colspan="1" xalign="0" /> -->
+        <group id="clinic_diag_diag" colspan="12" string="Presumptive Diagnosis" col="1">
+            <field name="diagnosis" colspan="1" xexpand="1" />
+        </group>
+        <newline />
+    </xpath>
+    <xpath expr="//field[@name=&quot;notes&quot;]" position="after">
+        <newline />
         <group id="clinic_diagnosis" col="12" colspan="12">
-            <!-- <label name="diagnosis" colspan="1" xalign="0" /> -->
-            <group id="clinic_diag_diag" colspan="12" string="Presumptive Diagnosis" col="11">
-            <field name="diagnosis" colspan="11" xexpand="1" />
-            </group>
-            <newline />
             <field name="secondary_conditions" colspan="6" />
             <field name="diagnostic_hypothesis" colspan="6" />
             <newline />

@@ -16,7 +16,9 @@
         </page>
         <page id="page_component_form" string="Details" col="12" 
             states="{'invisible': Bool(Eval('is_union_comp'))}">
-            
+
+            <!-- Most components will insert their form here -->
+
             <label name="notes" xexpand="1" xalign="0" />
             <newline />
             <field name="notes" yexpand="1" />

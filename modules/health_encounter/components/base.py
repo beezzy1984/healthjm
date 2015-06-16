@@ -1,4 +1,5 @@
 from datetime import datetime
+from trytond import backend
 from trytond.model import ModelView, ModelSQL, fields, UnionMixin
 from trytond.pyson import Eval, Bool
 from trytond.pool import Pool
@@ -173,6 +174,13 @@ class EncounterComponent(UnionMixin, BaseComponent):
             cls._buttons = {}
 
         cls._buttons['btn_open'] = {'readonly': Eval(False)}
+
+    @classmethod
+    def __register__(cls, module_name):
+        # TableHandler = backend.get('TableHandler')
+        super(ModelSQL, cls).__register__(module_name)
+        return
+
 
     @staticmethod
     def union_models():
