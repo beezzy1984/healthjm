@@ -47,7 +47,7 @@ MARITAL_STATUSES = [
 ALTERNATIVE_ID_TYPES = [
     ('trn', 'TRN'),
     ('medical_record', 'Medical Record'),
-    ('pathID ','PATH ID'),
+    ('pathID ', 'PATH ID'),
     ('gojhcard', 'GOJ Health Card'),
     ('votersid', 'GOJ Voter\'s ID'),
     ('birthreg', 'Birth Registration ID'),
@@ -71,17 +71,18 @@ class PartyPatient(ModelSQL, ModelView):
     upi = fields.Function(fields.Char('UPI', help='Unique Party Identifier'),
                           'get_upi_display', searcher='search_upi')
     firstname = fields.Char('First name', states=_STATES, depends=_DEPENDS,
-        select=True)
+                            select=True)
     middlename = fields.Char('Middle Name', states=_STATES, depends=_DEPENDS,
-        help="Middle name or names of Patient")
+                             help="Middle name or names of Patient")
     maiden_name = fields.Char(
-        'Maiden Name', 
-        states={'invisible':Or(Not(In(Eval('marital_status'),
-                                      ['m','c','w','d','x'])),
-                               Equal(Eval('sex'), 'm'))}
+        'Maiden Name',
+        states={'invisible': Or(Not(In(Eval('marital_status'),
+                                       ['m','c','w','d','x'])),
+                                Equal(Eval('sex'), 'm'))}
         )
-    mother_maiden_name = fields.Char("Mother's Maiden Name", states=_STATES, 
-        depends=_DEPENDS, help="Mother's Maiden Name")
+    mother_maiden_name = fields.Char("Mother's Maiden Name", states=_STATES,
+                                     depends=_DEPENDS,
+                                     help="Mother's Maiden Name")
     father_name = fields.Char("Father's Name", states=_STATES,
                               depends=_DEPENDS, help="Father's Name")
     sex_display = fields.Function(fields.Char('Sex'), 'get_sex_display')
@@ -130,6 +131,7 @@ class PartyPatient(ModelSQL, ModelView):
         cls.ref.string = "UPI"
         cls.insurance.string = "Insurance Plans"
         cls.alternative_ids.string = 'Alternate IDs'
+        cls.dob.string = 'Date of Birth'
 
         # help text mods
         cls.ref.help = "Unique Party Indentifier"
@@ -157,7 +159,7 @@ class PartyPatient(ModelSQL, ModelView):
         if there is no alt-id, then the party should be labeled as unidentified
         '''
         if (self.is_person and self.is_patient and
-            len(self.alternative_ids) == 0 and not self.unidentified):
+                len(self.alternative_ids) == 0 and not self.unidentified):
             self.raise_user_error('unidentified_or_altid')
 
 
@@ -191,11 +193,11 @@ class PartyPatient(ModelSQL, ModelView):
     def search_upi(cls, field_name, clause):
         # TODO: Fix this to work for 'in' and 'like' clauses
         fld, operator, operand = clause
-        if (isinstance(operand, six.string_types) and
-            NNre.match(operand)):
+        if (isinstance(operand, six.string_types) and NNre.match(operand)):
             # searching for NN- records, so auto-append unidentified=True
             operand = u''.join(NNre.split(operand))
-            if operand == u'%%': operand = '%'
+            if operand == u'%%':
+                operand = '%'
             return ['AND', ('ref',operator, operand),
                            ('unidentified','=', True)]
         else:
@@ -211,7 +213,7 @@ class PartyPatient(ModelSQL, ModelView):
         if (field_name == 'medical_record_num'):
             for altid in self.alternative_ids:
                 if (altid.alternative_id_type == 'medical_record' and
-                    (altid.issuing_institution and 
+                    (altid.issuing_institution and
                      altid.issuing_institution.id==here)):
                     return altid.code
             return '--'
@@ -311,7 +313,7 @@ class AlternativePersonID (ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(AlternativePersonID, cls).__setup__()
-        
+
         cls.alternative_id_type.selection = ALTERNATIVE_ID_TYPES[:]
         cls._error_messages.update({
             'invalid_trn':'Invalid format for TRN',
@@ -359,12 +361,11 @@ class AlternativePersonID (ModelSQL, ModelView):
                     alternative_id.raise_user_error(
                                         'mismatched_issue_expiry',
                                         (alternative_id.type_display,))
-            if (not alternative_id.expiry_date and 
+            if (not alternative_id.expiry_date and
                 alternative_id.alternative_id_type in cls.expiry_required):
                     alternative_id.raise_user_error(
                                         'expiry_date_required',
                                         (alternative_id.type_display,))
-
 
     def check_format(self):
         format_tester = self.format_test.get(self.alternative_id_type, False)
@@ -373,7 +374,6 @@ class AlternativePersonID (ModelSQL, ModelView):
                 pass
             else:
                 error_msg = 'invalid_{}'.format(self.alternative_id_type)
-                if not self._error_messages.has_key(error_msg):
+                if error_msg not in self._error_messages:
                     error_msg = 'invalid_format'
                 self.raise_user_error(error_msg, (self.type_display,))
-
