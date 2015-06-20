@@ -16,6 +16,7 @@ def model2dict(record, fields=None, with_one2many=True):
     field_names = fields[:]
     if 'id' not in field_names:
         field_names.insert(0, 'id')
+
     for field_name in field_names:
         field = record._fields[field_name]
         value = getattr(record, field_name, None)
@@ -24,7 +25,7 @@ def model2dict(record, fields=None, with_one2many=True):
                 out[field_name] = value.id
             else:
                 out[field_name] = value
-        elif field._type in ('one2many'):
+        elif field._type in ('one2many',):
             if with_one2many and value:
                 out[field_name] = [x.id for x in value]
             elif with_one2many:
@@ -156,16 +157,9 @@ class EditComponentWizard(Wizard):
             component = EncounterComponent.union_unshard(compid)
         state_model = getattr(self, state_name)
         state_model.critical_info = state_model.make_critical_info()
-        # next_state = state_name #set to return there on error
         if component:
-            state = self.states['component']
-            view = state.get_view()
-            field_names = view['fields'].keys()
-            if 'critical_info' not in field_names:
-                field_names.append('critical_info')
-            data = model2dict(state_model, field_names, False)
-            model = Pool().get(component.__name__)
-            model.write([component], data)
+            component._values = state_model._values
+            component.save()
         else:
             state_model.save()
         next_state = 'end'
