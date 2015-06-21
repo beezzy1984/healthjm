@@ -5,23 +5,23 @@
     </xpath>
     <xpath expr="//label[@name=&quot;notes&quot;]" position="before">
         <group id="clinic_signs" colspan="12">
-            <field name="signs_symptoms" mode="tree,form" view_ids="health_encounter.tree_signs_and_symptoms,health_encounter.form_signs_and_symptoms" />
+            <field name="signs_symptoms" mode="tree,form" view_ids="health_encounter.tree_signs_and_symptoms,health_encounter.form_signs_and_symptoms" height="140" />
         </group>
         <newline />
-        <!-- <label name="diagnosis" colspan="1" xalign="0" /> -->
-        <group id="clinic_diag_diag" colspan="12" string="Presumptive Diagnosis" col="1">
-            <field name="diagnosis" colspan="1" xexpand="1" />
+        <group id="clinic_diag_diag" colspan="12" string="Presumptive Diagnosis" col="6">
+            <field name="diagnosis" colspan="6" xexpand="1" />
         </group>
         <newline />
     </xpath>
+    <xpath expr="//field[@name=&quot;notes&quot;]" position="replace_attributes">
+        <field name="notes" yexpand="1" xexpand="1" colspan="12" />
+    </xpath>
     <xpath expr="//field[@name=&quot;notes&quot;]" position="after">
         <newline />
-        <group id="clinic_diagnosis" col="12" colspan="12">
-            <field name="secondary_conditions" colspan="6" />
-            <field name="diagnostic_hypothesis" colspan="6" />
+            <field name="secondary_conditions" colspan="12" height="140" />
+            <field name="diagnostic_hypothesis" colspan="12" height="140" />
             <newline />
-            <field name="procedures" colspan="12" />
-        </group>
+            <field name="procedures" colspan="12" height="140" />
         <newline />
     </xpath>
 </data>

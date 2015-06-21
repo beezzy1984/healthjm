@@ -17,7 +17,7 @@
     </group>
     <notebook>
         <page id="nbpage_encounter_components" string="Components">
-            <field name="components" readonly="1" mode="tree" />
+            <field name="components" readonly="1" mode="tree" view_ids="health_encounter.health_view_tree_encounter_component" />
         </page>
         <page id="nbpage_encounter_report" string="Summary">
             <field name="summary" />

@@ -19,14 +19,15 @@
             <field name="osat"/>
         </group>
         <newline/>
-        <group colspan="12" string="Nutrition" id="group_patient_evaluation_nutrition">
+        <group colspan="12" string="Nutrition" id="group_patient_evaluation_nutrition" col="6">
             <label name="malnutrition"/>
             <field name="malnutrition"/>
             <label name="dehydration"/>
             <field name="dehydration"/>
+            <label id="dehy_spacer" string=" " xalign="1.0" xexpand="1" colspan="2" />
         </group>
         <newline/>
-        <group colspan="4" col="6" string="Glucose and Lipids Profile" id="group_patient_evaluation_glucose_lipid">
+        <group colspan="12" col="6" string="Glucose and Lipids Profile" id="group_patient_evaluation_glucose_lipid">
             <label name="glycemia"/>
             <field name="glycemia"/>
             <label name="hba1c"/>

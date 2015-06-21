@@ -81,7 +81,7 @@
 		</record>
 
 		<!-- signs and symptoms -->
-		<record model="ir.ui.view" id="healthjm_form_signs_and_symptoms">
+<!-- 		<record model="ir.ui.view" id="healthjm_form_signs_and_symptoms">
 			<field name="model">gnuhealth.signs_and_symptoms</field>
 			<field name="inherit" ref="health.gnuhealth_signs_and_symptoms_form"/>
 			<field name="name">form-signs_and_symptoms</field>
@@ -91,7 +91,7 @@
 			<field name="model">gnuhealth_signs_and_symptoms</field>
 			<field name="inherit" ref="health.gnuhealth_signs_and_symptoms_tree"/>
 			<field name="name">signs_and_symptoms_tree</field>
-		</record>
+		</record> -->
 
 		<!-- Procedures -->
 		<record model="ir.ui.view" id="healthjm_form_directions">

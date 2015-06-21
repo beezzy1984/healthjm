@@ -124,15 +124,17 @@ class EncounterAmbulatory(BaseComponent):
         states=SIGNED_STATES)
     osat = fields.Integer('Oxygen Saturation',
         help='Oxygen Saturation(arterial).', states=SIGNED_STATES)
-    temperature = fields.Float('Temperature',
+    temperature = fields.Float('Temperature', digits=(4,2),
         help='Temperature in degrees celsius', states=SIGNED_STATES)
     glycemia = fields.Float(
         'Glycemia',
+        digits=(5,2),
         help='Last blood glucose level. Can be an approximate value.',
         states=SIGNED_STATES)
 
     hba1c = fields.Float(
         'Glycated Hemoglobin',
+        digits=(5,2),
         help='Last Glycated Hb level. Can be an approximate value.',
         states=SIGNED_STATES)
 

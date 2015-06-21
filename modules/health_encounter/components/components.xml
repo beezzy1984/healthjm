@@ -53,13 +53,15 @@
         <!-- fix up signs and symptoms in clinical screen -->
         <record model="ir.ui.view" id="form_signs_and_symptoms">
             <field name="model">gnuhealth.signs_and_symptoms</field>
-            <field name="inherit" ref="health.gnuhealth_signs_and_symptoms_form"/>
+            <field name="type">form</field>
             <field name="name">form-signs_symptoms</field>
+            <field name="inherit" eval="None" />
         </record>
         <record model="ir.ui.view" id="tree_signs_and_symptoms">
-            <field name="model">gnuhealth_signs_and_symptoms</field>
-            <field name="inherit" ref="health.gnuhealth_signs_and_symptoms_tree"/>
+            <field name="model">gnuhealth.signs_and_symptoms</field>
+            <field name="type">tree</field>
             <field name="name">tree-signs_symptoms</field>
+            <field name="inherit" eval="None" />
         </record>
 
         <!-- Ambulatory Component Form -->
