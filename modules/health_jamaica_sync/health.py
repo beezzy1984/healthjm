@@ -34,8 +34,8 @@ class Party(SyncMixin):
         else:
             with Transaction().set_context(active_test=False) as t:
                 unsync_domain = ['AND',('synchronised', '=', False),
-                                ['OR', ('is_healthprof','=',True),
-                                ('is_institution','=',True)]]
+                                ['OR', ('is_healthprof', '=', True),
+                                ('is_person', '=', False)]]
                 unsynced = cls.search(unsync_domain)
 
             return [r.get_wire_value() for r in unsynced]
