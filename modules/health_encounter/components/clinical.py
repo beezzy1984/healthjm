@@ -1,6 +1,8 @@
 from trytond.model import ModelSQL, ModelView, fields
 from .base import BaseComponent, SIGNED_STATES as STATES
 
+DASHER = ('-' * 15, )  # minimal text based spacer line
+
 class EncounterClinical(BaseComponent):
     'Clinical'
     __name__ = 'gnuhealth.encounter.clinical'
@@ -32,6 +34,7 @@ class EncounterClinical(BaseComponent):
         'gnuhealth.directions', 'clinical_component', 'Procedures',
         help='Procedures / Actions to take',
         states = STATES)
+    treatment_plan = fields.Text('Treatment Plan', states=STATES)
 
     def make_critical_info(self):
         out = []
@@ -59,6 +62,56 @@ class EncounterClinical(BaseComponent):
             else:
                 out.append(';'.join(x.procedure.name for x in self.procedures))
         return ', '.join(out)
+
+    def flip_one2many(self, title, o2mlist, fld, fld_name='name'):
+        mylines = []
+        if o2mlist:
+            mylines.append(('%s:' % title, ))
+            for p in o2mlist:
+                pline = (' *', getattr(getattr(p, fld), fld_name))
+                if getattr(p, 'comments', False):
+                    pline += ('-', p.comments)
+                mylines.append(pline)
+            return mylines
+        return None
+
+    def get_report_info(self, name):
+        lines = [('== Clinical ==',)]
+        if self.signs_symptoms:
+            lines.extend(
+                self.flip_one2many('Signs And Symptoms:',
+                                   self.signs_symptoms, 'clinical')
+            )
+        if self.diagnosis:
+            lines.append(('Presumptive Diagnosis:', self.diagnosis.name))
+        if self.notes:
+            lines.extend([('Clinical Notes:', ),
+                          ('\n'.join(filter(None, self.notes.split('\n'))), ),
+                          DASHER])
+        if self.treatment_plan:
+            lines.extend([('Treatment Plan:', ),
+                          ('\n'.join(filter(None, 
+                                            self.treatment_plan.split('\n'))), ),
+                          DASHER])
+        if self.procedures:
+            lines.extend(
+                self.flip_one2many('Procedures', self.procedures, 'procedure',
+                                   'description')
+            )
+
+        if self.diagnostic_hypothesis:
+            lines.extend(
+                self.flip_one2many('Diagnostic Hypothesis',
+                                   self.diagnostic_hypothesis, 'pathology')
+            )
+
+        if self.secondary_conditions:
+            lines.extend(
+                self.flip_one2many('Secondary Conditions found on the patient',
+                                   self.secondary_conditions, 'pathology')
+            )
+
+        return '\n'.join([' '.join(x) for x in lines])
 
 
 

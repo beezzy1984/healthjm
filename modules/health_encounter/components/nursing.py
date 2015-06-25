@@ -80,30 +80,30 @@ class EncounterAnthro(BaseComponent):
         lines = [('== Anthropometric Measurements ==',)]
         if self.height:
             lines.append(
-                ['* height: %7.2fcm'%(self.height),
+                ['* Height: %7.2fcm'%(self.height),
                 '(%2.0fft %2.0fin)'%divmod(self.height * METRIC_CONV['length'],
                                             12)])
         if self.weight:
             lines.append(
-                ['* weight: %7.2fkg'%(self.weight),
+                ['* Weight: %7.2fkg'%(self.weight),
                  '(%5.2flbs)'%(self.weight * METRIC_CONV['weight'])])
         if self.abdominal_circ:
             lines.append(
-                ['* waist: %7.2f'%(self.abdominal_circ),
+                ['* Waist: %7.2f'%(self.abdominal_circ),
                  '(%5.2fin)'%(self.abdominal_circ * METRIC_CONV['length'])])
         if self.hip:
-            lines.append(['* hip: %7.2f'%(self.hip),
+            lines.append(['* Hip: %7.2f'%(self.hip),
                           '(%5.2fin)'%(self.hip * METRIC_CONV['length'])])
         if self.head_circumference:
-            lines.append(['* head : %7.2f'%(self.head_circumference),
+            lines.append(['* Head : %7.2f'%(self.head_circumference),
              '(%5.2fin)'%(self.head_circumference * METRIC_CONV['length'])])
 
         if self.whr or self.bmi:
             lines.append(('',))
             if self.bmi:
-                lines.append(['* body mass index: %7.2f'%(self.bmi)])
+                lines.append(['* Body Mass Index: %7.2f'%(self.bmi)])
             if self.whr:
-                lines.append(['* waist to hip ratio: %5.2f'%(self.whr)])
+                lines.append(['* Waist to Hip Ratio: %5.2f'%(self.whr)])
         if self.notes:
             lines.extend([('\n=== Notes ===',), (str(self.notes), )])
         return '\n'.join([' '.join(x) for x in lines])
@@ -214,11 +214,11 @@ class EncounterAmbulatory(BaseComponent):
             lines.append(('* Blood Pressure:',
                           '%3.0f/%3.0f' % (self.systolic, self.diastolic)))
         if self.bpm:
-            lines.append(('* Heart Rate:', '%dbpm' % self.bpm))
+            lines.append(('* Heart Rate:', '%dbpm' % self.bpm, ))
         if self.respiratory_rate:
-            lines.append(('* Respiratory Rate: %d' % self.respiratory_rate))
+            lines.append(('* Respiratory Rate: %d' % self.respiratory_rate, ))
         if self.osat:
-            lines.append(('* Oxygen Saturation: %d' % self.osat))
+            lines.append(('* Oxygen Saturation: %d' % self.osat, ))
 
         # ToDo: Put in the Glucose and Lipids fields
 

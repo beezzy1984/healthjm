@@ -126,12 +126,13 @@ class PatientEncounter(ModelSQL, ModelView):
 
     def get_rec_name(self, name):
         localstart = utils.localtime(self.start_time)
-        return "EV%05d %s (%s) on %s" % (self.id, self.patient.name.name,
-                                         self.patient.name.upi,
-                                         localstart.ctime())
+        line = ['EV%05d' % self.id, self.patient.name.name,
+                '(%s /MRN:%s)' % (self.upi, self.medical_record_num),
+                self.sex_display, self.age, 'on %s' % localstart.ctime()]
+        return ' '.join(line)
 
     def get_person_patient_field(self, name):
-        if name in ['upi', 'sex_display']:
+        if name in ['upi', 'sex_display', 'medical_record_num']:
             return getattr(self.patient.name, name)
         if name in ['age']:
             return getattr(self.patient, name)

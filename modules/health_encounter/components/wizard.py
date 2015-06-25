@@ -6,6 +6,7 @@ from trytond.model import ModelView, fields
 from trytond.transaction import Transaction
 from .base import (EncounterComponentType, EncounterComponent,
                    UnknownEncounterComponentType)
+from datetime import datetime
 
 
 def model2dict(record, fields=None, with_one2many=True):
@@ -39,7 +40,7 @@ class ChooseComponentTypeView(ModelView):
     'Choose Component'
     __name__ = 'gnuhealth.encounter.component_chooser'
     component_type = fields.Selection('component_type_selection',
-                                      'Component Type')
+                                      'Component Type', required=True)
 
     @classmethod
     def component_type_selection(cls):
@@ -146,7 +147,18 @@ class EditComponentWizard(Wizard):
         return statename
 
     def transition_sign_x(self):
-        return 'end'
+        state_name = 'component'
+        state_model = getattr(self, state_name)
+        pool = Pool()
+        if not getattr(state_model, '_values', False):
+            state_model._values = {}
+        HealthProf = pool.get('gnuhealth.healthprofessional')
+        healthprof = HealthProf.get_health_professional()
+        state_model.signed_by = healthprof
+        state_model.sign_time = datetime.now()
+
+        return self.transition_save_x()
+
 
     def transition_save_x(self):
         model = self._component_data['model']
