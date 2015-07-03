@@ -1,46 +1,46 @@
 # -*- coding: utf-8 -*-
 
-from trytond.model import ModelView, ModelSQL, fields
+from trytond.model import fields
 from .base import BaseComponent, SIGNED_STATES
-from trytond.transaction import Transaction
+
 
 METRIC_CONV={
     'length': (1/2.54),
     'weight':2.20462262
 }
 
+
 class EncounterAnthro(BaseComponent):
     'Anthropometry'
     __name__ = 'gnuhealth.encounter.anthropometry'
 
     weight = fields.Float('Weight', help='Weight in Kilos',
-        states = SIGNED_STATES)
+                          states=SIGNED_STATES)
     height = fields.Float('Height', help='Height in centimeters, eg 175',
-        states = SIGNED_STATES)
+                          states=SIGNED_STATES)
 
     bmi = fields.Float(
         'Body Mass Index',
         readonly=True,
-        states = SIGNED_STATES)
+        states=SIGNED_STATES)
 
     head_circumference = fields.Float(
         'Head Circumference',
         help='Head circumference',
-        states = SIGNED_STATES)
+        states=SIGNED_STATES)
 
-    abdominal_circ = fields.Float('Waist',
-        states = SIGNED_STATES)
+    abdominal_circ = fields.Float('Waist', states=SIGNED_STATES)
     hip = fields.Float('Hip', help='Hip circumference in centimeters, eg 100',
-        states = SIGNED_STATES)
+                       states=SIGNED_STATES)
 
     whr = fields.Float(
         'WHR', help='Waist to hip ratio', readonly=True,
-        states = SIGNED_STATES)
+        states=SIGNED_STATES)
 
     head_circumference = fields.Float(
         'Head Circumference',
         help='Head circumference',
-        states = SIGNED_STATES)
+        states=SIGNED_STATES)
 
     # calculate BMI
     @fields.depends('weight', 'height', 'bmi')
@@ -70,8 +70,8 @@ class EncounterAnthro(BaseComponent):
         return ['weight', 'height', 'hip', 'abdominal_circ']
 
     def make_critical_info(self):
-        citxt = ['%5.2f'%self.weight, 'kg', 'x', '%5.1f'%self.height, 'cm',
-                 '=', '(BMI) %5.2f'%self.bmi]
+        citxt = ['%5.2f' % self.weight, 'kg', 'x', '%5.1f' % self.height, 'cm',
+                 '=', '(BMI) %5.2f' % self.bmi]
         # return a single line, no more than 140 chars to describe the details
         # of what's happening in the measurements in this component
         return ' '.join(citxt)
@@ -80,9 +80,9 @@ class EncounterAnthro(BaseComponent):
         lines = [('== Anthropometric Measurements ==',)]
         if self.height:
             lines.append(
-                ['* Height: %7.2fcm'%(self.height),
-                '(%2.0fft %2.0fin)'%divmod(self.height * METRIC_CONV['length'],
-                                            12)])
+                ['* Height: %7.2fcm' % (self.height),
+                '(%2.0fft %2.0fin)' % divmod(self.height * METRIC_CONV['length'],
+                                             12)])
         if self.weight:
             lines.append(
                 ['* Weight: %7.2fkg'%(self.weight),

@@ -2,7 +2,6 @@
 from datetime import datetime
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pyson import Eval, Not, Equal, Or, Greater, In
-from trytond.pool import Pool
 from trytond.modules.health import HealthInstitution, HealthProfessional
 from trytond.modules.health_jamaica import tryton_utils as utils
 
@@ -59,11 +58,30 @@ class PatientEncounter(ModelSQL, ModelView):
     age = fields.Function(fields.Char('Age'), 'get_person_patient_field')
 
     @classmethod
+    def __setup__(cls):
+        super(PatientEncounter, cls).__setup__()
+        cls._error_messages.update({
+            'health_professional_warning': 'No health professional '
+            'associated with this user',
+            'end_date_before_start': 'End time "%(end_time)s" BEFORE'
+            ' start time "%(start_time)s"',
+            'end_date_required': 'End time is required for finishing'
+        })
+
+        cls._buttons.update({
+            'set_done': {'invisible': Not(Equal(Eval('state'), 'in_progress'))},
+            'sign_finish': {'invisible': Not(Equal(Eval('state'), 'done'))},
+            'add_component': {'readonly': Or(Greater(0, Eval('id', -1)),
+                                             In(Eval('state'),
+                                                ['done', 'signed', 'invalid']))}
+        })
+
+    @classmethod
     @ModelView.button
     def sign_finish(cls, encounters):
         signing_hp = HealthProfessional().get_health_professional()
-        # Change the state of the evaluation to "Done"
-
+        if not signing_hp:
+            cls.raise_user_error('health_professional_warning')
         #ToDO: set all the not-done components to DONE as well and sign
         # the unsigned ones
 
@@ -91,7 +109,9 @@ class PatientEncounter(ModelSQL, ModelView):
     @ModelView.button_action(
         'health_encounter.health_wizard_encounter_edit_component')
     def add_component(cls, components, *a, **k):
-        pass
+        hp = HealthProfessional.get_health_professional()
+        if not hp:
+            cls.raise_user_error('health_professional_warning')
 
     @staticmethod
     def default_start_time():
@@ -104,25 +124,6 @@ class PatientEncounter(ModelSQL, ModelView):
     @staticmethod
     def default_state():
         return 'in_progress'
-
-    @classmethod
-    def __setup__(cls):
-        super(PatientEncounter, cls).__setup__()
-        cls._error_messages.update({
-            'health_professional_warning': 'No health professional '
-                'associated with this user',
-            'end_date_before_start': 'End time "%(end_time)s" BEFORE'
-                ' start time "%(start_time)s"',
-            'end_date_required': 'End time is required for finishing'
-        })
-
-        cls._buttons.update({
-            'set_done': {'invisible': Not(Equal(Eval('state'), 'in_progress'))},
-            'sign_finish': {'invisible': Not(Equal(Eval('state'), 'done'))},
-            'add_component': {'readonly': Or(Greater(0, Eval('id', -1)),
-                                             In(Eval('state'),
-                                                ['done', 'signed', 'invalid']))}
-        })
 
     def get_rec_name(self, name):
         localstart = utils.localtime(self.start_time)

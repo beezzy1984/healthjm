@@ -1,6 +1,8 @@
 from trytond.pool import Pool
-from .encounter import *
+from .encounter import PatientEncounter
+from .encounter_component_type import EncounterComponentType
 from .components import *
+
 
 def register():
     Pool.register(

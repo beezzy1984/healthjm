@@ -4,8 +4,9 @@ from trytond.wizard import (Wizard, StateView, Button, StateTransition)
 from trytond.pool import Pool
 from trytond.model import ModelView, fields
 from trytond.transaction import Transaction
-from .base import (EncounterComponentType, EncounterComponent,
-                   UnknownEncounterComponentType)
+from .base import EncounterComponent
+from ..encounter_component_type import (EncounterComponentType,
+                                        UnknownEncounterComponentType)
 from datetime import datetime
 
 
@@ -156,9 +157,7 @@ class EditComponentWizard(Wizard):
         healthprof = HealthProf.get_health_professional()
         state_model.signed_by = healthprof
         state_model.sign_time = datetime.now()
-
         return self.transition_save_x()
-
 
     def transition_save_x(self):
         model = self._component_data['model']
