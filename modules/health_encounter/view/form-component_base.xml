@@ -31,5 +31,10 @@
         <field name="performed_by" />
         <label name="start_time" />
         <field name="start_time" />
+        <newline />
+        <label name="signed_by" />
+        <field name="signed_by" />
+        <label name="sign_time" />
+        <field name="sign_time" />
     </group>
 </form>

@@ -4,6 +4,7 @@ from trytond.wizard import (Wizard, StateView, Button, StateTransition)
 from trytond.pool import Pool
 from trytond.model import ModelView, fields
 from trytond.transaction import Transaction
+from trytond.pyson import Eval, Bool, Not
 from .base import EncounterComponent
 from ..encounter_component_type import (EncounterComponentType,
                                         UnknownEncounterComponentType)
@@ -54,9 +55,14 @@ class ComponentStateView(StateView):
     appropriate instance of the component for creation or editing.'''
     def __init__(self, model_name, view_id):
         buttons = [
-            Button('Cancel', 'end', 'tryton-cancel'),
-            Button('Save', 'save_x', 'tryton-save'),
-            Button('Sign', 'sign_x', 'health-certify')
+            Button('Cancel', 'end', 'tryton-cancel',
+                   states={'invisible': Bool(Eval('signed_by'))}),
+            Button('Save', 'save_x', 'tryton-save',
+                   states={'invisible': Bool(Eval('signed_by'))}),
+            Button('Sign', 'sign_x', 'health-certify', states={
+                   'invisible': Bool(Eval('signed_by'))}),
+            Button('Close', 'close_x', 'tryton-close',
+                   states={'invisible': Not(Bool(Eval('signed_by')))})
         ]
         super(ComponentStateView, self).__init__(model_name, view_id, buttons)
 
@@ -86,6 +92,7 @@ class EditComponentWizard(Wizard):
     selected = StateTransition()
     save_x = StateTransition()
     sign_x = StateTransition()
+    close_x = StateTransition()
     _component_data = {}
 
     def __init__(self, sessionid):
@@ -120,7 +127,6 @@ class EditComponentWizard(Wizard):
         # if 'component' not in self.states:
         component_view = CStateView(component_type_id)
         self.states['component'] = component_view
-
         return 'component'
 
     def transition_start(self):
@@ -175,3 +181,6 @@ class EditComponentWizard(Wizard):
             state_model.save()
         next_state = 'end'
         return next_state
+
+    def transition_close_x(self):
+        return 'end'

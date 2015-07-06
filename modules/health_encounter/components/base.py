@@ -1,12 +1,13 @@
 from datetime import datetime
 from trytond.model import ModelView, ModelSQL, fields, UnionMixin
-from trytond.pyson import Eval, Bool
+from trytond.pyson import Eval, Bool, Not
 from trytond.pool import Pool
 from trytond.modules.health_jamaica import tryton_utils as utils
 from ..encounter_component_type import EncounterComponentType
 
 
-SIGNED_STATES = {'readonly': Bool(Eval('start_time'))}
+SIGNED_STATES = {'readonly': Bool(Eval('signed_by'))}
+SIGNED_VISIBLE = {'invisible': Not(Bool(Eval('signed_by')))}
 
 
 class BaseComponent(ModelSQL, ModelView):
@@ -17,9 +18,9 @@ class BaseComponent(ModelSQL, ModelView):
                                 readonly=True, required=True)
     start_time = fields.DateTime('Start', required=True, states=SIGNED_STATES)
     end_time = fields.DateTime('Finish', states=SIGNED_STATES)
-    sign_time = fields.DateTime('Signed', readonly=True)
+    sign_time = fields.DateTime('Signed', readonly=True, states=SIGNED_VISIBLE)
     signed_by = fields.Many2One('gnuhealth.healthprofessional', 'Signed by',
-                                readonly=True)
+                                readonly=True, states=SIGNED_VISIBLE)
     performed_by = fields.Many2One('gnuhealth.healthprofessional', 'Clinician',
                                    states=SIGNED_STATES)
     warning = fields.Boolean(
