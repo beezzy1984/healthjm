@@ -14,14 +14,14 @@ class PatientEncounter(ModelSQL, ModelView):
                              Equal(Eval('state'), 'done'),
                              Equal(Eval('state'), 'invalid'))}
     SIGNED_STATES = {'readonly': Equal(Eval('state'), 'signed')}
+    SIGNED_VISIBLE = {'invisible': Not(Equal(Eval('state'), 'signed'))}
 
     state = fields.Selection(
         [('in_progress', 'In progress'),
          ('done', 'Done'),
          ('signed', 'Signed'),
          ('invalid', 'Invalid')],
-        'State', readonly=True, sort=False
-    )
+        'State', readonly=True, sort=False)
     patient = fields.Many2One('gnuhealth.patient', 'Patient', required=True,
                               states=STATES)
     primary_complaint = fields.Char('Primary complaint', states=STATES)
@@ -42,20 +42,23 @@ class PatientEncounter(ModelSQL, ModelView):
         states=SIGNED_STATES)
     signed_by = fields.Many2One(
         'gnuhealth.healthprofessional', 'Signed By', readonly=True,
-        states={'invisible': Equal(Eval('state'), 'in_progress')},
+        states=SIGNED_VISIBLE,
         help="Health Professional that finished the patient evaluation")
-    sign_time = fields.DateTime('Sign time', readonly=True)
+    sign_time = fields.DateTime('Sign time', readonly=True,
+                                states=SIGNED_VISIBLE)
     components = fields.One2Many('gnuhealth.encounter.component', 'encounter',
                                  'Components')
     summary = fields.Function(fields.Text('Summary'), 'get_encounter_summary')
     # Patient identifier fields
-    upi = fields.Function(fields.Char('UPI'), getter='get_person_patient_field')
+    upi = fields.Function(fields.Char('UPI'), 'get_person_patient_field')
     medical_record_num = fields.Function(
         fields.Char('Medical Record Number'),
         'get_person_patient_field')
     sex_display = fields.Function(fields.Char('Sex'),
                                   'get_person_patient_field')
     age = fields.Function(fields.Char('Age'), 'get_person_patient_field')
+    crypto_enabled = fields.Function(fields.Boolean('Crypto Enabled'),
+                                     'get_crypto_enabled')
 
     @classmethod
     def __setup__(cls):
@@ -65,7 +68,9 @@ class PatientEncounter(ModelSQL, ModelView):
             'associated with this user',
             'end_date_before_start': 'End time "%(end_time)s" BEFORE'
             ' start time "%(start_time)s"',
-            'end_date_required': 'End time is required for finishing'
+            'end_date_required': 'End time is required for finishing',
+            'unsigned_components': 'There are unsigned components.'
+                                   # 'This encounter cannot be signed'
         })
 
         cls._buttons.update({
@@ -73,7 +78,8 @@ class PatientEncounter(ModelSQL, ModelView):
             'sign_finish': {'invisible': Not(Equal(Eval('state'), 'done'))},
             'add_component': {'readonly': Or(Greater(0, Eval('id', -1)),
                                              In(Eval('state'),
-                                                ['done', 'signed', 'invalid']))}
+                                                ['done', 'signed', 'invalid'])),
+                              'invisible': Equal(Eval('state'), 'signed')}
         })
 
     @classmethod
@@ -97,11 +103,14 @@ class PatientEncounter(ModelSQL, ModelView):
         # Change the state of the evaluation to "Done"
         save_data = {'state': 'done'}
         for encounter in encounters:
-            if encounter.end_time:
-                save_data.update(end_time=encounter.end_time)
-                break
-            else:
+            if not encounter.end_time:
                 cls.raise_user_error('end_date_required')
+            for comp in encounter.components:
+                if not comp.signed_by:
+                    cls.raise_user_error('unsigned_components')
+            #     save_data.update(end_time=encounter.end_time)
+            #     break
+            # else:
 
         cls.write(encounters, save_data)
 
@@ -124,6 +133,9 @@ class PatientEncounter(ModelSQL, ModelView):
     @staticmethod
     def default_state():
         return 'in_progress'
+
+    def get_crypto_enabled(self, name):
+        return False
 
     def get_rec_name(self, name):
         localstart = utils.localtime(self.start_time)
