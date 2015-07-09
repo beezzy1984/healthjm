@@ -3,6 +3,7 @@ from .base import BaseComponent, SIGNED_STATES as STATES
 
 DASHER = ('-' * 15, )  # minimal text based spacer line
 
+
 class EncounterClinical(BaseComponent):
     'Clinical'
     __name__ = 'gnuhealth.encounter.clinical'
@@ -11,29 +12,29 @@ class EncounterClinical(BaseComponent):
         'gnuhealth.pathology', 'Presumptive Diagnosis',
         help='Presumptive Diagnosis. If no diagnosis can be made'
         ', encode the main sign or symptom.',
-        states = STATES)
+        states=STATES)
 
     secondary_conditions = fields.One2Many(
         'gnuhealth.secondary_condition',
         'clinical_component', 'Secondary Conditions',
         help='Other, Secondary conditions found on the patient',
-        states = STATES)
+        states=STATES)
 
     diagnostic_hypothesis = fields.One2Many(
         'gnuhealth.diagnostic_hypothesis',
         'clinical_component', 'Hypotheses / DDx',
         help='Other Diagnostic Hypotheses / Differential Diagnosis (DDx)',
-        states = STATES)
+        states=STATES)
 
     signs_symptoms = fields.One2Many(
         'gnuhealth.signs_and_symptoms',
         'clinical_component', 'Signs and Symptoms',
         help='Enter the Signs and Symptoms for the patient in this evaluation.',
-        states = STATES)
+        states=STATES)
     procedures = fields.One2Many(
         'gnuhealth.directions', 'clinical_component', 'Procedures',
         help='Procedures / Actions to take',
-        states = STATES)
+        states=STATES)
     treatment_plan = fields.Text('Treatment Plan', states=STATES)
 
     def make_critical_info(self):
@@ -55,8 +56,8 @@ class EncounterClinical(BaseComponent):
             out.append('Procedures:')
             if len(self.procedures) <= 2:
                 out.append(
-                    '; '.join(['%s-%s'%(x.procedure.name,
-                                        x.procedure.description)
+                    '; '.join(['%s-%s' % (x.procedure.name,
+                                          x.procedure.description)
                               for x in self.procedures])
                 )
             else:
@@ -82,15 +83,15 @@ class EncounterClinical(BaseComponent):
                 self.flip_one2many('Signs And Symptoms:',
                                    self.signs_symptoms, 'clinical')
             )
-        if self.diagnosis:
-            lines.append(('Presumptive Diagnosis:', self.diagnosis.name))
         if self.notes:
             lines.extend([('Clinical Notes:', ),
                           ('\n'.join(filter(None, self.notes.split('\n'))), ),
                           DASHER])
+        if self.diagnosis:
+            lines.append(('Presumptive Diagnosis:', self.diagnosis.name))
         if self.treatment_plan:
             lines.extend([('Treatment Plan:', ),
-                          ('\n'.join(filter(None, 
+                          ('\n'.join(filter(None,
                                             self.treatment_plan.split('\n'))), ),
                           DASHER])
         if self.procedures:
@@ -111,11 +112,10 @@ class EncounterClinical(BaseComponent):
                                    self.secondary_conditions, 'pathology')
             )
 
-        return '\n'.join([' '.join(x) for x in lines])
+        return '\n\n'.join([' '.join(x) for x in lines])
 
 
-
-# Modification to GNU Health Default classes to point them here instead 
+# Modification to GNU Health Default classes to point them here instead
 class RewireEvaluationPointer(ModelSQL):
     clinical_component = fields.Many2One('gnuhealth.encounter.clinical',
                                          'Clinic', readonly=True)
@@ -125,6 +125,7 @@ class RewireEvaluationPointer(ModelSQL):
     #     super(RewireEvaluationPointer, cls).__setup__()
     #     evaluation_field = getattr(cls, cls._evalutaion_field_name)
     #     evaluation_field.model_name = 'gnuhealth.encounter.clinical'
+
 
 # PATIENT EVALUATION DIRECTIONS
 class Directions(RewireEvaluationPointer, ModelView):

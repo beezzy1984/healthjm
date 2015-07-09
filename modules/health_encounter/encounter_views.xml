@@ -90,5 +90,25 @@
 -            <field name="keyword">tree_open</field>
 -            <field name="model">gnuhealth.encounter,-1</field>
 -        </record>
+
+        <!-- Link to the Encounter from the Patient -->
+        <record model="ir.action.act_window" id="actwin_encounter_perpatient">
+            <field name="name">Encounters</field>
+            <field name="res_model">gnuhealth.encounter</field>
+            <field name="domain">[('patient', '=', Eval('active_id'))]</field>
+        </record>
+        <record model="ir.action.keyword" id="actkw_open_patient_encounters">
+            <field name="keyword">form_relate</field>
+            <field name="model">gnuhealth.patient,-1</field>
+            <field name="action" ref="actwin_encounter_perpatient"/>
+        </record>
+        
+        <!-- And disable the link to Evaluations -->
+        <record model="ir.action.keyword" id="health.act_open_evaluation_keyword1">
+            <field name="keyword">form_relate</field>
+            <field name="model">gnuhealth.patient,-2</field>
+            <field name="action" ref="health.act_evaluation_form1"/>
+        </record>
+
     </data>
 </tryton>

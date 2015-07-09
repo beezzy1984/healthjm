@@ -2,6 +2,7 @@ from trytond.pool import Pool
 from .encounter import PatientEncounter
 from .encounter_component_type import EncounterComponentType
 from .components import *
+from .appointment import CreateAppointmentEncounter
 
 
 def register():
@@ -21,4 +22,5 @@ def register():
 
     Pool.register(
         EditComponentWizard,
+        CreateAppointmentEncounter,
         module='health_encounter', type_='wizard')
