@@ -6,4 +6,4 @@ def register():
         PartyPatient,
         PatientData,
         OccupationalGroup,
-        module='healthjm_socioeconomics', type_='model')
+        module='health_jamaica_socioeconomics', type_='model')
