@@ -30,11 +30,11 @@ from trytond.transaction import Transaction
 class PostOffice(ModelSQL, ModelView):
     'Country Post Office'
     __name__ = 'country.post_office'
-    
+
     code = fields.Char('Code', required=True, size=10)
     name = fields.Char('Post Office', required=True, help="Post Offices")
     subdivision = fields.Many2One('country.subdivision', 'Parish/Province',
-        help="Enter Parish, State or Province")
+                                  help="Enter Parish, State or Province")
     inspectorate = fields.Char('Inspectorate',
                                help="Postal Area that governs this agency")
 
@@ -67,12 +67,12 @@ class PostOffice(ModelSQL, ModelView):
 class DistrictCommunity(ModelSQL, ModelView):
     'Country District Community'
     __name__ = 'country.district_community'
-    
+
     code = fields.Char('Code', required=True, size=10)
     name = fields.Char('District Community', required=True,
-        help="District Communities")
+                       help="District Communities")
     post_office = fields.Many2One('country.post_office', 'Post Office',
-        required=True)
+                                  required=True)
     parish = fields.Function(fields.Char('Parish'), 'get_parish')
 
     @classmethod
