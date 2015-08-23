@@ -137,9 +137,9 @@ class PartyPatient(ModelSQL, ModelView):
         cls.ref.help = "Unique Party Indentifier"
         cls.alias.help = "Pet-name or other name by which party is known"
         cls.internal_user.help = ' '.join([
-            'In order for this health professional to use'
-            'the system, an internal user account must be assigned.'
-            'This health professional will have a user account in this'
+            'In order for this health professional to use '
+            'the system, an internal user account must be assigned. '
+            'This health professional will have a user account in this '
             'instance only.'])
 
     @classmethod
