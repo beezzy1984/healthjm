@@ -22,6 +22,7 @@
 import re
 import random
 import uuid
+import six
 from datetime import date
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool
