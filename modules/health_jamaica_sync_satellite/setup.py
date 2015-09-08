@@ -19,7 +19,7 @@ from setuptools import setup
 from os import path
 import ConfigParser
 
-name = 'health_jamaica'
+name = 'health_jamaica_sync_satellite'
 prefix = 'trytond_'
 
 
@@ -39,16 +39,17 @@ for key in ('depends', 'extras_depend', 'xml'):
         info[key] = info[key].strip().splitlines()
 
 requires = [
-    'pytz>=2014.7',
     'trytond' + tryton_version,
     'trytond_health' + gnuhealth_version,
-    'trytond_country_jamaica' + myversion
+    'trytond_health_jamaica' + myversion,
+    'trytond_health_jamaica_sync' + myversion
 ]
 
 setup(
     name=prefix + name,
     version=info.get('version', '0.0.1'),
-    description=info.get('description', 'Jamaica ePAS Main Module'),
+    description=info.get('description',
+                         'Jamaica ePAS Synchronisation Module (Non-Master)'),
     long_description=read('README.rst'),
     author='Marc Murray',
     author_email='murraym@moh.gov.jm',
@@ -63,11 +64,11 @@ setup(
         'trytond.modules.'+name: info.get('xml', [])
             + info.get('translation', [])
             + ['tryton.cfg', 'view/*.xml', 'doc/*.rst', 'locale/*.po',
-               'report/*.odt', 'icons/*.svg', 'COPYRIGHT'],
+               'report/*.odt', 'icons/*.svg'],
     },
 
     classifiers=[
-        'Development Status :: 5 - Production/Stables',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Plugins',
         'Framework :: Tryton',
         'Intended Audience :: Developers',
