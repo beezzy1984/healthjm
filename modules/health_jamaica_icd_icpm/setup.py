@@ -52,8 +52,8 @@ setup(
     author_email='murraym@moh.gov.jm',
     url='http://nhin.moh.gov.jm',
     download_url='http://nhin.moh.gov.jm/rcode/pip/',
-    package_dir={'trytond.modules.country_jamaica': '.'},
-    packages=['trytond.modules.country_jamaica'],
+    package_dir={'trytond.modules.' + name: '.'},
+    packages=['trytond.modules.' + name],
     package_data={
         'trytond.modules.health_jamaica_icd_icpm': info.get('xml', [])
             + info.get('translation', [])

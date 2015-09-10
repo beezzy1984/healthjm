@@ -40,6 +40,7 @@ for key in ('depends', 'extras_depend', 'xml'):
 
 requires = [
     'trytond' + tryton_version,
+    'tryton_synchronisation >0.2.0,<0.3.0'
 ]
 
 for dep in info['depends']:

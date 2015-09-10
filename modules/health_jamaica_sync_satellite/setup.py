@@ -40,6 +40,7 @@ for key in ('depends', 'extras_depend', 'xml'):
 
 requires = [
     'trytond' + tryton_version,
+    'tryton_synchronisation >0.2.0,<0.3.0',
     'trytond_health' + gnuhealth_version,
     'trytond_health_jamaica' + myversion,
     'trytond_health_jamaica_sync' + myversion

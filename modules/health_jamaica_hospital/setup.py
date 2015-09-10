@@ -26,9 +26,9 @@ prefix = 'trytond_'
 def read(fname):
     return open(path.join(path.dirname(__file__), fname)).read()
 
-tryton_version = (3, 2, 3, 3)
-myversion = ' >=1.0,<1.1'
-gnuhealth_version = ' >=2.6,<2.7'
+tryton_version = (3, 4, 3, 5)
+myversion = ' >=1.2,<1.3'
+gnuhealth_version = ' >=2.8,<2.9'
 
 config = ConfigParser.ConfigParser()
 config.readfp(open('tryton.cfg'))

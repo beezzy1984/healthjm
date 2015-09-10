@@ -44,8 +44,6 @@ requires = [
     'trytond_health_inpatient' + gnuhealth_version,  # ?? Do we need this here
     'trytond_health_reporting' + gnuhealth_version,
     'trytond_health_jamaica' + myversion,
-    'trytond_health_jamaica_profile' + myversion,
-    'trytond_health_jamaica_seed' + myversion,
 ]
 
 setup(
