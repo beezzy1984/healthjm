@@ -1,0 +1,32 @@
+
+health_jamaica_history
+-------------------------
+
+:Organization: Ministry of Health - Jamaica
+:Authors: Marc Murray <murraym@moh.gov.jm>
+:Copyright: 2014-2015 Ministry of Health (Jamaica)
+
+Enables Tryton history feature for a few critical models in Jamaica ePAS
+The models enabled for history tracking are :
+
+        Party,
+        PartyAddress,
+        DomiciliaryUnit,
+        AlternativePersonID,
+        HealthProfessional,
+        HealthProfessionalSpecialties, 
+        Appointment, 
+        PatientData,
+        PatientEvaluation, 
+        PatientDiseaseInfo, 
+        DiagnosticHypothesis,
+        PatientVaccination, 
+        SecondaryCondition, 
+        SignsAndSymptoms,
+        Directions,
+
+
+This file and the files in this  module are all a part of (Health-Jamaica)
+The Jamaica Electronic Patient Administration System
+
+Copyright 2014-2015  Ministry of Health (NHIN), Jamaica <admin@mohnhin.info>
