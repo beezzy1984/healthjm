@@ -33,6 +33,7 @@ __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'PathologyGroup', 'Pathology', 'DiagnosticHypothesis',
            'PatientEvaluation', 'OperationalSector']
 
+
 class PatientData(ModelSQL, ModelView):
     '''Patient related information'''
     __name__ = 'gnuhealth.patient'
@@ -41,7 +42,7 @@ class PatientData(ModelSQL, ModelView):
     firstname = fields.Function(fields.Char('First name'), 'get_person_field',
                                 searcher='search_person_field')
     middlename = fields.Function(fields.Char('Middle name'), 'get_person_field',
-                                searcher='search_person_field')
+                                 searcher='search_person_field')
     mother_maiden_name = fields.Function(
         fields.Char('Mother\'s maiden name'),
         'get_person_field',
@@ -55,7 +56,8 @@ class PatientData(ModelSQL, ModelView):
     alt_ids = fields.Function(fields.Char('Alternate IDs'), 'get_person_field',
                               searcher='search_alt_ids')
     medical_record_num = fields.Function(fields.Char('Medical Record Number'),
-        'get_person_field', searcher='search_alt_ids')
+                                         'get_person_field',
+                                         searcher='search_alt_ids')
     du = fields.Function(fields.Char('Address'),
                          'get_person_field', searcher='search_person_field')
     unidentified = fields.Function(
@@ -87,12 +89,14 @@ class PatientData(ModelSQL, ModelView):
     def search_alt_ids(cls, field_name, clause):
         if field_name == 'medical_record_num':
             return ['AND', ('name.alternative_ids.alternative_id_type', '=',
-                           'medical_record'),
+                            'medical_record'),
                     ('name.alternative_ids.code',) + tuple(clause[1:])]
         else:
-            return ['AND',
-            ('name.alternative_ids.alternative_id_type','!=','medical_record'),
-            ('name.alternative_ids.code', clause[1], clause[2])]
+            return [
+                'AND',
+                ('name.alternative_ids.alternative_id_type', '!=',
+                 'medical_record'),
+                ('name.alternative_ids.code', clause[1], clause[2])]
 
     @classmethod
     def search_unidentified(cls, field_name, clause):
@@ -109,7 +113,10 @@ class PatientData(ModelSQL, ModelView):
     def __setup__(cls):
         super(PatientData, cls).__setup__()
 
+        # import pdb; pdb.set_trace()
         cls.dob.getter = 'get_person_field'
+        cls.dob.searcher = 'search_person_field'
+        cls.dob.string = 'Date of Birth'
         cls.puid.string = 'UPI'
 
         # if we need to make the Party Editable from Patient :
@@ -141,14 +148,14 @@ class PatientData(ModelSQL, ModelView):
                 # Return the raw age in the integers array [Y,M,D]
                 # When name is 'raw_age'
                 if name == 'raw_age':
-                    return [delta.years,delta.months,delta.days]
+                    return [delta.years, delta.months, delta.days]
 
                 ymd = []
                 if delta.years >= 1:
                     ymd.append(str(delta.years) + 'y')
-                if (delta.months >0 or delta.years > 0) and delta.years < 10:
+                if (delta.months > 0 or delta.years > 0) and delta.years < 10:
                     ymd.append(str(delta.months) + 'm')
-                if delta.years <= 2: 
+                if delta.years <= 2:
                     ymd.append(str(delta.days) + 'd')
                 ymd.append(deceased)
 
