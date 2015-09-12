@@ -9,12 +9,13 @@ from dateutil.relativedelta import relativedelta
 
 _cached_timezone = None
 
+
 def negate(operator):
-    '''returns the opposite operator of a domain operator. 
+    '''returns the opposite operator of a domain operator.
     e.g. if called as negate('=') it will return "!="
     '''
-    converter = {u'=':u'!=', u'<':u'>', u'<=':u'>='}
-    converter.update([(y,x) for x,y in converter.items()])
+    converter = {u'=': u'!=', u'<': u'>', u'<=': u'>='}
+    converter.update([(y, x) for x, y in converter.items()])
     return converter.get(operator, (u'not {}').format(operator))
 
 
@@ -23,9 +24,11 @@ def replace_clause_column(clause, new_column):
     with .search and .find methods ... domain language'''
     return (new_column, ) + tuple(clause[1:])
 
+
 def negate_clause(clause):
     # ToDo: verify if this can work for all clause types
     return (clause[0], negate(clause[1]), clause[2])
+
 
 def make_selection_display():
     def _get_x_display(self, field_name):
@@ -38,8 +41,9 @@ def make_selection_display():
 
     return _get_x_display
 
+
 def get_timezone():
-    '''returns the current timezone specified for the company/facility 
+    '''returns the current timezone specified for the company/facility
     or the default which is the value in /etc/localtime'''
     global _cached_timezone
     if _cached_timezone:
@@ -55,11 +59,14 @@ def get_timezone():
     if tz:
         _cached_timezone = pytz.timezone(tz)
     elif ospath.exists('/etc/localtime'):
-        _cached_timezone = pytz.tzfile.build_tzinfo('local',open('/etc/localtime', 'rb'))
+        _cached_timezone = pytz.tzfile.build_tzinfo(
+            'local',
+            open('/etc/localtime', 'rb'))
     else:
         raise pytz.UnknownTimeZoneError('Cannot find suitable time zone')
 
     return _cached_timezone
+
 
 def get_start_of_day(d, tz=None):
     '''returns a datetime object representing midnight at the start of
@@ -67,8 +74,10 @@ def get_start_of_day(d, tz=None):
     dt = d if isinstance(d, date) else d.date()
     return datetime(*dt.timetuple()[:6], tzinfo=(tz if tz else d.tzinfo))
 
+
 def get_start_of_next_day(d, tz=None):
     return get_start_of_day(d+timedelta(1), tz)
+
 
 def localtime(current):
     '''returns a datetime object with local timezone. naive datetime
@@ -89,6 +98,7 @@ def get_dob(age, ref_date=None):
         ref_date = date.today()
     return ref_date - relativedelta(years=age)
 
+
 def get_age_in_years(dob, ref_date=None):
     '''returns just the years portion of the full year,month,day age'''
 
@@ -97,7 +107,6 @@ def get_age_in_years(dob, ref_date=None):
     ref_date = ref_date or date.today()
     full_age = relativedelta(ref_date, dob)
     return full_age.years
-
 
 
 def get_epi_week(d=None):
@@ -110,23 +119,22 @@ def get_epi_week(d=None):
         d = date.today()
 
     dday = d.isoweekday()
-    if dday == 7: 
+    if dday == 7:
         weekstart = d
     else:
         # rewind to the previous Sunday
         weekstart = d - timedelta(dday)
 
     weekend = weekstart + timedelta(6)
-
-    jan1 = date(weekend.year, 1,1)
-    jan1_wkday = jan1.isoweekday()%7 # modulo with 7 since we want Sunday=0
+    jan1 = date(weekend.year, 1, 1)
+    jan1_wkday = jan1.isoweekday() % 7  # modulo with 7 since we want Sunday=0
 
     dyear = weekend.year
     dweek = int(weekend.strftime('%U'))
-    if jan1_wkday > 0: # year doesn't start on a Sunday. Life is hard
+    if jan1_wkday > 0:  # year doesn't start on a Sunday. Life is hard
         if jan1_wkday < 4:
             dweek += 1
-        elif dweek == 0 :
+        elif dweek == 0:
             dweek = 53
             dyear = weekstart.year
 
@@ -140,7 +148,7 @@ def is_not_synchro():
     '''
     t = Transaction()
     print('Transaction context = [{}]'.format(repr(t.context)))
-    return (t.user>0)
+    return (t.user > 0)
 
 
 def get_field_states(field):
@@ -148,6 +156,7 @@ def get_field_states(field):
     if s is None:
         return {}
     return s.copy()
+
 
 def update_states(field, updates):
     '''updates a states attribute on a field with the values from <updates>.
