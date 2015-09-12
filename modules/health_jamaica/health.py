@@ -19,13 +19,14 @@
 #
 ##############################################################################
 
-from datetime import date, datetime
+import re
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from trytond.model import ModelView, ModelSQL, fields
-from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal, And, Or
+from trytond.pyson import Eval, And
 from trytond.pool import Pool
 from .tryton_utils import (negate_clause, replace_clause_column, is_not_synchro,
-                           update_states, get_timezone)
+                           get_timezone, make_selection_display)
 
 __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'HealthInstitutionSpecialties', 'HealthProfessional',
@@ -102,8 +103,7 @@ class PatientData(ModelSQL, ModelView):
     def search_unidentified(cls, field_name, clause):
         cond = ['AND', replace_clause_column(clause, 'name.unidentified'),
                 negate_clause(replace_clause_column(clause,
-                                                    'name.party_warning_ack'))
-               ]
+                                                    'name.party_warning_ack'))]
         return cond
 
     def get_patient_puid(self, name):
@@ -197,17 +197,17 @@ class HealthInstitution(ModelSQL, ModelView):
 
     latitude = fields.Numeric('Latitude', digits=(3, 14))
     longitude = fields.Numeric('Longitude', digits=(4, 14))
-    altitude = fields.Numeric('Altitude (in meters)', digits=(4,3))
+    altitude = fields.Numeric('Altitude (in meters)', digits=(4, 3))
 
     @classmethod
     def __setup__(cls):
         cls.main_specialty = fields.Function(
             fields.Many2One(
                 'gnuhealth.institution.specialties',
-                'Specialty', domain=[('name', '=', Eval('active_id'))], 
-                depends=['specialties'], 
-                help="Choose the speciality in the case of Specialized " \
-                    "Hospitals or where this center excels",
+                'Specialty', domain=[('name', '=', Eval('active_id'))],
+                depends=['specialties'],
+                help="Choose the speciality in the case of Specialized "
+                "Hospitals or where this center excels",
                 # Allow to select the institution specialty only if the
                 # record already exists
                 states={
@@ -218,8 +218,7 @@ class HealthInstitution(ModelSQL, ModelView):
             ),
             'get_main_specialty',
             'set_main_specialty',
-            'search_main_specialty'
-    )
+            'search_main_specialty')
 
     def get_main_specialty(self, name):
         mss = [x for x in self.specialties if x.is_main_specialty]
@@ -230,14 +229,13 @@ class HealthInstitution(ModelSQL, ModelView):
     @classmethod
     def search_main_specialty(cls, name, clause):
         return ['AND',
-            ('specialties.is_main_specialty','=',True),
-            replace_clause_column(clause, 'specialties.specialty.id')
-        ]
+                ('specialties.is_main_specialty', '=', True),
+                replace_clause_column(clause, 'specialties.specialty.id')]
 
     @classmethod
     def set_main_specialty(cls, instances, field_name, value):
         for i in instances:
-            turnoff,turnon = [],[]
+            turnoff, turnon = [], []
             for spec in i.specialties:
                 if spec.id == value:
                     turnon.append(spec)
@@ -245,19 +243,21 @@ class HealthInstitution(ModelSQL, ModelView):
                     turnoff.append(spec)
         HIS = Pool().get('gnuhealth.institution.specialties')
         if turnoff:
-            HIS.write(turnoff,{'is_main_specialty':None})
+            HIS.write(turnoff, {'is_main_specialty': None})
         if turnon:
-            HIS.write(turnon, {'is_main_specialty':True})
+            HIS.write(turnon, {'is_main_specialty': True})
 
 
 class HealthInstitutionSpecialties(ModelSQL, ModelView):
     'Health Institution Specialties'
     __name__ = 'gnuhealth.institution.specialties'
 
-    is_main_specialty = fields.Boolean('Main Specialty',
-                                       help="Check if this is the main specialty"\
-                                       " e.g. in the case of specialized hospital"\
-                                       " or an area in which this institution excels.")
+    is_main_specialty = fields.Boolean(
+        'Main Specialty',
+        help="Check if this is the main specialty"
+        " e.g. in the case of specialized hospital"
+        " or an area in which this institution excels.")
+
     @staticmethod
     def default_is_main_specialty():
         return False
@@ -293,14 +293,13 @@ class HealthProfessional(ModelSQL, ModelView):
     @classmethod
     def search_main_specialty(cls, name, clause):
         return ['AND',
-            ('specialties.is_main_specialty','=',True),
-            replace_clause_column(clause, 'specialties.specialty.id')
-        ]
+                ('specialties.is_main_specialty', '=', True),
+                replace_clause_column(clause, 'specialties.specialty.id')]
 
     @classmethod
     def set_main_specialty(cls, instances, field_name, value):
         for i in instances:
-            turnoff,turnon = [],[]
+            turnoff, turnon = [], []
             for spec in i.specialties:
                 if spec.id == value:
                     turnon.append(spec)
@@ -308,9 +307,9 @@ class HealthProfessional(ModelSQL, ModelView):
                     turnoff.append(spec)
         HPS = Pool().get('gnuhealth.hp_specialty')
         if turnoff:
-            HPS.write(turnoff,{'is_main_specialty':None})
+            HPS.write(turnoff, {'is_main_specialty': None})
         if turnon:
-            HPS.write(turnon, {'is_main_specialty':True})
+            HPS.write(turnon, {'is_main_specialty': True})
 
 
 class HealthProfessionalSpecialties(ModelSQL, ModelView):
@@ -318,8 +317,8 @@ class HealthProfessionalSpecialties(ModelSQL, ModelView):
     __name__ = 'gnuhealth.hp_specialty'
     is_main_specialty = fields.Boolean(
         'Main Specialty',
-        help="Check if this is the main specialty i.e. in the case of "\
-             "specialty doctor or an area in which this professional excels."
+        help="Check if this is the main specialty i.e. in the case of "
+        "specialty doctor or an area in which this professional excels."
     )
 
     @staticmethod
@@ -356,31 +355,34 @@ class Appointment(ModelSQL, ModelView):
         for appt in appointments:
             if appt.state == 'done' and appt.appointment_date > now:
                 cls.raise_user_error(
-                        "An appointment in the future cannot be marked done.")
+                    "An appointment in the future cannot be marked done.")
 
             if appt.patient:
-                comp_startdate = datetime(*(appt.appointment_date.timetuple()[:3]+(0,0,0)),
-                                          tzinfo=tz)
-                comp_enddate = datetime(*(appt.appointment_date.timetuple()[:3]+(23,59,59)),
-                                          tzinfo=tz)
+                comp_startdate = datetime(
+                    *(appt.appointment_date.timetuple()[:3] + (0, 0, 0)),
+                    tzinfo=tz)
+                comp_enddate = datetime(
+                    *(appt.appointment_date.timetuple()[:3]+(23, 59, 59)),
+                    tzinfo=tz)
                 search_terms = ['AND',
-                            ('patient','=',appt.patient),
-                            ('appointment_date','>=',comp_startdate),
-                            ('appointment_date','<=',comp_enddate)]
+                                ('patient', '=', appt.patient),
+                                ('appointment_date', '>=', comp_startdate),
+                                ('appointment_date', '<=', comp_enddate)]
                 if appt.id:
-                    search_terms.append(('id','!=',appt.id))
+                    search_terms.append(('id', '!=', appt.id))
                 others = cls.search(search_terms)
             else:
                 others = []
-            if others and is_not_synchro(): # pop up the warning but not during sync
+            # pop up the warning but not during sync
+            if others and is_not_synchro():
                 # setup warning params
                 other_specialty = others[0].speciality.name
-                warning_code = 'healthjm.duplicate_appointment_warning.w_{}_{}'.format(
-                                appt.patient.id, appt.appointment_date.strftime('%s'))
+                warning_code = (
+                    'healthjm.duplicate_appointment_warning.w_{}_{}'.format(
+                        appt.patient.id, appt.appointment_date.strftime('%s')))
                 warning_msg = ['Possible Duplicate Appointment\n\n',
-                                appt.patient.name.firstname,' ',
-                                appt.patient.name.lastname]
-                use_an = False
+                               appt.patient.name.firstname, ' ',
+                               appt.patient.name.lastname]
                 if other_specialty == appt.speciality.name:
                     warning_msg.append(' already has')
                 else:
@@ -392,8 +394,8 @@ class Appointment(ModelSQL, ModelView):
                     warning_msg.append(' a ')
                 warning_msg.extend([other_specialty, ' appointment for ',
                                    appt.appointment_date.strftime('%b %d'),
-                                  '\nAre you sure you need this ',
-                                  appt.speciality.name, ' one?'])
+                                   '\nAre you sure you need this ',
+                                   appt.speciality.name, ' one?'])
 
                 cls.raise_user_warning(warning_code, u''.join(warning_msg))
 
@@ -401,6 +403,7 @@ class Appointment(ModelSQL, ModelView):
 class ProcedureCode(ModelSQL, ModelView):
     'Medcal Procedures'
     __name__ = 'gnuhealth.procedure'
+
     @classmethod
     def __setup__(cls):
         super(ProcedureCode, cls).__setup__()
@@ -441,8 +444,9 @@ class DiagnosticHypothesis(ModelSQL, ModelView):
     'Diagnostic Hypotheses'
     __name__ = 'gnuhealth.diagnostic_hypothesis'
 
-    first_diagnosis = fields.Boolean('First diagnosis', 
-            help='First time being diagnosed with this ailment')
+    first_diagnosis = fields.Boolean(
+        'First diagnosis',
+        help='First time being diagnosed with this ailment')
 
     @staticmethod
     def default_first_diagnosis():
@@ -459,11 +463,12 @@ class PatientEvaluation(ModelSQL, ModelView):
     visit_type_display = fields.Function(fields.Char('Visit Type'),
                                          'get_selection_display')
     upi = fields.Function(fields.Char('UPI'), getter='get_person_patient_field')
-    sex_display = fields.Function(fields.Char('Sex'), 'get_person_patient_field')
+    sex_display = fields.Function(fields.Char('Sex'),
+                                  'get_person_patient_field')
     age = fields.Function(fields.Char('Age'), 'get_person_patient_field')
 
     def get_selection_display(self, fn):
-        return make_selection_display()(self,'visit_type')
+        return make_selection_display()(self, 'visit_type')
 
     def get_person_patient_field(self, name):
         if name in ['upi', 'sex_display']:
@@ -478,13 +483,13 @@ class PatientEvaluation(ModelSQL, ModelView):
 
     @fields.depends('patient', 'evaluation_start', 'institution')
     def on_change_with_first_visit_this_year(self, *arg, **kwarg):
-        if self.institution and self.patient: 
+        if self.institution and self.patient:
             M = Pool().get('gnuhealth.patient.evaluation')
             search_parms = ['AND',
-                            ('evaluation_start','<',self.evaluation_start),
-                            ('evaluation_start','>=',
+                            ('evaluation_start', '<', self.evaluation_start),
+                            ('evaluation_start', '>=',
                              datetime(self.evaluation_start.year,1,1,0,0,0)),
-                            ('patient','=',self.patient.id),
+                            ('patient', '=', self.patient.id),
                             ('institution', '=', self.institution.id)]
 
             others = M.search(search_parms)
