@@ -25,7 +25,7 @@ upload:
 	find modules/ -name 'setup.py' -execdir python '{}' sdist upload -r local \;
 
 publish:
-	find modules/ -name 'setup.py' -execdir python '{}' sdist upload -r nhin -s -i murraym@moh.gov.jm \;
+	find modules/ -name 'setup.py' -execdir python '{}' sdist upload -r nhin \;
 
 dist: build
 	mkdir dist

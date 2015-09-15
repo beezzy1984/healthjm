@@ -28,7 +28,6 @@ def read(fname):
 
 tryton_version = '>=3.4,<3.5'
 gnuhealth_version = '>=2.8,<2.9'
-myversion = '>1.1,<1.3'
 
 config = ConfigParser.ConfigParser()
 config.readfp(open('tryton.cfg'))
@@ -37,6 +36,8 @@ info = dict(config.items('tryton'))
 for key in ('depends', 'extras_depend', 'xml'):
     if key in info:
         info[key] = info[key].strip().splitlines()
+
+myversion = '==%s' % info.get('version', '0.0.1')
 
 requires = [
     'trytond' + tryton_version,

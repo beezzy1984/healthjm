@@ -27,7 +27,6 @@ def read(fname):
     return open(path.join(path.dirname(__file__), fname)).read()
 
 tryton_version = (3, 4, 3, 5)
-myversion = ' >=1.2,<1.3'
 gnuhealth_version = ' >=2.8,<2.9'
 
 config = ConfigParser.ConfigParser()
@@ -37,6 +36,7 @@ for key in ('depends', 'extras_depend', 'xml'):
     if key in info:
         info[key] = info[key].strip().splitlines()
 
+myversion = '==%s' % info.get('version', '0.0.1')
 
 requires = [
     'trytond>=%d.%d,<%d.%d' % tryton_version,
