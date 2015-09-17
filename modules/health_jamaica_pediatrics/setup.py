@@ -42,7 +42,10 @@ requires = [
     'trytond>=%d.%d,<%d.%d' % tryton_version,
     'trytond_party>=%d.%d,<%d.%d' % tryton_version,
     'trytond_health_pediatrics' + gnuhealth_version,
-    'trytond_health_jamaica' + myversion
+    'trytond_health_jamaica' + myversion,
+    'trytond_health_pediatrics_growth_charts' + gnuhealth_version,
+    'trytond_health_pediatrics_growth_charts_who' + gnuhealth_version
+
 ]
 
 setup(
