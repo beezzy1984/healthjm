@@ -296,7 +296,7 @@
 		</record>
 		<record id="jmpo_P14B3A7" model="country.post_office">
 			<field name="code">P14B3A7</field>
-			<field name="subdivision" ref="country.jm-14" />
+			<field name="subdivision" ref="country.jm-13" />
 			<field name="name">Crofts Hill P.O.</field>
 			<field name="inspectorate">SPANISH TOWN</field>
 		</record>
@@ -651,7 +651,7 @@
 		<record id="jmpo_P134041" model="country.post_office">
 			<field name="code">P134041</field>
 			<field name="subdivision" ref="country.jm-13" />
-			<field name="name">Trout Hallp.O.</field>
+			<field name="name">Trout Hall P.O.</field>
 			<field name="inspectorate">MAYPEN</field>
 		</record>
 		<record id="jmpo_P133B6F" model="country.post_office">
