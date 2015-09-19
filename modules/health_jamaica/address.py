@@ -110,4 +110,3 @@ class PartyAddress(ModelSQL, ModelView):
 
     def get_relationship_display(self, name):
         return make_selection_display()(self, 'relationship')
-

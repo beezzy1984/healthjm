@@ -147,7 +147,6 @@ def is_not_synchro():
     greater than 0
     '''
     t = Transaction()
-    print('Transaction context = [{}]'.format(repr(t.context)))
     return (t.user > 0)
 
 
