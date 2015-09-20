@@ -325,6 +325,15 @@ class HealthProfessionalSpecialties(ModelSQL, ModelView):
     def default_is_main_specialty():
         return False
 
+    @classmethod
+    def __setup__(cls):
+        super(HealthProfessionalSpecialties, cls).__setup__()
+        cls.specialty.ondelete = 'CASCADE'
+        cls.specialty.required = True
+        cls._sql_constraints.append(('name_specialty_uniq',
+                                     'UNIQUE(name, specialty)',
+                                     'Duplicate specialty assignment'))
+
 
 class Appointment(ModelSQL, ModelView):
     'Patient Appointments'
