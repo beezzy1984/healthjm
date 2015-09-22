@@ -356,6 +356,30 @@ class Appointment(ModelSQL, ModelView):
             ('no_show', 'No show')
         ]
 
+    @staticmethod
+    def default_healthprof():
+        return None
+        # default to no health_prof.
+
+    @fields.depends('patient')
+    def on_change_patient(self):
+        return {}
+
+     @classmethod
+    def search_rec_name(cls, name, clause):
+        "Allow the default search to be by name, upi or appointment ID"
+        field, operator, value = clause
+        retests = {'patient.name.name': re.compile('^\D+$'),
+                   'patient.name.upi': re.compile('^[a-z]{3}\d+?(\w+)?$', re.I)
+                  }
+        clauses = super(Appointment, cls).search_rec_name(name, clause)
+        for newfield, test in retests.items():
+            if test.match(value.strip('%')):
+                clauses.append((newfield, operator, value))
+        if len(clauses) > 1:
+            clauses.insert(0, 'OR')
+        return clauses
+
     @classmethod
     def validate(cls, appointments):
         super(Appointment, cls).validate(appointments)
@@ -490,6 +514,23 @@ class PatientEvaluation(ModelSQL, ModelView):
         if self.patient:
             return self.patient.patient_age(name)
 
+    @classmethod
+    def __setup__(cls):
+        super(PatientEvaluation, cls).__setup__()
+        cls._error_messages.update({
+            'no_enddate_error': 'End time is required for finishing evaluation'
+        })
+        cls.evaluation_endtime.required = False
+
+    @classmethod
+    def __register__(cls, module_name):
+        super(PatientEvaluation, cls).__register__(module_name)
+        cursor = Transaction().cursor
+        # Make the endtime column not required at the DB level
+        cursor.execute(
+            '''ALTER TABLE gnuhealth_patient_evaluation
+               ALTER COLUMN evaluation_endtime DROP NOT NULL;''')
+
     @fields.depends('patient', 'evaluation_start', 'institution')
     def on_change_with_first_visit_this_year(self, *arg, **kwarg):
         if self.institution and self.patient:
@@ -523,6 +564,14 @@ class PatientEvaluation(ModelSQL, ModelView):
                         "This evaluation is in a Done state.\n"
                         "You can no longer modify it.")
         return super(PatientEvaluation, cls).write(evaluations, vals)
+
+    @classmethod
+    @ModelView.button
+    def discharge(cls, evaluations):
+        for evaluation in evaluations:
+            if not evaluation.evaluation_endtime:
+                cls.raise_user_error('no_enddate_error')
+        super(PatientEvaluation, cls).discharge(evaluations)
 
 
 class OperationalSector(ModelSQL, ModelView):

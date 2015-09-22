@@ -21,7 +21,7 @@ class HospitalBed(ModelSQL, ModelView):
     @classmethod
     def search_rec_name(cls, name, clause):
         return ['OR', replace_clause_column(clause, 'name.name'),
-                replace_clause_column('name.code')]
+                replace_clause_column(clause, 'name.code')]
 
 
 class InpatientRegistration(ModelSQL, ModelView):
@@ -31,7 +31,7 @@ class InpatientRegistration(ModelSQL, ModelView):
     @classmethod
     @ModelView.button
     def admission(cls, registrations):
-    	# redefined to fix a date bug
+        # redefined to fix a date bug
         registration_id = registrations[0]
         Bed = Pool().get('gnuhealth.hospital.bed')
         tz = get_timezone()

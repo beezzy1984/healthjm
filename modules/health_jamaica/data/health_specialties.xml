@@ -5,6 +5,18 @@
 			<field name="name">Oral Health (Primary Care)</field>
 			<field name="code">PRIMARY-ORAL</field>
 		</record>
+		<record model="gnuhealth.specialty" id="health.37">
+			<field name="name">Orthopaedic surgery</field>
+			<field name="code">ORTHOSURG</field>
+		</record>
+		<record model="gnuhealth.specialty" id="health.41">
+			<field name="name">Paediatrics</field>
+			<field name="code">PEDIATRICS</field>
+		</record>
+		<record model="gnuhealth.specialty" id="health.42">
+			<field name="name">Paediatric surgery</field>
+			<field name="code">PEDIATRICSURG</field>
+		</record>
 		<record id="jm_specialty_74" model="gnuhealth.specialty">
 			<field name="name">HIV</field>
 			<field name="code">HIV</field>

@@ -233,6 +233,7 @@ class Jiss (ModelSQL, ModelView):
         ('died', 'Died'),
         ('daa', 'Discharge Against Advise'),
         ('transferred', 'Transferred'),
+        ('referred', 'Referred'),
         ('doa', 'Dead on Arrival'),
         ], 'Disposition', help="Place of occurrance",sort=False, required=True)
 
@@ -267,7 +268,7 @@ class Jiss (ModelSQL, ModelView):
     def on_change_with_urladdr(self):
         # Generates the URL to be used in OpenStreetMap
         # The address will be mapped to the URL in the following way
-        # If the latitud and longitude of the Accident / Injury 
+        # If the latitude and longitude of the Accident / Injury
         # are given, then those parameters will be used.
 
         ret_url = ''
@@ -286,7 +287,7 @@ class Jiss (ModelSQL, ModelView):
 
     @classmethod
     def generate_injury_code(cls):
-        now = datetime.now(tz=get_timezone())
+        now = datetime.now()
         return 'ISS-%s'%(now.strftime('%s'))
 
     @classmethod
@@ -307,4 +308,4 @@ class Jiss (ModelSQL, ModelView):
 
     @classmethod
     def default_registration_date(cls):
-        return datetime.now(tz=get_timezone()).date()
+        return datetime.now().date()
