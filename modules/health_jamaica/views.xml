@@ -116,12 +116,37 @@
 			<field name="name">form-pathology_group</field>
 		</record>
 
-		<!-- Rename Free Appointment state to Scheduled -->
-    <record model="ir.action.act_window.domain" id="health.act_gnuhealth_appointment_domain_free">
-        <field name="sequence" eval="10"/>
-        <field name="domain">[('state', '=', 'free')]</field>
-        <field name="act_window" ref="health.action_gnuhealth_appointment_view"/>
-        <field name="name">Scheduled</field>
-    </record>
+		<!-- Rename Confirmed Appointment state to Scheduled -->
+		<record model="ir.action.act_window.domain" id="health.act_gnuhealth_appointment_domain_confirmed">
+			<field name="sequence" eval="10"/>
+			<field name="domain">[('state', '=', 'confirmed')]</field>
+			<field name="act_window" ref="health.action_gnuhealth_appointment_view"/>
+			<field name="name">Scheduled</field>
+		</record>
+		<!-- Rename Free to "Unassigned"  and move it to the end -->
+		<record model="ir.action.act_window.domain" id="health.act_gnuhealth_appointment_domain_free">
+			<field name="sequence" eval="20"/>
+			<field name="domain">[('state', '=', 'free')]</field>
+			<field name="act_window" ref="health.action_gnuhealth_appointment_view"/>
+			<field name="name">Unassigned</field>
+		</record>
+	<!-- Rename Create a Waiting and In-Progress Appointment -->
+		<record model="ir.action.act_window.domain" id="act_gnuhealth_appointment_domain_today">
+			<field name="sequence" eval="8"/>
+			<field name="domain">[('is_today', '=', True)]</field>
+			<field name="act_window" ref="health.action_gnuhealth_appointment_view"/>
+			<field name="name">Today</field>
+		</record>
+	<!-- Change the colors of the appointments. 
+		* ('done, user_cancelled, center_cancelled, no_show'): 'grey'
+        * ('arrived', ): 'green'
+        * ('processing', ): 'blue'
+        * else: 'black'
+    -->
+		<record model="ir.ui.view" id="healthjm_tree_appointment">
+			 <field name="model">gnuhealth.appointment</field>
+			 <field name="inherit" ref="health.gnuhealth_appointment_tree"/>
+			 <field name="name">tree-appointment</field>
+		</record>
 	</data>
 </tryton>

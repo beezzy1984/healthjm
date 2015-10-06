@@ -79,6 +79,15 @@ def get_start_of_next_day(d, tz=None):
     return get_start_of_day(d+timedelta(1), tz)
 
 
+def get_day_comp(d=None, tz=None):
+    '''returns a tuple of (D1, D2) representing midnight this morning
+    midnight tomorrow morning with <d> as today
+    '''
+    if d is None:
+        d = datetime.now()
+    return (get_start_of_day(d, tz), get_start_of_next_day(d, tz))
+
+
 def localtime(current):
     '''returns a datetime object with local timezone. naive datetime
     assumed to be in utc'''

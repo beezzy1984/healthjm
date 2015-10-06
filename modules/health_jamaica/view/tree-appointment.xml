@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<data>
+   <xpath expr="/tree" position="replace_attributes">
+      <tree string="Appointments" colors="Eval('tree_color')" />
+   </xpath>
+   <xpath expr="/tree/field[@name=&quot;state&quot;]" position="after">
+       <field name="tree_color" tree_invisible="1" />
+       <field name="is_today" tree_invisible="1" />
+   </xpath>
+</data>

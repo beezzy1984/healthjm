@@ -25,7 +25,7 @@
     <!-- Alternative_ids will be in a new location -->
     <xpath expr="/form//field[@name='alternative_ids']" position="replace" />
     <xpath expr="/form//field[@name='insurance']" position="replace">
-        <field colspan="4" name="alternative_ids" />
+        <field colspan="4" name="alternative_ids" height="180" />
     </xpath>
 
     <!-- Rearrange the demographics fields -->

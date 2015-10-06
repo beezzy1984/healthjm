@@ -25,8 +25,9 @@ from dateutil.relativedelta import relativedelta
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pyson import Eval, And
 from trytond.pool import Pool
+from trytond.transaction import Transaction
 from .tryton_utils import (negate_clause, replace_clause_column, is_not_synchro,
-                           get_timezone, make_selection_display)
+                           get_timezone, make_selection_display, get_day_comp)
 
 __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'HealthInstitutionSpecialties', 'HealthProfessional',
@@ -339,6 +340,10 @@ class Appointment(ModelSQL, ModelView):
     'Patient Appointments'
     __name__ = 'gnuhealth.appointment'
 
+    is_today = fields.Function(fields.Boolean('Is Today'), 'get_is_today',
+                               searcher='search_is_today')
+    tree_color = fields.Function(fields.Char('tree_color'), 'get_tree_color')
+
     @staticmethod
     def default_state():
         return 'free'
@@ -348,11 +353,13 @@ class Appointment(ModelSQL, ModelView):
         super(Appointment, cls).__setup__()
         cls.state.selection = [
             (None, ''),
-            ('free', 'Scheduled'),
-            ('confirmed', 'Confirmed'),
+            ('free', 'Unassigned'),
+            ('confirmed', 'Scheduled'),
+            ('arrived', 'Arrived/Waiting'),
+            ('processing', 'In-Progress'),
             ('done', 'Done'),
             ('user_cancelled', 'Cancelled by patient'),
-            ('center_cancelled', 'Cancelled by Health Center'),
+            ('center_cancelled', 'Cancelled by facility'),
             ('no_show', 'No show')
         ]
 
@@ -361,17 +368,52 @@ class Appointment(ModelSQL, ModelView):
         return None
         # default to no health_prof.
 
-    @fields.depends('patient')
-    def on_change_patient(self):
-        return {}
+    # @fields.depends('patient')
+    # def on_change_patient(self):
+    #     return {}
 
-     @classmethod
+    @classmethod
+    def get_is_today(cls, instances, name):
+        comp = get_day_comp()
+        out = {}
+        for a in instances:
+            out[a.id] = comp[0] <= a.appointment_date < comp[1]
+        return out
+
+    @classmethod
+    def get_tree_color(cls, instances, name):
+        out = {}
+        for a in instances:
+            if a.state in ('done, user_cancelled, center_cancelled, no_show'):
+                out[a.id] = 'grey'
+            elif a.state in ('arrived', ):
+                out[a.id] = 'blue'
+            elif a.state in ('processing', ):
+                out[a.id] = 'green'
+            else:
+                out[a.id] = 'black'
+        return out
+
+    @classmethod
+    def search_is_today(cls, name, clause):
+        fld, operator, operand = clause
+        comp = get_day_comp()
+        domain = []
+        if operand and operator == '=':
+            domain = ['AND', ('appointment_date', '>=', comp[0]),
+                      ('appointment_date', '<', comp[1])]
+        else:
+            domain = ['OR', ('appointment_date', '<', comp[0]),
+                      ('appointment_date', '>=', comp[1])]
+        return domain
+
+    @classmethod
     def search_rec_name(cls, name, clause):
         "Allow the default search to be by name, upi or appointment ID"
         field, operator, value = clause
         retests = {'patient.name.name': re.compile('^\D+$'),
                    'patient.name.upi': re.compile('^[a-z]{3}\d+?(\w+)?$', re.I)
-                  }
+        }
         clauses = super(Appointment, cls).search_rec_name(name, clause)
         for newfield, test in retests.items():
             if test.match(value.strip('%')):
