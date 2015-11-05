@@ -68,6 +68,8 @@ class PatientData(ModelSQL, ModelView):
         searcher='search_unidentified'
     )
     full_name = fields.Function(fields.Char('Full name'), 'get_fullname')
+    summary_info = fields.Function(fields.Text('Summary Information'),
+                                   'get_patient_summary')
 
     def get_rec_name(self, name):
         return self.name.name
@@ -180,6 +182,12 @@ class PatientData(ModelSQL, ModelView):
 
         return compute_age_from_dates(self.dob, self.deceased,
                                       self.dod, self.sex)
+
+    def get_patient_summary(self, name):
+        content = [('Date of Birth', self.dob.strftime('%Y-%m-%d')),
+                   ('Address', self.name.du and self.name.du.full_address or 'None'),
+                   ('Next of Kin', 'None')]
+        return '\n'.join([': '.join(x) for x in content])
 
 
 class Insurance(ModelSQL, ModelView):

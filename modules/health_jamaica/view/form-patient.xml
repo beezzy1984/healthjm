@@ -4,6 +4,10 @@
         <page id="misc_info_page" string="Death Data" />
     </xpath>
     <xpath expr="//group[@id=&quot;patient_main_info_3&quot;]/field[@name=&quot;sex&quot;]" position="before">
+        <label id="lbl_upi_mrn" string="UPI/MRN" />
+        <field name="puid" />
+        <field name="medical_record_num" />
+        <label name="sex" />
     	<field name="sex_display" width="60" />
     </xpath>
     <xpath expr="//group[@id=&quot;patient_main_info_3&quot;]/field[@name=&quot;sex&quot;]" position="replace_attributes">
