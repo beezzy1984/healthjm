@@ -1,17 +1,31 @@
 <?xml version="1.0"?>
 <data>
     <xpath expr="//notebook/page[@id='misc_info_page']" position="replace_attributes">
-        <page id="misc_info_page" string="Death Data" />
+        <page id="misc_info_page" string="Death Data" states="{'invisible': ~Eval('deceased')}" />
+    </xpath>
+    <xpath expr="//group[@id=&quot;patient_main_info_3&quot;]" position="replace_attributes">
+        <group colspan="3" col="12" id="patient_main_info_3" />
     </xpath>
     <xpath expr="//group[@id=&quot;patient_main_info_3&quot;]/field[@name=&quot;sex&quot;]" position="before">
         <label id="lbl_upi_mrn" string="UPI/MRN" />
-        <field name="puid" />
-        <field name="medical_record_num" />
-        <label name="sex" />
+        <field name="puid" width="60" />
+        <field name="medical_record_num" width="60" />
     	<field name="sex_display" width="60" />
     </xpath>
     <xpath expr="//group[@id=&quot;patient_main_info_3&quot;]/field[@name=&quot;sex&quot;]" position="replace_attributes">
     	<field name="sex" invisible="1" />
+    </xpath>
+    <!-- move the critical-info box and the photo from the top section -->
+    <xpath expr="//group[@id=&quot;critical_info&quot;]" position="replace" />
+    <xpath expr="//group[@id=&quot;patient__pic&quot;]" position="replace" />
+
+    <xpath expr="/form/notebook/page/notebook/page[@id=&quot;main_info_page&quot;]/group[@id=&quot;general_info&quot;]" position="before">
+        <group colspan="4" col="5">
+            <field name="summary_info" height="180" colspan="2" />
+            <field height="180" name="critical_summary" colspan="2" />
+            <field xfill="0" xexpand="1" name="photo" img_width="200" img_height="200" height="200" width="200" widget="image"/>
+        </group>
+        <newline />
     </xpath>
 </data>
 

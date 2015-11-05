@@ -84,6 +84,30 @@
         <page string="Contact" id="general" />
     </xpath>
 
+    <!-- Insert a tab for Relatives -->
+    <xpath expr="/form/notebook/page[@id=&quot;general&quot;]" position="after">
+        <page string="Relatives/NOK" id="nok_relatives">
+            <field name="relatives" xexpand="1" colspan="4" mode="tree,form"
+               view_ids="health_jamaica.healthjm_tree-party_relative,health_jamaica.healthjm_form-party_relative" />
+            <newline />
+            <field name="reverse_relatives" xexpand="1" colspan="4" mode="tree"
+                view_ids="health_jamaica.healthjm_tree-party_reverse_relative" />
+        </page>
+    </xpath>
+
+    <xpath expr="//label[@name=&quot;citizenship&quot;]" position="replace">
+        <label name="birthplace" />
+    </xpath>
+    <xpath expr="//field[@name=&quot;citizenship&quot;]" position="replace">
+        <group id="birthplace_group" colspan="1" col="2">
+            <field name="birth_country" />
+            <field name="birth_subdiv" />
+        </group>
+    </xpath>
+    <!-- remove country of residence field, pointless -->
+    <xpath expr="//label[@name=&quot;residence&quot;]" position="replace" />
+    <xpath expr="//field[@name=&quot;residence&quot;]" position="replace" />
+
     <!-- Replace the ref field with the UPI field that shows NN as needed -->
     <xpath expr="/form/field[@name=&quot;ref&quot;]" position="replace">
         <field name="upi" />

@@ -185,8 +185,24 @@ class PatientData(ModelSQL, ModelView):
 
     def get_patient_summary(self, name):
         content = [('Date of Birth', self.dob.strftime('%Y-%m-%d')),
-                   ('Address', self.name.du and self.name.du.full_address or 'None'),
-                   ('Next of Kin', 'None')]
+                   ('Pet Name/Alias', self.name.alias),
+                   # ('Birthplace', self.name.birthplace),
+                   ('Marital Status', self.name.marital_status_display),
+                   ('Mother\'s Maiden Name', self.name.mother_maiden_name)]
+                   # ('Father\'s Name', self.name.father_name)]
+        if self.name.du:
+            content.append(('Address (DU)', self.name.du.simple_address))
+        elif self.name.addresses:
+            content.append(('Address', self.name.addresses[0].simple_address))
+        else:
+            content.append(('Address', '-- no address on record'))
+        if self.name.relatives:
+            content.append(('Next of Kin', ''))
+            for relative in self.name.relatives:
+                content.append(('', '    %s (%s)' % (relative.relative.name,
+                                                     relative.phone_number)))
+        if self.name.occupation:
+            content.append(('Occupational Group', self.name.occupation.name))
         return '\n'.join([': '.join(x) for x in content])
 
 

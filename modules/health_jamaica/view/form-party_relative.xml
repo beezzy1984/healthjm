@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form string="Relative" col="2">
+    <label name="party" />
+    <field name="party" />
+    <label name="relative" />
+    <field name="relative" />
+    <label name="relationship" />
+    <field name="relationship" />
+    <label name="relative_summary" states="{'invisible': ~Eval('active_id')}" />
+    <field name="relative_summary" colspan="2"  height="150" yexpand="0" states="{'invisible': ~Eval('active_id')}" />
+
+</form>

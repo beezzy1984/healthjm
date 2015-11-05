@@ -53,23 +53,7 @@ class PartyAddress(ModelSQL, ModelView):
         cls.city.states = origstate
         cls.zip.states = origstate
 
-        cls.relationship = fields.Selection(
-            [('', ''),
-            ('offspring', 'Son/Daughter'),
-            ('spouse','Spouse (husband/wife)'),
-            ('parent','Parent (mother/father)'),
-            ('guardian','Guardian/Foster parent'),
-            ('sibling', 'Sibling (brother/sister)'),
-            ('grandparent','Grandparent'),
-            ('grandchild', 'Grandchild'),
-            ('cousin','Cousin'),
-            ('auntuncle','Aunt/Uncle'),
-            ('girlboyfriend', 'Girlfriend/Boyfriend'),
-            ('friend','Friend'),
-            ('coworker','Co-worker'),
-            ('other', 'Other')],
-            'Relationship',
-            help = 'Relationship of contact to patient')
+        cls.name.string = 'Label'
 
     @classmethod
     def default_country(cls):

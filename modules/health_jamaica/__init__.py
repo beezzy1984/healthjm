@@ -23,7 +23,7 @@
 
 from trytond.pool import Pool
 from .du import DomiciliaryUnit
-from .party import PartyPatient, AlternativePersonID
+from .party import PartyPatient, AlternativePersonID, PartyRelative
 from .health import *
 from .address import PartyAddress
 from .wizards import *
@@ -35,6 +35,7 @@ def register():
         PartyPatient,
         AlternativePersonID,
         PartyAddress,
+        PartyRelative,
         PatientData,
         Insurance,
         OperationalSector,

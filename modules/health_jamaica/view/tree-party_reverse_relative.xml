@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tree string="Relatives">
+    <field name="party" expand="1" />
+    <field name="relative" expand="1" />
+    <field name="relationship" expand="1" />
+    <field name="party_phone_number" expand="1" />
+</tree>

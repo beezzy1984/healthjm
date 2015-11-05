@@ -33,6 +33,23 @@
 				<field name="name">tree-party</field>
 		</record>
 
+		<!-- Tree and form for Party Relatives -->
+		<record model="ir.ui.view" id="healthjm_tree-party_relative">
+			<field name="model">party.relative</field>
+			<field name="type">tree</field>
+			<field name="name">tree-party_relative</field>
+		</record>
+		<record model="ir.ui.view" id="healthjm_form-party_relative">
+			<field name="model">party.relative</field>
+			<field name="type">form</field>
+			<field name="name">form-party_relative</field>
+		</record>
+		<record model="ir.ui.view" id="healthjm_tree-party_reverse_relative">
+			<field name="model">party.relative</field>
+			<field name="type">tree</field>
+			<field name="name">tree-party_reverse_relative</field>
+		</record>
+
 		<!-- AlternativeID -->
 		<record model="ir.ui.view" id="healthjm_form_alternative_id">
 			 <field name="model">gnuhealth.person_alternative_identification</field>
@@ -139,10 +156,10 @@
 		</record>
 	<!-- Change the colors of the appointments. 
 		* ('done, user_cancelled, center_cancelled, no_show'): 'grey'
-        * ('arrived', ): 'green'
-        * ('processing', ): 'blue'
-        * else: 'black'
-    -->
+		* ('arrived', ): 'green'
+		* ('processing', ): 'blue'
+		* else: 'black'
+	-->
 		<record model="ir.ui.view" id="healthjm_tree_appointment">
 			 <field name="model">gnuhealth.appointment</field>
 			 <field name="inherit" ref="health.gnuhealth_appointment_tree"/>
