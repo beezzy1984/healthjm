@@ -61,6 +61,26 @@ class DomiciliaryUnit(ModelSQL, ModelView):
         cls.address_city.states = INVISIBLEJM
         cls.address_zip.states = INVISIBLEJM
 
+        cls.dwelling.selection = [
+            (None, ''),
+            ('single_house', 'Single / Detached House'),
+            ('apartment', 'Apartment'),
+            ('townhouse', 'Townhouse'),
+            ('factory', 'Factory'),
+            ('building', 'Building'),
+            ('mobilehome', 'Mobile Home'),
+        ]
+        cls.roof_type.selection = [
+            ('concrete', 'Concrete/Slab'),
+            ('alusteel', 'Steel/Aluminium/Zinc'),
+            ('wood', 'Wood'),
+            ('mud', 'Mud'),
+            ('thatch', 'Thatched'),
+            ('stone', 'Stone'),
+            ('shingles', 'Wooden or other non-clay shingles'),
+            ('clay', 'Clay shingles'),
+        ]
+
 
     @classmethod
     def default_address_country(cls):

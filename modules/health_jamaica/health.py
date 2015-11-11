@@ -649,3 +649,27 @@ class OperationalSector(ModelSQL, ModelView):
 
     def get_rec_name(self, name):
         return ' - '.join([self.subdivision.name, self.name])
+
+
+class PatientEncounter(ModelSQL, ModelView):
+    'gnuhealth.encounter'
+    fvty = fields.Boolean('First visit this year',
+                          help='Check if this is known to be the first time '
+                          'this patient is visiting this institution '
+                          'for this year')
+
+    @fields.depends('patient', 'start_time', 'institution')
+    def on_change_with_fvty(self, *arg, **kwarg):
+        if self.institution and self.patient and self.start_time:
+            M = Pool().get('gnuhealth.encounter')
+            search_parms = ['AND',
+                            ('start_time', '<', self.start_time),
+                            ('evaluation_start', '>=',
+                             datetime(self.start_time.year,1,1,0,0,0)),
+                            ('patient', '=', self.patient.id),
+                            ('institution', '=', self.institution.id)]
+
+            others = M.search(search_parms)
+            if others:
+                return False
+        return True
