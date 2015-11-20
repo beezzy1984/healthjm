@@ -71,8 +71,20 @@ def get_timezone():
 def get_start_of_day(d, tz=None):
     '''returns a datetime object representing midnight at the start of
     the datetime passed in.'''
-    dt = d if isinstance(d, date) else d.date()
-    return datetime(*dt.timetuple()[:6], tzinfo=(tz if tz else d.tzinfo))
+    if d.tzinfo:
+        dt = d
+    elif tz:
+        dt = datetime(*d.timetuple()[:6], tzinfo=tz)
+    else:
+        dt = datetime(*d.timetuple()[:6], tzinfo=get_timezone())
+
+    # now dt is a timezone aware datetime object
+    # return the utc naive time for midnight at the timezone of dt
+
+    r = datetime(*dt.timetuple()[:3], hour=0, minute=0, second=0,
+                 tzinfo=dt.tzinfo)
+    rdt = datetime(*r.utctimetuple()[:6])
+    return rdt
 
 
 def get_start_of_next_day(d, tz=None):
@@ -83,9 +95,14 @@ def get_day_comp(d=None, tz=None):
     '''returns a tuple of (D1, D2) representing midnight this morning
     midnight tomorrow morning with <d> as today
     '''
+    if tz is None:
+        tz = get_timezone()
+    else:
+        tz = tz
     if d is None:
-        d = datetime.now()
-    return (get_start_of_day(d, tz), get_start_of_next_day(d, tz))
+        d = datetime.now(tz=tz)
+    start_of_today = get_start_of_day(d, tz)
+    return (start_of_today, start_of_today+timedelta(1))
 
 
 def localtime(current):

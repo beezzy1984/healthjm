@@ -44,9 +44,7 @@ class Appointment(ModelSQL, ModelView):
     def get_is_today(cls, instances, name):
         comp = get_day_comp()
         out = {}
-        print('%s\nCalculating is_today with daycomp = %s\n' % ('*'*79, repr(comp)))
         for a in instances:
-            print('    testing: %s' % (repr(a.appointment_date), ))
             out[a.id] = comp[0] <= a.appointment_date < comp[1]
         return out
 
@@ -69,7 +67,6 @@ class Appointment(ModelSQL, ModelView):
         fld, operator, operand = clause
         comp = get_day_comp()
         domain = []
-        print('doing a seach for is_today with clause= ' + repr(clause))
         if operand and operator in ('=', u'='):
             domain = ['AND', ('appointment_date', '>=', comp[0]),
                       ('appointment_date', '<', comp[1])]
