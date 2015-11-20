@@ -25,6 +25,7 @@ from trytond.pool import Pool
 from .du import DomiciliaryUnit
 from .party import PartyPatient, AlternativePersonID, PartyRelative
 from .health import *
+from .appointment import Appointment
 from .address import PartyAddress
 from .wizards import *
 from .reports import *

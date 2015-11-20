@@ -27,7 +27,7 @@ from datetime import date
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool
 from trytond.transaction import Transaction
-from trytond.pyson import Eval, Not, Bool, Equal, Or, In
+from trytond.pyson import Eval, Not, Bool, Equal, Or, In, Less
 
 ThisInstitution = lambda: Pool().get('gnuhealth.institution').get_institution()
 
@@ -430,7 +430,8 @@ class PartyRelative(ModelSQL, ModelView):
                                domain=[('id', '!=', Eval('party'))])
     relationship = fields.Selection(RELATIONSHIP_LIST, 'Relationship',
                                     help='Relationship of contact to patient')
-    relative_summary = fields.Function(fields.Text('Relative Summary'),
+    relative_summary = fields.Function(fields.Text('Relative Summary',
+                                       states={'invisible': Eval('id', 0) <= 0}),
                                        'get_relative_val')
     phone_number = fields.Function(fields.Char('Phone/Mobile'),
                                    'get_relative_val')

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+    <xpath expr="/form/separator[@id=&quot;sepatator_appointment_notes&quot;]" position="replace_attributes">
+        <separator string="Notes" id="sepatator_appointment_notes"/>
+    </xpath>
+</data>
