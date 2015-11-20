@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data>
+    <xpath expr="/form/group[@id=&quot;appointment_header&quot;]" position="replace">
+        <group colspan="4" col="6" id="appointment_header">
+            <label name="patient"/>
+            <field name="patient" xexpand="1" />
+            <label name="urgency"/>
+            <field name="urgency"/>
+            <label name="visit_type"/>
+            <field name="visit_type"/>
+
+            <label name="appointment_date"/>
+            <field name="appointment_date"/>
+            <label name="appointment_type"/>
+            <field name="appointment_type"/>
+        </group>
+    </xpath>
+
     <xpath expr="/form/separator[@id=&quot;sepatator_appointment_notes&quot;]" position="replace_attributes">
         <separator string="Notes" id="sepatator_appointment_notes"/>
+    </xpath>
+    <xpath expr="/form/field[@name=&quot;comments&quot;]" position="after">
+        <field name="state_changes" colspan="2" />
+        <group colspan="2" id="tail_group" col="2">
+            <label name="state"/>
+            <field name="state"/>
+            <label name="institution"/>
+            <field name="institution"/>
+            <label name="name"/>
+            <field name="name"/>
+            <button name="client_arrived" string="Client Arrived" icon="tryton-go-next" colspan="2" />
+            <button name="goto_encounter" string="Go to Encounter" icon="tryton-go-next" colspan="2" />
+            <button name="start_encounter" help="Start Encounter" string="Begin Encounter" icon="tryton-go-next" colspan="2" />
+        </group>
     </xpath>
 </data>

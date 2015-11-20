@@ -25,7 +25,7 @@ from trytond.pool import Pool
 from .du import DomiciliaryUnit
 from .party import PartyPatient, AlternativePersonID, PartyRelative
 from .health import *
-from .appointment import Appointment
+from .appointment import Appointment, AppointmentStateChange
 from .address import PartyAddress
 from .wizards import *
 from .reports import *
@@ -45,6 +45,7 @@ def register():
         HealthProfessional,
         HealthProfessionalSpecialties,
         Appointment,
+        AppointmentStateChange,
         ProcedureCode,
         PathologyGroup,
         Pathology,

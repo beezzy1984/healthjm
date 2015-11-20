@@ -1,7 +1,21 @@
 import re
 from datetime import datetime
+from trytond.pool import Pool
 from trytond.model import ModelView, ModelSQL, fields
+from trytond.pyson import Eval, Equal, In, Not
 from .tryton_utils import is_not_synchro, get_timezone, get_day_comp
+
+APPOINTMENT_STATES = [
+    (None, ''),
+    ('free', 'Unassigned'),
+    ('confirmed', 'Scheduled'),
+    ('arrived', 'Arrived/Waiting'),
+    ('processing', 'In-Progress'),
+    ('done', 'Done'),
+    ('user_cancelled', 'Cancelled by patient'),
+    ('center_cancelled', 'Cancelled by facility'),
+    ('no_show', 'No show')
+]
 
 
 class Appointment(ModelSQL, ModelView):
@@ -11,25 +25,30 @@ class Appointment(ModelSQL, ModelView):
     is_today = fields.Function(fields.Boolean('Is Today'), 'get_is_today',
                                searcher='search_is_today')
     tree_color = fields.Function(fields.Char('tree_color'), 'get_tree_color')
+    state_changes = fields.One2Many('gnuhealth.appointment.statechange',
+                                    'appointment', 'State Changes',
+                                    order=([('create_date', 'DESC')]),
+                                    readonly=True)
 
     @staticmethod
     def default_state():
         return 'free'
 
+    # def get_rec_name(self, name):
+    #     return '%s %s' % (self.name, self.appointment_date.strftime('%c'))
+
     @classmethod
     def __setup__(cls):
         super(Appointment, cls).__setup__()
-        cls.state.selection = [
-            (None, ''),
-            ('free', 'Unassigned'),
-            ('confirmed', 'Scheduled'),
-            ('arrived', 'Arrived/Waiting'),
-            ('processing', 'In-Progress'),
-            ('done', 'Done'),
-            ('user_cancelled', 'Cancelled by patient'),
-            ('center_cancelled', 'Cancelled by facility'),
-            ('no_show', 'No show')
-        ]
+        cls.state.selection = APPOINTMENT_STATES
+        cls._buttons.update({
+            'start_encounter': {'invisible': Not(Equal(Eval('state'),
+                                                 'arrived'))},
+            'goto_encounter': {'invisible': Not(In(Eval('state'),
+                                                ['processing', 'done']))},
+            'client_arrived': {'invisible': Not(Equal(Eval('state'),
+                                                'confirmed'))}
+        })
 
     @staticmethod
     def default_healthprof():
@@ -141,3 +160,60 @@ class Appointment(ModelSQL, ModelView):
                                    appt.speciality.name, ' one?'])
 
                 cls.raise_user_warning(warning_code, u''.join(warning_msg))
+
+    @classmethod
+    def write(cls, appointments, values):
+        'create an AppointmentStateChange when the state changes'
+        newstate = values.get('state', False)
+        to_make = []
+        if newstate:
+            for appt in appointments:
+                if appt.state != newstate:
+                    to_make.append({'appointment': appt.id,
+                                    'orig_state': appt.state,
+                                    'target_state': newstate})
+        return_val = super(Appointment, cls).write(appointments, values)
+        AppointmentStateChange.create(to_make)
+        return return_val
+
+    @classmethod
+    @ModelView.button_action('health_encounter.act_appointment_encounter_starter')
+    def start_encounter(cls, appointments):
+        pass
+
+    @classmethod
+    @ModelView.button_action('health_encounter.act_appointment_encounter_starter')
+    def goto_encounter(cls, appointments):
+        pass
+
+    @classmethod
+    @ModelView.button
+    def client_arrived(cls, appointments):
+        cls.write(appointments, {'state': 'arrived'})
+
+
+class AppointmentStateChange(ModelSQL, ModelView):
+    """Appointment State Change"""
+    __name__ = 'gnuhealth.appointment.statechange'
+    appointment = fields.Many2One('gnuhealth.appointment', 'Appointment')
+    orig_state = fields.Selection(APPOINTMENT_STATES, 'Changed From')
+    target_state = fields.Selection(APPOINTMENT_STATES, 'Changed to')
+    # use the built-in create_date and create_uid to determine who
+    # changed the state of the appointment and when it was changed.
+    # Records in this model will, be created automatically
+    change_date = fields.Function(fields.DateTime('Changed on'),
+                                  'get_change_date')
+    creator = fields.Function(fields.Char('Changed by'), 'get_creator_name')
+
+    def get_creator_name(self, name):
+        pool = Pool()
+        Party = pool.get('party.party')
+        persons = Party.search([('internal_user', '=', self.create_uid)])
+        if persons:
+            return persons[0].name
+        else:
+            return self.create_uid.name
+
+    def get_change_date(self, name):
+        # we're sending back the create date since these are readonly
+        return self.create_date
