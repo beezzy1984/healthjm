@@ -33,11 +33,14 @@ def negate_clause(clause):
 def make_selection_display():
     def _get_x_display(self, field_name):
         fieldlist = getattr(self, '_fields')
-        # import pdb; pdb.set_trace()
         field_selections = fieldlist[field_name].selection
         field_obj = getattr(self, field_name)
         xdict = dict(filter(lambda x: x[0], field_selections))
-        return xdict.get(field_obj, '')
+        outval = xdict.get(field_obj, '')
+        if outval is None:
+            return ''
+        else:
+            return outval
 
     return _get_x_display
 
