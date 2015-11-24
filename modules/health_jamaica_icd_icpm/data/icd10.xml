@@ -77,6 +77,11 @@
             <field name="code">R10.6</field>
             <field name="name">Perineal Pain</field>
         </record>
+        <record id="R107" model="gnuhealth.pathology">
+            <field name="category" ref="health_icd10.icdcat18-2" />
+            <field name="code">R10.7</field>
+            <field name="name">Generalized abdominal pain</field>
+        </record>
         <record model="gnuhealth.pathology" id="R502">
             <field name="name">Drug Induced Fever</field>
             <field name="code">R50.2</field>
@@ -88,11 +93,15 @@
             <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
         <record model="gnuhealth.pathology" id="health_icd10.R501">
-            <field name="name">High Fever Unspec. greater than 38&#176;C (100.4&#176;F)</field>
+            <field name="name">High Fever greater than 38&#176;C (100.4&#176;F)</field>
             <field name="code">R50.5</field>
             <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
-
+        <record model="gnuhealth.pathology" id="health_icd10.R10">
+            <field name="name">Abdominal Pain</field>
+            <field name="code">R10</field>
+            <field name="category" ref="health_icd10.icdcat18-2" />
+        </record>
         <!-- Disable these R codes -->
         <!--active=False doesn't work on them, so the last two above
             overwrites them -->
@@ -102,6 +111,145 @@
         <record model="gnuhealth.pathology" id="health_icd10.R501">
             <field name="active" eval="False" />
         </record> -->
+
+        <record id="R360" model="gnuhealth.pathology">
+            <field name="code">R36.0</field>
+            <field name="name">Urethral discharge without blood</field>
+            <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record id="R361" model="gnuhealth.pathology">
+            <field name="code">R36.1</field>
+            <field name="name">Urethral discharge with blood</field>
+            <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record id="R362" model="gnuhealth.pathology">
+            <field name="code">R36.2</field>
+            <field name="name">Haematospermia (blood in semen)</field>
+            <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record id="R37" model="gnuhealth.pathology">
+            <field name="code">R37</field>
+            <field name="name">Vaginal discharge</field>
+            <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record id="R371" model="gnuhealth.pathology">
+            <field name="code">R37.1</field>
+            <field name="name">Vaginal discharge with blood</field>
+            <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record id="R372" model="gnuhealth.pathology">
+            <field name="code">R37.2</field>
+            <field name="name">Vaginal itching</field>
+            <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record id="R373" model="gnuhealth.pathology">
+            <field name="code">R37.3</field>
+            <field name="name">Vaginal swelling, mass</field>
+            <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record id="R374" model="gnuhealth.pathology">
+            <field name="code">R37.4</field>
+            <field name="name">Perineal itching</field>
+            <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record id="R375" model="gnuhealth.pathology">
+            <field name="code">R37.5</field>
+            <field name="name">Perineal swelling, mass</field>
+            <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record id="R376" model="gnuhealth.pathology">
+            <field name="code">R37.6</field>
+            <field name="name">Pain associated with sexual intercourse (females)</field>
+        <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record id="R377" model="gnuhealth.pathology">
+            <field name="code">R37.7</field>
+            <field name="name">Vaginal bleeding</field>
+            <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record id="R378" model="gnuhealth.pathology">
+            <field name="code">R37.8</field>
+            <field name="name">Abnormal menstrual bleeding</field>
+            <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+
+
 <!-- -->
+        <!-- ICD Codes added for Growth Indicators -->
+        <record id="E663" model="gnuhealth.pathology">
+            <field name="name">Normal Nutrition (BMI 19-24.99 or less)</field>
+            <field name="code">E66.3</field>
+            <field name="category" ref="health_icd10.icdcat4-7" />
+        </record>
+        <record id="E664" model="gnuhealth.pathology">
+            <field name="name">Overweight (BMI 25-29.99)</field>
+            <field name="code">E66.4</field>
+            <field name="category" ref="health_icd10.icdcat4-7" />
+        </record>
+        <record id="E665" model="gnuhealth.pathology">
+            <field name="name">Obsesity (BMI 30-34.99)</field>
+            <field name="code">E66.5</field>
+            <field name="category" ref="health_icd10.icdcat4-7" />
+        </record>
+        <record id="E666" model="gnuhealth.pathology">
+            <field name="name">Obesity (BMI 35-39.99)</field>
+            <field name="code">E66.6</field>
+            <field name="category" ref="health_icd10.icdcat4-7" />
+        </record>
+        <record id="E667" model="gnuhealth.pathology">
+            <field name="name">Obesity (BMI 40 or greater) </field>
+            <field name="code">E66.7</field>
+            <field name="category" ref="health_icd10.icdcat4-7" />
+        </record>
+        <record id="health_icd10.E440" model="gnuhealth.pathology">
+            <field name="name">Moderate Wasting</field>
+            <field name="code">E44.0</field>
+            <field name="category" ref="health_icd10.icdcat4-5" />
+        </record>
+        <record id="health_icd10.E441" model="gnuhealth.pathology">
+            <field name="name">Normal Nutrition</field>
+            <field name="code">E44.1</field>
+            <field name="category" ref="health_icd10.icdcat4-5" />
+        </record>
+        <record id="E442" model="gnuhealth.pathology">
+            <field name="name">Severe Wasting</field>
+            <field name="code">E44.2</field>
+            <field name="category" ref="health_icd10.icdcat4-5" />
+        </record>
+        <record id="E443" model="gnuhealth.pathology">
+            <field name="name">Underweight</field>
+            <field name="code">E44.3</field>
+            <field name="category" ref="health_icd10.icdcat4-5" />
+        </record>
+        <record id="E444" model="gnuhealth.pathology">
+            <field name="name">Severly underweight</field>
+            <field name="code">E44.4</field>
+            <field name="category" ref="health_icd10.icdcat4-5" />
+        </record>
+        <record id="E451" model="gnuhealth.pathology">
+            <field name="name">Moderate Stunting</field>
+            <field name="code">E45.1</field>
+            <field name="category" ref="health_icd10.icdcat4-5" />
+        </record>
+        <record id="E452" model="gnuhealth.pathology">
+            <field name="name">Severe Stunting</field>
+            <field name="code">E45.2</field>
+            <field name="category" ref="health_icd10.icdcat4-5" />
+        </record>
+        <record id="Z395" model="gnuhealth.pathology">
+            <field name="name">Exclusive breastfeeding of infant</field>
+            <field name="code">Z39.5</field>
+            <field name="category" ref="health_icd10.icdcat21-3" />
+        </record>
+        <record id="Z396" model="gnuhealth.pathology">
+            <field name="name">Partial breastfeeding of infant</field>
+            <field name="code">Z39.6</field>
+            <field name="category" ref="health_icd10.icdcat21-3" />
+        </record>
+        <record id="Z397" model="gnuhealth.pathology">
+            <field name="name">Not breastfeeding infant</field>
+            <field name="code">Z39.7</field>
+            <field name="category" ref="health_icd10.icdcat21-3" />
+        </record>
     </data>
 </tryton>

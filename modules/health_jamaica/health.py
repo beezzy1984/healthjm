@@ -272,6 +272,12 @@ class HealthInstitution(ModelSQL, ModelView):
         if turnon:
             HIS.write(turnon, {'is_main_specialty': True})
 
+    @classmethod
+    def search_rec_name(cls, name, clause):
+        # mkclause = lambda x: replace_clause_column(clause, x)
+        return ['OR', replace_clause_column(clause, 'code'),
+                replace_clause_column(clause, 'name.name')]
+
 
 class HealthInstitutionSpecialties(ModelSQL, ModelView):
     'Health Institution Specialties'
@@ -372,6 +378,16 @@ class ProcedureCode(ModelSQL, ModelView):
         cls._sql_constraints.append(('name_uniq', 'UNIQUE(name)',
                                      'Medical procedure code must be unique'))
 
+    @classmethod
+    def search_rec_name(cls, name, clause):
+        codere = re.compile('[-.0-9]+', re.I)
+        if codere.match(clause[2]):
+            return ['OR', replace_clause_column(clause, 'code'),
+                    replace_clause_column(clause, 'name')]
+        else:
+            return [replace_clause_column(clause, 'name')]
+
+
 
 class PathologyGroup(ModelSQL, ModelView):
     'Pathology Groups'
@@ -398,6 +414,15 @@ class Pathology(ModelSQL, ModelView):
                 return True
 
         return False
+
+    @classmethod
+    def search_rec_name(cls, name, clause):
+        # codere = re.compile('([A-Z]?[0-9]+)(\.[0-9]+)?', re.I)
+        # if codere.match(clause[2]):
+        return ['OR', replace_clause_column(clause, 'code'),
+                replace_clause_column(clause, 'name')]
+        # else:
+        #     return [replace_clause_column(clause, 'name')]
 
 
 class DiagnosticHypothesis(ModelSQL, ModelView):

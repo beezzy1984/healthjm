@@ -114,6 +114,10 @@
             <field name="description">CONTRACEPTIVE INSTRUCTION</field>
             <field name="name">4-650</field>
         </record>
+        <record id="icpm_2-444" model="gnuhealth.procedure">
+            <field name="description">PREGNANCY SCREENING TEST</field>
+            <field name="name">2-444</field>
+        </record>
 
 <!-- Corrections from GNU Health Default -->
         <record model="gnuhealth.procedure" id="health_icpm.icpm_5-913">
