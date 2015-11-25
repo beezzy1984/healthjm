@@ -367,7 +367,7 @@ class HealthProfessionalSpecialties(ModelSQL, ModelView):
 
 
 class ProcedureCode(ModelSQL, ModelView):
-    'Medcal Procedures'
+    'Medical Procedures'
     __name__ = 'gnuhealth.procedure'
 
     @classmethod
@@ -380,12 +380,12 @@ class ProcedureCode(ModelSQL, ModelView):
 
     @classmethod
     def search_rec_name(cls, name, clause):
-        codere = re.compile('[-.0-9]+', re.I)
-        if codere.match(clause[2]):
-            return ['OR', replace_clause_column(clause, 'code'),
-                    replace_clause_column(clause, 'name')]
-        else:
-            return [replace_clause_column(clause, 'name')]
+        return ['OR', replace_clause_column(clause, 'name'),
+                replace_clause_column(clause, 'description')]
+
+
+    def get_rec_name(self, name):
+        return '%s [%s]' % (self.description, self.name)
 
 
 
@@ -423,6 +423,9 @@ class Pathology(ModelSQL, ModelView):
                 replace_clause_column(clause, 'name')]
         # else:
         #     return [replace_clause_column(clause, 'name')]
+
+    def get_rec_name(self, name):
+        return '%s [%s]' % (self.name, self.code)
 
 
 class DiagnosticHypothesis(ModelSQL, ModelView):
