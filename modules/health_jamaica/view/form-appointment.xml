@@ -28,9 +28,9 @@
             <field name="institution"/>
             <label name="name"/>
             <field name="name"/>
-            <button name="client_arrived" string="Client Arrived" icon="tryton-go-next" colspan="2" />
-            <button name="goto_encounter" string="Go to Encounter" icon="tryton-go-next" colspan="2" />
-            <button name="start_encounter" help="Start Encounter" string="Begin Encounter" icon="tryton-go-next" colspan="2" />
+            <button name="client_arrived" string="Patient Arrive_d" icon="tryton-go-next" colspan="2" />
+            <button name="goto_encounter" string="Go to En_counter" icon="tryton-go-next" colspan="2" />
+            <button name="start_encounter" help="Start En_counter" string="Begin Encounter" icon="tryton-go-next" colspan="2" />
         </group>
     </xpath>
 </data>
