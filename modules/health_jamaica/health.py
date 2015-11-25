@@ -32,8 +32,8 @@ from .tryton_utils import (negate_clause, replace_clause_column, is_not_synchro,
 __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'HealthInstitutionSpecialties', 'HealthProfessional',
            'HealthProfessionalSpecialties', 'ProcedureCode',
-           'PathologyGroup', 'Pathology', 'DiagnosticHypothesis',
-           'PatientEvaluation', 'OperationalSector']
+           'PathologyGroup', 'Pathology', 'PatientEvaluation',
+           'OperationalSector']
 
 
 class PatientData(ModelSQL, ModelView):
@@ -426,19 +426,6 @@ class Pathology(ModelSQL, ModelView):
 
     def get_rec_name(self, name):
         return '%s [%s]' % (self.name, self.code)
-
-
-class DiagnosticHypothesis(ModelSQL, ModelView):
-    'Diagnostic Hypotheses'
-    __name__ = 'gnuhealth.diagnostic_hypothesis'
-
-    first_diagnosis = fields.Boolean(
-        'First diagnosis',
-        help='First time being diagnosed with this ailment')
-
-    @staticmethod
-    def default_first_diagnosis():
-        return False
 
 
 class PatientEvaluation(ModelSQL, ModelView):

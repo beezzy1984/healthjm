@@ -49,7 +49,6 @@ def register():
         ProcedureCode,
         PathologyGroup,
         Pathology,
-        DiagnosticHypothesis,
         PatientEvaluation,
         PatientRegisterModel,
         OpenAppointmentReportStart,

@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <data>
-<xpath expr="/form/field[@name=&quot;comments&quot;]" position="after">
-	<newline />
-	<label name="first_diagnosis" />
-	<field name="first_diagnosis"  width="60" />
-</xpath>
+    <xpath expr="/form" position="replace_attributes">
+        <form string="Diagnostic Hypothesis" />
+    </xpath>
 </data>
