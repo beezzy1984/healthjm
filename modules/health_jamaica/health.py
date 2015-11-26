@@ -184,13 +184,17 @@ class PatientData(ModelSQL, ModelView):
                                       self.dod, self.sex)
 
     def get_patient_summary(self, name):
-        content = [('Date of Birth', self.dob.strftime('%Y-%m-%d')),
-                   ('Pet Name/Alias',
-                    '' if self.name.alias is None else self.name.alias),
+        alias = '' if self.name.alias is None else self.name.alias
+        if self.name.mother_maiden_name is None:
+            momnom = ''
+        else:
+            momnom = self.name.mother_maiden_name
+        dob = 'unknown' if self.dob is None else self.dob.strftime('%Y-%m-%d')
+        content = [('Date of Birth', dob),
+                   ('Pet Name/Alias', alias),
                    # ('Birthplace', self.name.birthplace),
                    ('Marital Status', self.name.marital_status_display),
-                   ('Mother\'s Maiden Name',
-                    '' if self.name.mother_maiden_name is None else self.name.m$
+                   ('Mother\'s Maiden Name', momnom)]
                    # ('Father\'s Name', self.name.father_name)]
 
         if self.name.du:
