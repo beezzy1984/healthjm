@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 from trytond.pool import Pool
 from trytond.model import ModelView, ModelSQL, fields
-from trytond.pyson import Eval, Equal, In, Not
+from trytond.pyson import Eval, Equal, In, Not, And, Bool
 from .tryton_utils import is_not_synchro, get_timezone, get_day_comp
 
 APPOINTMENT_STATES = [
@@ -42,12 +42,14 @@ class Appointment(ModelSQL, ModelView):
         super(Appointment, cls).__setup__()
         cls.state.selection = APPOINTMENT_STATES
         cls._buttons.update({
-            'start_encounter': {'invisible': Not(Equal(Eval('state'),
-                                                 'arrived'))},
+            'start_encounter': {'readonly': Not(And(Equal(Eval('state'),
+                                                'arrived'), Bool(Eval('name')))),
+                                'invisible': In(Eval('state'),
+                                                ['processing', 'done'])},
             'goto_encounter': {'invisible': Not(In(Eval('state'),
-                                                ['processing', 'done']))},
-            'client_arrived': {'invisible': Not(Equal(Eval('state'),
-                                                'confirmed'))}
+                                               ['processing', 'done']))},
+            'client_arrived': {'readonly': Not(And(Equal(Eval('state'),
+                                               'confirmed'), Bool(Eval('name'))))}
         })
 
     @staticmethod
