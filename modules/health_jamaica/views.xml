@@ -177,5 +177,19 @@
 			<field name="type">tree</field>
 			<field name="name">tree-appointment_statechange</field>
 		</record>
+
+		<record model="ir.model.button" id="appt-start_encounter_button">
+			<field name="name">start_encounter</field>
+			<field name="model" search="[('model', '=', 'gnuhealth.appointment')]"/>
+		</record>
+
+		<!-- disable the default Go To Encounter link on Appointment 
+			use the button from health_jamaica
+			Disabled by setting the model id to -2 -->
+        <record model="ir.action.keyword" id="health_encounter.act_create_app_encounter_keyword">
+            <field name="keyword">form_action</field>
+            <field name="model">gnuhealth.appointment,-2</field>
+            <field name="action" ref="health_encounter.act_appointment_encounter_starter"/>
+        </record>
 	</data>
 </tryton>
