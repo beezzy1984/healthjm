@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<tryton>
+    <data>
+<!--    
+    User groups used in primary care.
+    Most if not all of these groups will also be applicable in a hospital
+    Groups that don't apply will not be used.
+         -->
+        <record id="goup_records_clerk" model="res.group">
+            <field name="name">Records Clerk</field>
+        </record>
+        <record id="goup_records_technician" model="res.group">
+            <field name="name">Records Technician</field>
+        </record>
+        <record id="goup_records_administrator" model="res.group">
+            <field name="name">Records Administrator</field>
+        </record>
+        <record id="goup_junior_doctor" model="res.group">
+            <field name="name">Junior Medical Doctor</field>
+        </record>
+        <record id="goup_medical_doctor" model="res.group">
+            <field name="name">Medical Doctor</field>
+        </record>
+        <record id="goup_senior_doctor" model="res.group">
+            <field name="name">Senior Medical Doctor</field>
+        </record>
+        <record id="goup_managing_doctor" model="res.group">
+            <field name="name">Managing Medical Officer</field>
+        </record>
+        <record id="goup_junior_nurse" model="res.group">
+            <field name="name">Junior Nurse</field>
+        </record>
+        <record id="goup_health_nurse" model="res.group">
+            <field name="name">Health Nurse</field>
+        </record>
+        <record id="goup_senior_nurse" model="res.group">
+            <field name="name">Senior Nurse</field>
+        </record>
+        <record id="goup_managing_nurse" model="res.group">
+            <field name="name">Managing Nurse</field>
+        </record>
+        <record id="goup_institution_management" model="res.group">
+            <field name="name">Institution Management</field>
+        </record>
+        <record id="goup_senior_management" model="res.group">
+            <field name="name">Senior Management</field>
+        </record>
+        <record id="goup_administrative_clerk" model="res.group">
+            <field name="name">Administrative Clerk</field>
+        </record>
+        <record id="goup_accounting_clerk" model="res.group">
+            <field name="name">Accounting Clerk</field>
+        </record>
+        <record id="goup_customer_service" model="res.group">
+            <field name="name">Customer Service</field>
+        </record>
+    </data>
+</tryton>
