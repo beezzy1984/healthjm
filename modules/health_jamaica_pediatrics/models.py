@@ -3,10 +3,11 @@
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.modules.health_jamaica.party import SEX_OPTIONS
 
+
 class Newborn (ModelSQL, ModelView):
     'Newborn Information'
     __name__ = 'gnuhealth.newborn'
-    
+
     bba = fields.Boolean('BBA',
                          help='Check this box if born on arrival to facility')
 
@@ -15,7 +16,7 @@ class Newborn (ModelSQL, ModelView):
         super(Newborn, cls).__setup__()
 
         cls.cephalic_perimeter.string = "Head Circumference"
-        cls.length = "Crown-Heel Length"
+        cls.length.string = "Crown-Heel Length"
 
         cls.sex.selection = SEX_OPTIONS
         cls.sex.string = 'Sex at birth'
