@@ -42,6 +42,7 @@ def register():
         OperationalSector,
         HealthInstitution,
         HealthInstitutionSpecialties,
+        HealthInstitutionOperationalSector,
         HealthProfessional,
         HealthProfessionalSpecialties,
         Appointment,

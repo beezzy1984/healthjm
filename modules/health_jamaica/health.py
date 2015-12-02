@@ -20,6 +20,7 @@
 ##############################################################################
 
 import re
+import hashlib
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from trytond.model import ModelView, ModelSQL, fields
@@ -33,7 +34,8 @@ __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'HealthInstitutionSpecialties', 'HealthProfessional',
            'HealthProfessionalSpecialties', 'ProcedureCode',
            'PathologyGroup', 'Pathology', 'PatientEvaluation',
-           'OperationalSector']
+           'OperationalSector', 'HealthInstitutionOperationalSector']
+MENARCH = (9, 60)
 
 
 class PatientData(ModelSQL, ModelView):
@@ -174,8 +176,8 @@ class PatientData(ModelSQL, ModelView):
             # the caller is childbearing_potential
 
             if (name == 'childbearing_age' and patient_dob):
-                if (delta.years >= 11
-                   and delta.years <= 55 and patient_sex == 'f'):
+                if (delta.years >= MENARCH[0]
+                   and delta.years <= MENARCH[1] and patient_sex == 'f'):
                     return True
                 else:
                     return False
@@ -532,9 +534,46 @@ class OperationalSector(ModelSQL, ModelView):
 
     subdivision = fields.Many2One('country.subdivision', 'Parish/Province',
                                   required=True)
+    code = fields.Char('Code', help='must be globally unique for each sector',
+                       states={'readonly': True})
 
     def get_rec_name(self, name):
         return ' - '.join([self.subdivision.name, self.name])
+
+    @classmethod
+    def generate_code(cls, parish, name):
+        out = [parish.code[-2:],
+               hashlib.md5(' '.join(filter(None,
+                                           name.split()))).hexdigest()[:5]]
+        return '-'.join(out)
+
+    @classmethod
+    def create(cls, vlist):
+        vlist = [x.copy() for x in vlist]
+        for values in vlist:
+            if not values.get('code'):
+                values['code'] = cls.generate_code(values['subdivision'],
+                                                   values['name'])
+        return super(OperationalSector, cls).crate(vlist)
+
+
+class HealthInstitutionOperationalSector(ModelSQL, ModelView):
+    'Operational Sectors covered by Institution'
+    __name__ = 'gnuhealth.institution.operationalsector'
+    sync_code = fields.Char('sync code', states={'readonly': True})
+
+    @classmethod
+    def generate_code(cls, institution, sector):
+        return '-'.join([institution.code, sector.code])
+
+    @classmethod
+    def create(cls, vlist):
+        vlist = [x.copy() for x in vlist]
+        for values in vlist:
+            if not values.get('code'):
+                values['code'] = cls.generate_code(values['name'],
+                                                   values['operational_sector'])
+        return super(OperationalSector, cls).crate(vlist)
 
 
 class PatientEncounter(ModelSQL, ModelView):
