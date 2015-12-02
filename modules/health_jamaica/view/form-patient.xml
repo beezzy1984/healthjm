@@ -20,7 +20,7 @@
     <xpath expr="//group[@id=&quot;patient__pic&quot;]" position="replace" />
 
     <xpath expr="/form/notebook/page/notebook/page[@id=&quot;main_info_page&quot;]/group[@id=&quot;general_info&quot;]" position="before">
-        <group colspan="4" col="5">
+        <group colspan="4" col="5" id="grp_patient_summary_header">
             <field name="summary_info" height="180" colspan="2" />
             <field height="180" name="critical_summary" colspan="2" />
             <field xfill="0" xexpand="1" name="photo" img_width="200" img_height="200" height="200" width="200" widget="image"/>
