@@ -6,52 +6,64 @@
     Most if not all of these groups will also be applicable in a hospital
     Groups that don't apply will not be used.
          -->
-        <record id="goup_records_clerk" model="res.group">
-            <field name="name">Records Clerk</field>
+         <!-- Generic Groups in which everyone will be in at least one -->
+        <record id="group_records_staff" model="res.group">
+            <field name="name">Medical Records Staff</field>
         </record>
-        <record id="goup_records_technician" model="res.group">
-            <field name="name">Records Technician</field>
+        <record id="group_doctors" model="res.group">
+            <field name="name">Doctors</field>
         </record>
-        <record id="goup_records_administrator" model="res.group">
-            <field name="name">Records Administrator</field>
+        <record id="group_nurses" model="res.group">
+            <field name="name">Nurses</field>
         </record>
-        <record id="goup_junior_doctor" model="res.group">
-            <field name="name">Junior Medical Doctor</field>
+        <record id="group_admin_staff" model="res.group">
+            <field name="name">Administrative Staff</field>
         </record>
-        <record id="goup_medical_doctor" model="res.group">
-            <field name="name">Medical Doctor</field>
+
+        <!--
+        Members of these groups get permissions and attributes above
+        and beyong what members of the generic groups above get-->
+        <!-- Specialised Groups for MEDICAL RECORDS. -->
+        <record id="group_records_technicians" model="res.group">
+            <field name="name">Records Technicians</field>
         </record>
-        <record id="goup_senior_doctor" model="res.group">
-            <field name="name">Senior Medical Doctor</field>
+        <record id="group_records_admins" model="res.group">
+            <field name="name">Records Administrators</field>
         </record>
-        <record id="goup_managing_doctor" model="res.group">
-            <field name="name">Managing Medical Officer</field>
+
+        <!-- Specialised groups for DOCTORS -->
+        <record id="group_jr_doctors" model="res.group">
+            <field name="name">Junior Doctors</field>
         </record>
-        <record id="goup_junior_nurse" model="res.group">
-            <field name="name">Junior Nurse</field>
+        <record id="group_sr_doctors" model="res.group">
+            <field name="name">Senior Doctors</field>
         </record>
-        <record id="goup_health_nurse" model="res.group">
-            <field name="name">Health Nurse</field>
+        <record id="group_managing_doctors" model="res.group">
+            <field name="name">Managing Doctors</field>
         </record>
-        <record id="goup_senior_nurse" model="res.group">
-            <field name="name">Senior Nurse</field>
+
+        <!-- Specialised groups for NURSES -->
+        <record id="group_junior_nurses" model="res.group">
+            <field name="name">Junior Nurses</field>
         </record>
-        <record id="goup_managing_nurse" model="res.group">
-            <field name="name">Managing Nurse</field>
+        <record id="group_senior_nurses" model="res.group">
+            <field name="name">Senior Nurses</field>
         </record>
-        <record id="goup_institution_management" model="res.group">
+        <record id="group_managing_nurses" model="res.group">
+            <field name="name">Managing Nurses</field>
+        </record>
+
+        <!-- Specialised groups for MANAGEMENT and Admistrative Staff -->
+        <record id="group_local_management" model="res.group">
             <field name="name">Institution Management</field>
         </record>
-        <record id="goup_senior_management" model="res.group">
+        <record id="group_senior_management" model="res.group">
             <field name="name">Senior Management</field>
         </record>
-        <record id="goup_administrative_clerk" model="res.group">
-            <field name="name">Administrative Clerk</field>
+        <record id="group_accounts_clerks" model="res.group">
+            <field name="name">Accounting Clerks</field>
         </record>
-        <record id="goup_accounting_clerk" model="res.group">
-            <field name="name">Accounting Clerk</field>
-        </record>
-        <record id="goup_customer_service" model="res.group">
+        <record id="group_customer_service" model="res.group">
             <field name="name">Customer Service</field>
         </record>
     </data>

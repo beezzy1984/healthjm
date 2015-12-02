@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<tryton>
+    <data>
+        <record mode="ir.model.access" id="model-grp_">
+            <field name="model" search="[('model','=', '')]"/>
+            <field name="group" ref=""/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+    </data>
+</tryton>

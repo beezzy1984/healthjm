@@ -2,5 +2,186 @@
 <tryton>
     <data>
         <!-- User Group Menu Access Permissions-->
+
+        <!-- Records, Nurse and Doctors can all Get at Party menu -->
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurse_party">
+            <field name="menu" ref="party.menu_party_form" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctor_party">
+            <field name="menu" ref="party.menu_party_form" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_party">
+            <field name="menu" ref="party.menu_party_form" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_admins_party">
+            <field name="menu" ref="party.menu_party_form" />
+            <field name="group" ref="group_admin_clerks" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_custserv_party">
+            <field name="menu" ref="party.menu_party_form" />
+            <field name="group" ref="group_customer_service" />
+        </record>
+
+
+        <!-- Some people get access to the Health Menu -->
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurse_health">
+            <field name="menu" ref="health.gnuhealth_menu" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctor_health">
+            <field name="menu" ref="health.gnuhealth_menu" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_health">
+            <field name="menu" ref="health.gnuhealth_menu" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+
+        <!-- And for these folks access to the health-patient menu -->
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurse_patient">
+            <field name="menu" ref="health.gnuhealth_patients_menu" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctor_patient">
+            <field name="menu" ref="health.gnuhealth_patients_menu" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_patient">
+            <field name="menu" ref="health.gnuhealth_patients_menu" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+
+        <!-- And access to the appointments menu -->
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurse_appointment">
+            <field name="menu" ref="health.gnuhealth_appointment_menu" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctor_appointment">
+            <field name="menu" ref="health.gnuhealth_appointment_menu" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_appointment">
+            <field name="menu" ref="health.gnuhealth_appointment_menu" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_admins_appointment">
+            <field name="menu" ref="health.gnuhealth_appointment_menu" />
+            <field name="group" ref="group_admin_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_custsrv_appointment">
+            <field name="menu" ref="health.gnuhealth_appointment_menu" />
+            <field name="group" ref="group_customer_service" />
+        </record>
+
+        <!-- The same three musketeers get access to Encounters menu -->
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurse_encounters">
+            <field name="menu" ref="health_encounter.health_menu_encounter_main" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctor_encounters">
+            <field name="menu" ref="health_encounter.health_menu_encounter_main" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_encounters">
+            <field name="menu" ref="health_encounter.health_menu_encounter_main" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+
+        <!-- And institutions -->
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurse_institutions">
+            <field name="menu" ref="health.gnuhealth_menu_institution" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctor_institutions">
+            <field name="menu" ref="health.gnuhealth_menu_institution" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_institutions">
+            <field name="menu" ref="health.gnuhealth_menu_institution" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_admins_institutions">
+            <field name="menu" ref="health.gnuhealth_menu_institution" />
+            <field name="group" ref="group_admin_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurse_institutions_os">
+            <field name="menu" ref="health.gnuhealth_institution_operationalsector" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctor_institutions_os">
+            <field name="menu" ref="health.gnuhealth_institution_operationalsector" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_institutions_os">
+            <field name="menu" ref="health.gnuhealth_institution_operationalsector" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_admins_institutions_os">
+            <field name="menu" ref="health.gnuhealth_institution_operationalsector" />
+            <field name="group" ref="group_admin_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurse_institutions_specialties">
+            <field name="menu" ref="health.gnuhealth_institution_specialties" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctor_institutions_specialties">
+            <field name="menu" ref="health.gnuhealth_institution_specialties" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_institutions_specialties">
+            <field name="menu" ref="health.gnuhealth_institution_specialties" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_admins_institutions_specialties">
+            <field name="menu" ref="health.gnuhealth_institution_specialties" />
+            <field name="group" ref="group_admin_staff" />
+        </record>
+
+        <!-- Some people get access to the reporting menu -->
+        <record model="ir.ui.menu-res.group" id="menu-grp_mgmt_nurses_reporting">
+            <field name="menu" ref="health.gnuhealth_reporting_menu" />
+            <field name="group" ref="group_managing_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_mgmt_doctors_reporting">
+            <field name="menu" ref="health.gnuhealth_reporting_menu" />
+            <field name="group" ref="group_managing_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_local_mgmt_reporting">
+            <field name="menu" ref="health.gnuhealth_reporting_menu" />
+            <field name="group" ref="group_local_management" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_sr_mgmt_reporting">
+            <field name="menu" ref="health.gnuhealth_reporting_menu" />
+            <field name="group" ref="group_senior_management" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_tech_reporting">
+            <field name="menu" ref="health.gnuhealth_reporting_menu" />
+            <field name="group" ref="group_records_technicians" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_admin_reporting">
+            <field name="menu" ref="health.gnuhealth_reporting_menu" />
+            <field name="group" ref="group_records_admins" />
+        </record>
+
+        <!-- Accounting and Financial Management Menus for Accounting Clerks -->
+        <record model="ir.ui.menu-res.group" id="menu-grp_accounts_currencies">
+            <field name="menu" ref="currency.menu_currency" />
+            <field name="group" ref="group_accounts_clerks" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_local_mgmt_currencies">
+            <field name="menu" ref="currency.menu_currency" />
+            <field name="group" ref="group_local_management" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_sr_mgmt_currencies">
+            <field name="menu" ref="currency.menu_currency" />
+            <field name="group" ref="group_senior_management" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_custsrv_currencies">
+            <field name="menu" ref="currency.menu_currency" />
+            <field name="group" ref="group_customer_service" />
+        </record>
     </data>
 </tryton>
