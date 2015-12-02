@@ -6,7 +6,7 @@
 #    Copyright (C) 2011-2014  GNU Solidario <health@gnusolidario.org>
 #
 #    MODULE : JAMAICA INJURY SURVEILLANCE SYSTEM
-# 
+#
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -25,12 +25,11 @@
 #
 # The documentation of the module goes in the "doc" directory.
 
-from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal
+from trytond.pyson import Eval, Not, Equal
 from trytond.model import ModelView, ModelSQL, fields
-from trytond.transaction import Transaction
-from datetime import datetime, date
+from datetime import datetime
 from ..health_jamaica.party import (ThisInstitution)
-from ..health_jamaica.tryton_utils import get_timezone
+
 
 __all__ = ['Jiss']
 
@@ -39,15 +38,16 @@ class Jiss (ModelSQL, ModelView):
     'Jamaica Injury Surveillance System Registration'
     __name__ = 'gnuhealth.jiss'
 
-    name = fields.Many2One('gnuhealth.patient.evaluation',
-        'Evaluation', required=True, help='Related Patient Evaluation')
+    name = fields.Many2One(
+        'gnuhealth.patient.evaluation', 'Evaluation',
+        required=True, help='Related Patient Evaluation')
 
     injury_date = fields.Date('Injury Date',
-        help="Usually the same as the Evaluation")
+                              help="Usually the same as the Evaluation")
 
     registration_date = fields.Date('Registration Date')
 
-    code = fields.Char('Code',help='Injury Code', readonly=True)
+    code = fields.Char('Code', help='Injury Code', readonly=True)
 
     location = fields.Many2One(
         'country.subdivision', 'Location',
@@ -60,7 +60,7 @@ class Jiss (ModelSQL, ModelView):
         'OSM Map',
         help="Maps the Accident / Injury location on Open Street Map")
 
-    healthcenter = fields.Many2One('gnuhealth.institution','Institution')
+    healthcenter = fields.Many2One('gnuhealth.institution', 'Institution')
 
     patient = fields.Function(
         fields.Char('Patient'),
@@ -83,8 +83,8 @@ class Jiss (ModelSQL, ModelView):
         ('accidental', 'Accidental / Unintentional'),
         ('violence', 'Violence'),
         ('attempt_suicide', 'Suicide Attempt'),
-        ('motor_vehicle', 'Motor Vehicle'),
-        ], 'Injury Type', required=True, sort=False)
+        ('motor_vehicle', 'Motor Vehicle')],
+        'Injury Type', required=True, sort=False)
 
     mva_mode = fields.Selection([
         (None, ''),
@@ -100,9 +100,9 @@ class Jiss (ModelSQL, ModelView):
         ('boat', 'Boat / Ship'),
         ('aircraft', 'Aircraft'),
         ('other', 'Other'),
-        ('unknown', 'Unknown'),
-        ], 'Mode', help="Motor Vehicle Accident Mode",sort=False,
-           states={'required': Equal(Eval('injury_type'), 'motor_vehicle')})
+        ('unknown', 'Unknown')],
+        'Mode', help="Motor Vehicle Accident Mode", sort=False,
+        states={'required': Equal(Eval('injury_type'), 'motor_vehicle')})
 
     mva_position = fields.Selection([
         (None, ''),
@@ -111,10 +111,10 @@ class Jiss (ModelSQL, ModelView):
         ('outside', 'Outside / on the back'),
         ('bystander', 'Bystander'),
         ('unspecified_vehicle', 'Unspecified vehicle'),
-        ('unknown', 'Unknown'),
-        ], 'User Position', help="Motor Vehicle Accident user position",sort=False,
-           states={'required': Equal(Eval('injury_type'), 'motor_vehicle')})
- 
+        ('unknown', 'Unknown')],
+        'User Position', help="Motor Vehicle Accident user position",
+        sort=False, states={
+            'required': Equal(Eval('injury_type'), 'motor_vehicle')})
 
     mva_counterpart = fields.Selection([
         (None, ''),
@@ -133,7 +133,6 @@ class Jiss (ModelSQL, ModelView):
         ('unknown', 'Unknown'),
         ], 'Counterpart', help="Motor Vehicle Accident Counterpart",sort=False,
             states={'required': Equal(Eval('injury_type'), 'motor_vehicle')})
-         
 
     safety_gear = fields.Selection([
         (None, ''),
@@ -142,7 +141,6 @@ class Jiss (ModelSQL, ModelView):
         ('unknown', 'Unknown'),
         ], 'Safety Gear', help="Use of Safety Gear - Helmet, safety belt...",sort=False,
            states={'required': Equal(Eval('injury_type'), 'motor_vehicle')})
-
 
     alcohol = fields.Selection([
         (None, ''),
@@ -165,7 +163,7 @@ class Jiss (ModelSQL, ModelView):
                 " in the 6 hours before the accident ?",sort=False)
 
     injury_details = fields.Text('Details')
-    
+
     # Add victim-perpretator relationship for violence-related injuries
     victim_perpetrator = fields.Selection([
         (None, ''),
@@ -209,7 +207,7 @@ class Jiss (ModelSQL, ModelView):
 
 
     # Place of occurrance . Not used in motor vehicle accidents
-    
+
     place_occurrance = fields.Selection([
         (None, ''),
         ('home', 'Home'),
@@ -287,8 +285,13 @@ class Jiss (ModelSQL, ModelView):
 
     @classmethod
     def generate_injury_code(cls):
+        icode = ['ISS']
         now = datetime.now()
-        return 'ISS-%s'%(now.strftime('%s'))
+        here = ThisInstitution()
+        if here:
+            icode.append(here.code)
+        icode.append(now.strftime('%s'))
+        return '-'.join(icode)
 
     @classmethod
     def create(cls, vlist):
