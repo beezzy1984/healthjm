@@ -3,7 +3,7 @@ from trytond.model import ModelSQL
 from trytond.pool import PoolMeta
 from trytond.transaction import Transaction
 __all__ = ['Party', 'PartyAddress', 'DomiciliaryUnit', 'AlternativePersonID',
-    'HealthProfessional', 'PatientVaccination', 
+    'HealthProfessional', 'PatientVaccination',
     'HealthProfessionalSpecialties', 'PatientData', 'Appointment',
     'PatientDiseaseInfo', 'Directions', 'PatientEvaluation',
     'SecondaryCondition', 'SignsAndSymptoms', 'DiagnosticHypothesis']
