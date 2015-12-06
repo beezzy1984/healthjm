@@ -106,9 +106,7 @@ class PatientData(ModelSQL, ModelView):
 
     @classmethod
     def search_unidentified(cls, field_name, clause):
-        cond = ['AND', replace_clause_column(clause, 'name.unidentified'),
-                negate_clause(replace_clause_column(clause,
-                                                    'name.party_warning_ack'))]
+        cond = [replace_clause_column(clause, 'name.unidentified')]
         return cond
 
     def get_patient_puid(self, name):
@@ -210,8 +208,8 @@ class PatientData(ModelSQL, ModelView):
             for relative in self.name.relatives:
                 content.append(('', '    %s (%s)' % (relative.relative.name,
                                                      relative.phone_number)))
-        if self.name.occupation:
-            content.append(('Occupational Group', self.name.occupation.name))
+        # if self.name.occupation:
+        #     content.append(('Occupational Group', self.name.occupation.name))
         return '\n'.join([': '.join(x) for x in content])
 
 
