@@ -7,7 +7,7 @@ from trytond.pool import Pool
 from trytond.report import Report
 from .tryton_utils import get_timezone, get_start_of_day, get_start_of_next_day
 
-__all__ = ('DailyPatientRegister', )
+__all__ = ('DailyPatientRegister', 'PatientRegisterByDisease')
 
 class BaseReport(Report):
     '''defines basic data elements that are passed to all health_jamaica
@@ -40,10 +40,10 @@ class BaseReport(Report):
                     localcontext['parish'] = addr.subdivision.name
                     break
 
-        localcontext['now_date']= datetime.now(tz)
+        localcontext['now_date'] = datetime.now(tz)
 
         return super(BaseReport, cls).parse(report, records, data,
-                                                      localcontext)
+                                            localcontext)
 
 
 class DailyPatientRegister(BaseReport):
@@ -67,46 +67,50 @@ class DailyPatientRegister(BaseReport):
             tzone = company.timezone
         except AttributeError:
             # default timezone
-            tzone = 'America/Jamaica' 
+            tzone = 'America/Jamaica'
 
         tzone = pytz.timezone(tzone)
 
         data['start_date'] = datetime(
-            *(data['start_date'].timetuple()[:3]+(0,0,0)), tzinfo=tzone)
+            *(data['start_date'].timetuple()[:3]+(0, 0, 0)), tzinfo=tzone)
         data['end_date'] = datetime(
-            *(data['end_date'].timetuple()[:3]+(23,59,58)), tzinfo=tzone)
+            *(data['end_date'].timetuple()[:3]+(23, 59, 58)), tzinfo=tzone)
 
         search_criteria = [
-            ('state','=','done'),
-            ('evaluation_start','>=',data['start_date']),
+            ('state', '=', 'done'),
+            ('evaluation_start', '>=', data['start_date']),
             ('evaluation_start', '<=', data['end_date']),
         ]
-        
+
         if data.get('institution', False):
-            search_criteria.append(('institution','=',data['institution']))
+            search_criteria.append(('institution', '=', data['institution']))
             localcontext['institution'] = Institution(data['institution'])
             osectors = localcontext['institution'].operational_sectors
             if osectors:
                 localcontext['sector'] = osectors[0].operational_sector
 
-
         if data.get('specialty', False):
             search_criteria.append(('specialty', '=', data['specialty']))
             localcontext['specialty'] = Specialty(data['specialty'])
 
+        if data.get('x_search_criteria', False):
+            search_criteria = ['AND', data['x_search_criteria'],
+                               search_criteria]
 
         objects = Evaluation.search(search_criteria,
-                                    order=(('evaluation_start','ASC'),
+                                    order=(('evaluation_start', 'ASC'),
                                            ('evaluation_endtime', 'ASC')))
+        num_objects = 0
         groups = {}
         myzone = get_timezone()
         for ev in objects:
             group_key = myzone.fromutc(ev.evaluation_start).strftime('%Y-%m-%d')
-            groups.setdefault(group_key,[]).append(ev)
+            groups.setdefault(group_key, []).append(ev)
+            num_objects += 1  # low-tech count since len would count them too
 
         groups = groups.items()
-        groups.sort(lambda x,y: cmp(x[0],y[0]))
-
+        groups.sort(lambda x, y: cmp(x[0], y[0]))
+        localcontext['evaluation_count'] = num_objects
         localcontext['evaluation_groups'] = groups
         localcontext['eval_date'] = data['start_date'].strftime('%Y-%m-%d')
         localcontext['date_start'] = None
@@ -120,3 +124,17 @@ class DailyPatientRegister(BaseReport):
 
         return super(DailyPatientRegister, cls).parse(report, records, data,
                                                       localcontext)
+
+
+class PatientRegisterByDisease(DailyPatientRegister):
+    __name__ = 'health_jamaica.report_patient_register_bydisease'
+
+    @classmethod
+    def parse(cls, report, records, data, localcontext):
+        localcontext['selected_diseases'] = data.get('x_selected_diseases',
+                                                     'None')
+        localcontext['disease_plural'] = (data.get(
+            'x_selected_diseases_count', 0) != 1)
+
+        return super(PatientRegisterByDisease, cls).parse(report, records,
+                                                          data, localcontext)

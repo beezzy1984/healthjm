@@ -67,6 +67,11 @@
             <field name="code">R11.1</field>
             <field name="name">Vomitting</field>
         </record>
+        <record model="gnuhealth.pathology" id="health_icd10.R10">
+            <field name="name">Abdominal Pain</field>
+            <field name="code">R10</field>
+            <field name="category" ref="health_icd10.icdcat18-2" />
+        </record>
         <record id="R105" model="gnuhealth.pathology">
             <field name="category" ref="health_icd10.icdcat18-2" />
             <field name="code">R10.5</field>
@@ -87,23 +92,18 @@
             <field name="code">R50.2</field>
             <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
-        <record model="gnuhealth.pathology" id="health_icd10.R500">
-            <field name="name">Persistent Fever or Fever with Chills/Rigors</field>
-            <field name="code">R50.8</field>
-            <field name="category" ref="health_icd10.icdcat18-8" />
-        </record>
-        <record model="gnuhealth.pathology" id="health_icd10.R501">
+        <record model="gnuhealth.pathology" id="R505">
             <field name="name">High Fever greater than 38&#176;C (100.4&#176;F)</field>
             <field name="code">R50.5</field>
             <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
-        <record model="gnuhealth.pathology" id="health_icd10.R10">
-            <field name="name">Abdominal Pain</field>
-            <field name="code">R10</field>
-            <field name="category" ref="health_icd10.icdcat18-2" />
+        <record model="gnuhealth.pathology" id="R508">
+            <field name="name">Persistent Fever or Fever with Chills/Rigors</field>
+            <field name="code">R50.8</field>
+            <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
         <!-- Disable these R codes -->
-        <!--active=False doesn't work on them, so the last two above
+        <!--active=False doesn't work on them, so the next two below
             overwrites them -->
 <!--         <record model="gnuhealth.pathology" id="health_icd10.R500">
             <field name="active" eval="False" />
@@ -112,12 +112,12 @@
             <field name="active" eval="False" />
         </record> -->
 
-        <record id="R360" model="gnuhealth.pathology">
+        <record model="gnuhealth.pathology" id="health_icd10.R500">
             <field name="code">R36.0</field>
             <field name="name">Urethral discharge without blood</field>
             <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
-        <record id="R361" model="gnuhealth.pathology">
+        <record model="gnuhealth.pathology" id="health_icd10.R501">
             <field name="code">R36.1</field>
             <field name="name">Urethral discharge with blood</field>
             <field name="category" ref="health_icd10.icdcat18-5" />

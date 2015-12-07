@@ -12,6 +12,7 @@ from trytond.wizard import (Wizard, StateView, StateTransition, Button,
 from .reports import DailyPatientRegister
 
 __all__ = ['PatientRegisterModel', 'PatientRegisterWizard',
+           'PatientRegisterByDiseaseView', 'PatientRegisterWithDiseaseWizard',
            'AppointmentReport', 'OpenAppointmentReportStart',
            'OpenAppointmentReport', 'StartEndDateModel']
 
@@ -95,6 +96,70 @@ class PatientRegisterWizard(Wizard):
             self.start.raise_user_error('required_institution')
             return 'start'
 
+        return action, data
+
+
+class PatientRegisterByDiseaseView(PatientRegisterModel):
+    'Patient Evaluation Register (by Disease)'
+    __name__ = 'healthjm.report.patientregister_wdisease.start'
+    disease1 = fields.Many2One('gnuhealth.pathology', 'Disease (1)',
+                               required=True)
+    disease2 = fields.Many2One('gnuhealth.pathology', 'Disease (2)')
+    disease_perm = fields.Selection(
+        [('OR', 'Include either disease (OR)'),
+         ('AND', 'Include both diseases (AND)')], 'Permutation', sort=False)
+
+    @staticmethod
+    def default_disease_perm():
+        return 'AND'
+
+
+class PatientRegisterWithDiseaseWizard(PatientRegisterWizard):
+    '''Evaluation Register Wizard'''
+    __name__ = 'healthjm.report.patientregister_wdisease.wizard'
+
+    start = StateView(
+        'healthjm.report.patientregister_wdisease.start',
+        'health_jamaica.healthjm_form_patientregisterwd_report_start', [
+            Button('Cancel', 'end', 'tryton-cancel'),
+            Button('Generate Report', 'generate_report', 'tryton-ok',
+                   default=True),
+        ])
+    generate_report = StateAction(
+        'health_jamaica.healthjm_report_patientregister_wdisease')
+
+    def transition_generate_report(self):
+        return 'end'
+
+    def do_generate_report(self, action):
+        bad_action, data = super(PatientRegisterWithDiseaseWizard, self).\
+            do_generate_report(action)
+        search_criteria = []
+        search_criteria_name = []
+        if self.start.disease1 and self.start.disease2:
+            search_criteria.append(self.start.disease_perm)
+            # search_criteria_name.append(self.start.disease_perm)
+
+        def make_search_domain(disease):
+            return (['OR',
+                    ('diagnosis', '=', disease.id),
+                    ('diagnostic_hypothesis.pathology', '=', disease.id)],
+                    u'%s (%s)' % (disease.name, disease.code))
+
+        if self.start.disease1:
+            criteria, name = make_search_domain(self.start.disease1)
+            search_criteria.append(criteria)
+            search_criteria_name.append(name)
+
+        if self.start.disease2:
+            criteria, name = make_search_domain(self.start.disease2)
+            search_criteria.append(criteria)
+            search_criteria_name.append(name)
+
+        data['x_search_criteria'] = search_criteria
+        data['x_selected_diseases'] = (
+            ' %s ' % self.start.disease_perm).lower().join(search_criteria_name)
+        data['x_selected_diseases_count'] = len(search_criteria_name)
         return action, data
 
 

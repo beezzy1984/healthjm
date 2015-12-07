@@ -52,6 +52,7 @@ def register():
         Pathology,
         PatientEvaluation,
         PatientRegisterModel,
+        PatientRegisterByDiseaseView,
         OpenAppointmentReportStart,
         AppointmentReport,
         StartEndDateModel,
@@ -59,11 +60,13 @@ def register():
 
     Pool.register(
         PatientRegisterWizard,
+        PatientRegisterWithDiseaseWizard,
         OpenAppointmentReport,
         module='health_jamaica', type_='wizard'
     )
 
     Pool.register(
         DailyPatientRegister,
+        PatientRegisterByDisease,
         module='health_jamaica', type_='report'
     )

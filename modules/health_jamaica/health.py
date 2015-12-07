@@ -568,10 +568,10 @@ class HealthInstitutionOperationalSector(ModelSQL, ModelView):
     def create(cls, vlist):
         vlist = [x.copy() for x in vlist]
         for values in vlist:
-            if not values.get('code'):
-                values['code'] = cls.generate_code(values['name'],
+            if not values.get('sync_code'):
+                values['sync_code'] = cls.generate_code(values['name'],
                                                    values['operational_sector'])
-        return super(OperationalSector, cls).crate(vlist)
+        return super(HealthInstitutionOperationalSector, cls).create(vlist)
 
 
 class PatientEncounter(ModelSQL, ModelView):

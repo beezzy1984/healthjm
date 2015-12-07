@@ -35,6 +35,28 @@
 			parent="health.gnuhealth_reporting_menu" sequence="2"
 			action="healthjm_wizard_patientregister"
 			icon="gnuhealth-list" />
+<!-- END of Patient Register Report -->
+<!-- Patient Register Report With Disease -->
+		<record model="ir.action.report" id="healthjm_report_patientregister_wdisease">
+			<field name="name">Patient Evaluation Register (by Disease)</field>
+			<field name="report_name">health_jamaica.report_patient_register_bydisease</field>
+			<field name="active" eval="True" />
+			<field name="report">health_jamaica/report/patient_register_by_disease.odt</field>
+			<field name="template_extension">odt</field>
+			<field name="extension">pdf</field>
+		</record>
+		<record model="ir.ui.view" id="healthjm_form_patientregisterwd_report_start">
+			<field name="model">healthjm.report.patientregister_wdisease.start</field>
+			<field name="inherit" ref="report_patientregister_start" />
+			<field name="type">form</field>
+			<field name="name">report_patientregister_wdisease_start</field>
+		</record>
+		<record model="ir.action.wizard" id="healthjm_wizard_patientregister_wdisease">
+			<field name="name">Patient Evaluation Register (by Disease)</field>
+			<field name="wiz_name">healthjm.report.patientregister_wdisease.wizard</field>
+		</record>
+		<menuitem id="menu_report_patientregister_bydisease" name="By Disease"
+			parent="menu_report_patientregister" sequence="2" action="healthjm_wizard_patientregister_wdisease" icon="gnuhealth-list" />
 
 	<!-- Update the default Appointment report -->
 		<record model="ir.ui.view" id="appointments_report_start_view_form">
