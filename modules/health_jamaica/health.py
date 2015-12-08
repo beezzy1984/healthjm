@@ -34,7 +34,8 @@ __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'HealthInstitutionSpecialties', 'HealthProfessional',
            'HealthProfessionalSpecialties', 'ProcedureCode',
            'PathologyGroup', 'Pathology', 'PatientEvaluation',
-           'OperationalSector', 'HealthInstitutionOperationalSector']
+           'OperationalSector', 'HealthInstitutionOperationalSector',
+           'PatientEncounter']
 MENARCH = (9, 60)
 
 
@@ -575,7 +576,8 @@ class HealthInstitutionOperationalSector(ModelSQL, ModelView):
 
 
 class PatientEncounter(ModelSQL, ModelView):
-    'gnuhealth.encounter'
+    'Patient Encounter'
+    __name__ ='gnuhealth.encounter'
     fvty = fields.Boolean('First visit this year',
                           help='Check if this is known to be the first time '
                           'this patient is visiting this institution '

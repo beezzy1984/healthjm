@@ -51,6 +51,7 @@ def register():
         PathologyGroup,
         Pathology,
         PatientEvaluation,
+        PatientEncounter,
         PatientRegisterModel,
         PatientRegisterByDiseaseView,
         OpenAppointmentReportStart,
