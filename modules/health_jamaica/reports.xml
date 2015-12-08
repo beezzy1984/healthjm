@@ -47,9 +47,9 @@
 		</record>
 		<record model="ir.ui.view" id="healthjm_form_patientregisterwd_report_start">
 			<field name="model">healthjm.report.patientregister_wdisease.start</field>
-			<field name="inherit" ref="report_patientregister_start" />
+			<field name="inherit" ref="healthjm_form_patientregister_report_start" />
 			<field name="type">form</field>
-			<field name="name">report_patientregister_wdisease_start</field>
+			<field name="name">wizard-patientregister_wdisease_start</field>
 		</record>
 		<record model="ir.action.wizard" id="healthjm_wizard_patientregister_wdisease">
 			<field name="name">Patient Evaluation Register (by Disease)</field>
