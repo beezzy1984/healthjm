@@ -64,24 +64,22 @@ class Appointment(ModelSQL, ModelView):
     @classmethod
     def get_is_today(cls, instances, name):
         comp = get_day_comp()
-        out = {}
-        for a in instances:
-            out[a.id] = comp[0] <= a.appointment_date < comp[1]
-        return out
+
+        def istoday(instance):
+            if instance.appointment_date:
+                return (instance.id,
+                        comp[0] <= instance.appointment_date < comp[1])
+            return (instance.id, False)
+
+        return dict(map(istoday, instances))
+
 
     @classmethod
     def get_tree_color(cls, instances, name):
-        out = {}
-        for a in instances:
-            if a.state in ('done, user_cancelled, center_cancelled, no_show'):
-                out[a.id] = 'grey'
-            elif a.state in ('arrived', ):
-                out[a.id] = 'blue'
-            elif a.state in ('processing', ):
-                out[a.id] = 'green'
-            else:
-                out[a.id] = 'black'
-        return out
+        colord = dict([(x, 'grey') for x in
+                       ('done, user_cancelled, center_cancelled, no_show')])
+        colord.update(arrived='blue', processing='green')
+        return dict([(a.id, colord.get(a.state, 'black')) for a in instances])
 
     @classmethod
     def search_is_today(cls, name, clause):
