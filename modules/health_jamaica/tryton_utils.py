@@ -176,7 +176,7 @@ def is_not_synchro():
     greater than 0
     '''
     t = Transaction()
-    return (t.user > 0)
+    return (t.user > 1)
 
 
 def get_field_states(field):
