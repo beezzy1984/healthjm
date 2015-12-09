@@ -71,6 +71,7 @@ class DomiciliaryUnit(ModelSQL, ModelView):
             ('mobilehome', 'Mobile Home'),
         ]
         cls.roof_type.selection = [
+            (None, ''),
             ('concrete', 'Concrete/Slab'),
             ('alusteel', 'Steel/Aluminium/Zinc'),
             ('wood', 'Wood'),
