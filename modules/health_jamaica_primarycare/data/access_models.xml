@@ -1,7 +1,9 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <tryton>
     <data>
-        <record mode="ir.model.access" id="model-grp_">
+    <!-- template for all the records to follow:
+
+        <record model="ir.model.access" id="model-grp_">
             <field name="model" search="[('model','=', '')]"/>
             <field name="group" ref=""/>
             <field name="perm_read" eval="True" />
@@ -9,5 +11,359 @@
             <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="True" />
         </record>
+    -->
+        <!-- Who has permissions to create parties and patients -->
+        <record model="ir.model.access" id="model-grp_records_party">
+            <field name="model" search="[('model','=', 'party.party')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_patient">
+            <field name="model" search="[('model','=', 'gnuhealth.patient')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_du">
+            <field name="model" search="[('model','=', 'gnuhealth.du')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_address">
+            <field name="model" search="[('model','=', 'party.address')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+            <!-- Doctors and nurses should be able to create them too -->
+        <record model="ir.model.access" id="model-grp_nurses_party">
+            <field name="model" search="[('model','=', 'party.party')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_nurses_patient">
+            <field name="model" search="[('model','=', 'gnuhealth.patient')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_doctors_party">
+            <field name="model" search="[('model','=', 'party.party')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+
+            <!-- Records technicians get the ability to modify and delete -->
+        <record model="ir.model.access" id="model-grp_doctors_patient">
+            <field name="model" search="[('model','=', 'gnuhealth.patient')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_jrdoctors_patient">
+            <field name="model" search="[('model','=', 'gnuhealth.patient')]"/>
+            <field name="group" ref="group_jr_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_jrnurses_patient">
+            <field name="model" search="[('model','=', 'gnuhealth.patient')]"/>
+            <field name="group" ref="group_junior_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_tech_party">
+            <field name="model" search="[('model','=', 'party.party')]"/>
+            <field name="group" ref="group_records_technicians"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_adm_party">
+            <field name="model" search="[('model','=', 'party.party')]"/>
+            <field name="group" ref="group_records_admins"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+            <!-- So too Senior Doctors and Nurses -->
+        <record model="ir.model.access" id="model-grp_srdoc_party">
+            <field name="model" search="[('model','=', 'party.party')]"/>
+            <field name="group" ref="group_sr_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_srnurse_party">
+            <field name="model" search="[('model','=', 'party.party')]"/>
+            <field name="group" ref="group_senior_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_managing_nurse_party">
+            <field name="model" search="[('model','=', 'party.party')]"/>
+            <field name="group" ref="group_managing_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+
+        <!-- Records staff should not be creating or modifying these -->
+        <record model="ir.model.access" id="model-grp_records_occupation">
+            <field name="model" search="[('model','=', 'gnuhealth.occupation')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_ethnicity">
+            <field name="model" search="[('model','=', 'gnuhealth.ethnicity')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_oparea">
+            <field name="model" search="[('model','=', 'gnuhealth.operational_area')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_opsector">
+            <field name="model" search="[('model','=', 'gnuhealth.operational_sector')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_institution">
+            <field name="model" search="[('model','=', 'gnuhealth.institution')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_specialty">
+            <field name="model" search="[('model','=', 'gnuhealth.specialty')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_healthprof">
+            <field name="model" search="[('model','=', 'gnuhealth.healthprofessional')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_pathology">
+            <field name="model" search="[('model','=', 'gnuhealth.pathology')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_pathology_category">
+            <field name="model" search="[('model','=', 'gnuhealth.pathology.category')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_procedure">
+            <field name="model" search="[('model','=', 'gnuhealth.procedure')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+
+        <!-- Customer Service and Administrators should not see Diseases -->
+        <record model="ir.model.access" id="model-grp_custserv_diseases">
+            <field name="model" search="[('model','=', 'gnuhealth.patient.disease')]"/>
+            <field name="group" ref="group_customer_service"/>
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_diseases">
+            <field name="model" search="[('model','=', 'gnuhealth.patient.disease')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <!-- But Records Techs and Admins have full control -->
+        <record model="ir.model.access" id="model-grp_recordstech_diseases">
+            <field name="model" search="[('model','=', 'gnuhealth.patient.disease')]"/>
+            <field name="group" ref="group_records_technicians"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_recordsadm_diseases">
+            <field name="model" search="[('model','=', 'gnuhealth.patient.disease')]"/>
+            <field name="group" ref="group_records_admins"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_nurses_diseases">
+            <field name="model" search="[('model','=', 'gnuhealth.patient.disease')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_doctors_diseases">
+            <field name="model" search="[('model','=', 'gnuhealth.patient.disease')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+
+        <!-- As For medication, same rules as above -->
+        <record model="ir.model.access" id="model-grp_custserv_medication">
+            <field name="model" search="[('model','=', 'gnuhealth.patient.medication')]"/>
+            <field name="group" ref="group_customer_service"/>
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_medication">
+            <field name="model" search="[('model','=', 'gnuhealth.patient.medication')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <!-- And Records Techs and Admins have full control -->
+        <record model="ir.model.access" id="model-grp_recordstech_medication">
+            <field name="model" search="[('model','=', 'gnuhealth.patient.medication')]"/>
+            <field name="group" ref="group_records_technicians"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_recordsadm_medication">
+            <field name="model" search="[('model','=', 'gnuhealth.patient.medication')]"/>
+            <field name="group" ref="group_records_admins"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_nurses_medication">
+            <field name="model" search="[('model','=', 'gnuhealth.patient.medication')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_doctors_medication">
+            <field name="model" search="[('model','=', 'gnuhealth.patient.medication')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+
+        <!-- Records Staff, Nurses and Doctors all have permissions to appointments -->
+        <record model="ir.model.access" id="model-grp_records_appointment">
+            <field name="model" search="[('model','=', 'gnuhealth.appointment')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_admins_appointment">
+            <field name="model" search="[('model','=', 'gnuhealth.appointment')]"/>
+            <field name="group" ref="group_admin_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_doctors_appointment">
+            <field name="model" search="[('model','=', 'gnuhealth.appointment')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_nurses_appointment">
+            <field name="model" search="[('model','=', 'gnuhealth.appointment')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_custsrv_appointment">
+            <field name="model" search="[('model','=', 'gnuhealth.appointment')]"/>
+            <field name="group" ref="group_customer_service"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+
+
     </data>
 </tryton>

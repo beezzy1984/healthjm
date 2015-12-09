@@ -1,7 +1,29 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <tryton>
     <data>
         <!-- User Group Menu Access Permissions-->
+<!-- menu_party -->
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurse_party_top">
+            <field name="menu" ref="party.menu_party" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctor_party_top">
+            <field name="menu" ref="party.menu_party" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_party_top">
+            <field name="menu" ref="party.menu_party" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_admins_party_top">
+            <field name="menu" ref="party.menu_party" />
+            <field name="group" ref="group_admin_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_custserv_party_top">
+            <field name="menu" ref="party.menu_party" />
+            <field name="group" ref="group_customer_service" />
+        </record>
+
 
         <!-- Records, Nurse and Doctors can all Get at Party menu -->
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_party">
@@ -18,10 +40,32 @@
         </record>
         <record model="ir.ui.menu-res.group" id="menu-grp_admins_party">
             <field name="menu" ref="party.menu_party_form" />
-            <field name="group" ref="group_admin_clerks" />
+            <field name="group" ref="group_admin_staff" />
         </record>
         <record model="ir.ui.menu-res.group" id="menu-grp_custserv_party">
             <field name="menu" ref="party.menu_party_form" />
+            <field name="group" ref="group_customer_service" />
+        </record>
+
+        <!--  And The People Menu -->
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurse_people">
+            <field name="menu" ref="health.menu_people" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctor_people">
+            <field name="menu" ref="health.menu_people" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_people">
+            <field name="menu" ref="health.menu_people" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_admins_people">
+            <field name="menu" ref="health.menu_people" />
+            <field name="group" ref="group_admin_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_custserv_people">
+            <field name="menu" ref="health.menu_people" />
             <field name="group" ref="group_customer_service" />
         </record>
 
@@ -39,6 +83,10 @@
             <field name="menu" ref="health.gnuhealth_menu" />
             <field name="group" ref="group_records_staff" />
         </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_custserv_health">
+            <field name="menu" ref="health.gnuhealth_menu" />
+            <field name="group" ref="group_customer_service" />
+        </record>
 
         <!-- And for these folks access to the health-patient menu -->
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_patient">
@@ -53,6 +101,11 @@
             <field name="menu" ref="health.gnuhealth_patients_menu" />
             <field name="group" ref="group_records_staff" />
         </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_custserv_patient">
+            <field name="menu" ref="health.gnuhealth_patients_menu" />
+            <field name="group" ref="group_customer_service" />
+        </record>
+
 
         <!-- And access to the appointments menu -->
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_appointment">
@@ -76,18 +129,19 @@
             <field name="group" ref="group_customer_service" />
         </record>
 
-        <!-- The same three musketeers get access to Encounters menu -->
+        <!-- Only Senior Records folks and Managing Dr.s get direct access
+        to Encounters. Everyone else goes through appointments or Patient -->
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_encounters">
             <field name="menu" ref="health_encounter.health_menu_encounter_main" />
-            <field name="group" ref="group_nurses" />
+            <field name="group" ref="group_managing_nurses" />
         </record>
         <record model="ir.ui.menu-res.group" id="menu-grp_doctor_encounters">
             <field name="menu" ref="health_encounter.health_menu_encounter_main" />
-            <field name="group" ref="group_doctors" />
+            <field name="group" ref="group_managing_doctors" />
         </record>
         <record model="ir.ui.menu-res.group" id="menu-grp_records_encounters">
             <field name="menu" ref="health_encounter.health_menu_encounter_main" />
-            <field name="group" ref="group_records_staff" />
+            <field name="group" ref="group_records_admins" />
         </record>
 
         <!-- And institutions -->
@@ -141,6 +195,7 @@
         </record>
 
         <!-- Some people get access to the reporting menu -->
+
         <record model="ir.ui.menu-res.group" id="menu-grp_mgmt_nurses_reporting">
             <field name="menu" ref="health.gnuhealth_reporting_menu" />
             <field name="group" ref="group_managing_nurses" />
@@ -153,6 +208,10 @@
             <field name="menu" ref="health.gnuhealth_reporting_menu" />
             <field name="group" ref="group_local_management" />
         </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_records_admin_reporting">
+            <field name="menu" ref="health.gnuhealth_reporting_menu" />
+            <field name="group" ref="group_records_admins" />
+        </record>
         <record model="ir.ui.menu-res.group" id="menu-grp_sr_mgmt_reporting">
             <field name="menu" ref="health.gnuhealth_reporting_menu" />
             <field name="group" ref="group_senior_management" />
@@ -161,12 +220,9 @@
             <field name="menu" ref="health.gnuhealth_reporting_menu" />
             <field name="group" ref="group_records_technicians" />
         </record>
-        <record model="ir.ui.menu-res.group" id="menu-grp_records_admin_reporting">
-            <field name="menu" ref="health.gnuhealth_reporting_menu" />
-            <field name="group" ref="group_records_admins" />
-        </record>
 
         <!-- Accounting and Financial Management Menus for Accounting Clerks -->
+        <!--
         <record model="ir.ui.menu-res.group" id="menu-grp_accounts_currencies">
             <field name="menu" ref="currency.menu_currency" />
             <field name="group" ref="group_accounts_clerks" />
@@ -183,5 +239,6 @@
             <field name="menu" ref="currency.menu_currency" />
             <field name="group" ref="group_customer_service" />
         </record>
+    -->
     </data>
 </tryton>

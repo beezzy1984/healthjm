@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<tryton>
+    <data>
+        <menuitem action="health.action_gnuhealth_institution"
+            id="health.gnuhealth_menu_institution" icon="gnuhealth-health-center"
+            parent="health.gnuhealth_menu" sequence="21"/>
+    </data>
+</tryton>

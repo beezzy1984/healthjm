@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tryton>
+    <data>
+        <!-- Template
+
+        <record model="ir.model.field.access" id="field-grp_">
+            <field name="group" ref="" />
+            <field name="field" search="[('name','=',''),('model.model','=','')]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        -->
+        <!-- Records clerks and customer service should not see the critical summary
+        field on patients -->
+        <record model="ir.model.field.access" id="field-grp_records_criticalsummary">
+            <field name="group" ref="group_records_staff" />
+            <field name="field" search="[('name','=','critical_summary'),('model.model','=','gnuhealth.patient')]" />
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.field.access" id="field-grp_recordstech_criticalsummary">
+            <field name="group" ref="group_records_technicians" />
+            <field name="field" search="[('name','=','critical_summary'),('model.model','=','gnuhealth.patient')]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.field.access" id="field-grp_recordsadm_criticalsummary">
+            <field name="group" ref="group_records_admins" />
+            <field name="field" search="[('name','=','critical_summary'),('model.model','=','gnuhealth.patient')]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.field.access" id="field-grp_doctors_criticalsummary">
+            <field name="group" ref="group_doctors" />
+            <field name="field" search="[('name','=','critical_summary'),('model.model','=','gnuhealth.patient')]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.field.access" id="field-grp_nurses_criticalsummary">
+            <field name="group" ref="group_nurses" />
+            <field name="field" search="[('name','=','critical_summary'),('model.model','=','gnuhealth.patient')]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+    </data>
+</tryton>
