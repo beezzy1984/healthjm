@@ -191,5 +191,11 @@
             <field name="model">gnuhealth.appointment,-2</field>
             <field name="action" ref="health_encounter.act_appointment_encounter_starter"/>
         </record>
+        <!-- Disable the check VIES action from Party module. Pointless in Jamaica -->
+        <record model="ir.action.keyword" id="party.check_vies_keyword">
+            <field name="keyword">form_action</field>
+            <field name="model">party.party,-2</field>
+            <field name="action" ref="party.wizard_check_vies"/>
+        </record>
 	</data>
 </tryton>
