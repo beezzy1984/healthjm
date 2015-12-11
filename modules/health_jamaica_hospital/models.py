@@ -16,7 +16,7 @@ class HospitalBed(ModelSQL, ModelView):
         if self.name:
             return self.name.code
         else:
-            return "Unlabeled bed %d"%(self.id)
+            return "Unlabeled bed %d" % (self.id)
 
     @classmethod
     def search_rec_name(cls, name, clause):

@@ -74,7 +74,7 @@ def get_timezone():
 def get_start_of_day(d, tz=None):
     '''returns a datetime object representing midnight at the start of
     the datetime passed in.'''
-    if d.tzinfo:
+    if getattr(d, 'tzinfo', False):
         dt = d
     elif tz:
         dt = datetime(*d.timetuple()[:6], tzinfo=tz)

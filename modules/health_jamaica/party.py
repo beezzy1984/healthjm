@@ -363,13 +363,15 @@ class AlternativePersonID (ModelSQL, ModelView):
             'invalid_medical_record': 'Invalid format for medical record number',
             'invalid_format': 'Invalid format for %s',
             'mismatched_issue_expiry': '%s issue date cannot be after the expiry date',
-            'expiry_date_required': 'An expiry date is required for %s'
+            'expiry_date_required': 'An expiry date is required for %s',
+            'invalid_nhfcard': 'Invalid format for NHF Card (9-10 digits only)'
         })
         cls.format_test = {
             'trn': re.compile('^1\d{8}$'),
             'medical_record': re.compile('\d{6}[a-z]?', re.I),
             'pathID': re.compile('^\d{8}$'),
             'gojhcard': re.compile('^\d{10}$'),
+            'nhfcard': re.compile('^\d{9,10}$'),
             'nunnum': re.compile('^\d{9}$')
         }
         cls.format_test['jm_license'] = cls.format_test['trn']

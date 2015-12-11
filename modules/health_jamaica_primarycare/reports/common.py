@@ -78,7 +78,7 @@ def make_age_grouper(age_groups, ref_date, dob_field='patient.dob'):
 
 
 
-def mk_domain_clause(code, column='signs_and_symptoms.clinical.code'):
+def mk_domain_clause(code, column='signs_symptoms.clinical.code'):
     '''returns a single domain clause to say column="<code>" '''
     if ' - ' in code:
         limits = code.split(' - ')
