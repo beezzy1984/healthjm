@@ -63,15 +63,16 @@ class ServiceUtilisationReport(Report):
                     localcontext['parish'] = addr.subdivision.name
                     break
         else:
-            default_services = ['Curative', 'Oral Health (Primary Care)', 
-                        'Family Planning', 'Child Health', 'Antenatal',
-                        'Nutrition', 'Postnatal']
-            default_services = [{'specialty.name':x, 'is_main_specialty':False}
-                                for x  in default_services ]
+            default_services = ['Curative', 'Oral Health (Primary Care)',
+                                'Family Planning', 'Child Health', 'Antenatal',
+                                'Nutrition', 'Postnatal']
+            default_services = [{'specialty.name': x, 'is_main_specialty': False}
+                                for x  in default_services]
 
-        age_groups = [('0 - 4',0,5), ('5 - 9', 5,10), ('10 - 19', 10, 20),
+        age_groups = [('0 - 4', 0, 5), ('5 - 9', 5, 10), ('10 - 19', 10, 20),
                       ('20 - 59', 20, 60), ('60+', 60, None),
-                      ('Unknown', -1, None)] # negative min_age for dob==null
+                      ('Unknown', -1, None)]
+                      # negative min_age for dob==null
 
         appointments = Appointment.search_read(search_criteria,
                                     order=(('speciality','ASC'),
