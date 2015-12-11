@@ -1218,9 +1218,9 @@
 			<field name="name">Heathfield P.A.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
-		<record id="jmpo_G121142" model="country.post_office">
-			<field name="code">G121142</field>
-			<field name="subdivision" ref="country.jm-12" />
+		<record id="jmpo_G071142" model="country.post_office">
+			<field name="code">G071142</field>
+			<field name="subdivision" ref="country.jm-07" />
 			<field name="name">Joe Hut P.A.</field>
 			<field name="inspectorate">MANDEVILLE</field>
 		</record>
