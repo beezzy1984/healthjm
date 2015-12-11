@@ -19,12 +19,12 @@
     <!-- /end of Primary Care Face Sheet -->
 	<!-- <Syndromic Surveillance Report> -->
 		<record model="ir.action.report" id="jmreport_syndromic_surveillance">
-			<field name="name">Syndromic Surveillance Report</field>
+			<field name="name">Sentinel Surveillance Report</field>
 			<field name="report_name">healthjm_primarycare.report.syndromic_surveillance</field>
 			<field name="active" eval="True"></field>
 			<field name="report">health_jamaica_primarycare/report/syndromic_surveillance.odt</field>
 			<field name="template_extension">odt</field>
-			<field name="extension"></field>
+			<field name="extension">pdf</field>
 		</record>
 		<!-- report wizard view -->
         <record model="ir.ui.view" id="report_syndromic_surveillance_start">
@@ -38,7 +38,7 @@
             <field name="wiz_name">healthjm_primarycare.report.syndromic_surveillance.wizard</field>
         </record>
         <!-- menu item -->
-        <menuitem id="menu_syndromic_surveillance_report" name="Syndromic Surveillance Report" parent="health.gnuhealth_reporting_menu" sequence="404" action="action_syndromic_surveillance_wizard" icon="gnuhealth-list"/>
+        <menuitem id="menu_syndromic_surveillance_report" name="Sentinel Surveillance Report" parent="health.gnuhealth_reporting_menu" sequence="404" action="action_syndromic_surveillance_wizard" icon="gnuhealth-list"/>
     <!-- </end of Syndromic Surveillance Report> -->
     <!-- <Service Utilisation Report> -->
         <record model="ir.action.report" id="jmreport_service_utilisation">

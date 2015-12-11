@@ -21,26 +21,45 @@ class SyndromicSurveillanceReport(Report):
     __name__ = 'healthjm_primarycare.report.syndromic_surveillance'
 
     @classmethod
+    def get_additional_criteria(cls, for_evaluation = False):
+        if for_evaluation:
+            return []
+        else:
+            Speciality = Pool().get('gnuhealth.specialty')
+            curative, = Speciality.search([('code', '=', 'CURATIVE')])
+            return [('speciality', '=', curative)]
+
+    @classmethod
     def parse(cls, report, records, data, localcontext):
         pool = Pool()
         User = pool.get('res.user')
         Institution = pool.get('gnuhealth.institution')
         Company = pool.get('company.company')
-        Evaluation = pool.get('gnuhealth.patient.evaluation')
+        Encounter = pool.get('gnuhealth.encounter')
+        Clinical = pool.get('gnuhealth.encounter.clinical')
+        # clinical component
+        Appointment = pool.get('gnuhealth.appointment')
         # Patient = pool.get('gnuhealth.patient')
 
         timezone = utils.get_timezone()
         start_date = utils.get_start_of_day(data['start_date'], timezone)
         end_date = utils.get_start_of_next_day(data['end_date'], timezone)
         search_criteria = ['AND',
-            ('state','=','done'),
-            ('evaluation_start','>=',start_date),
-            ('evaluation_start','<',end_date)
-        ]
+            ('signed_by', '!=', None),
+            ('encounter.start_time','>=',start_date),
+            ('encounter.start_time','<',end_date)
+        ] + cls.get_additional_criteria(True)
+        appt_search_criteria = ['AND',
+            ('state', '=', 'done'),
+            ('appointment_date','>=',start_date),
+            ('appointment_date','<',end_date)] + cls.get_additional_criteria(False)
+        encounter_domain = [('state', '=', 'signed')]
         localcontext['user_name'] = User(Transaction().user).name
         if data.get('institution', False):
-            search_criteria.append(('institution','=',data['institution']))
-            localcontext['institution'] = Institution(data['institution'])
+            i = data['institution']
+            encounter_domain.append(('institution', '=', i))
+            appt_search_criteria.append(('institution', '=', i))
+            localcontext['institution'] = Institution(i)
             osectors = localcontext['institution'].operational_sectors
             if osectors:
                 localcontext['sector'] = osectors[0].operational_sector
@@ -86,7 +105,8 @@ class SyndromicSurveillanceReport(Report):
 
         ]
         output_lines = []
-        def day_group_counts(evaluation_list, field="evaluation_start"):
+        total_line = Counter(Sun=0, Mon=0, Tue=0, Wed=0, Thu=0, Fri=0, Sat=0)
+        def day_group_counts(evaluation_list, field="start_time"):
             # restricted to using day names as the keys since we're sure
             # this will only be run for a single week
             # dayfunc = lambda x: x['evaluation_start'].timetuple()[:3]
@@ -100,7 +120,6 @@ class SyndromicSurveillanceReport(Report):
             counter.update(total = sum(counter.values()))
             return counter, evgroups
 
-        total_line = Counter(Sun=0, Mon=0, Tue=0, Wed=0, Thu=0, Fri=0, Sat=0)
         for heading, params in syndromes:
             search_domain = search_criteria[:]
             if params.get('signs', False):
@@ -109,35 +128,38 @@ class SyndromicSurveillanceReport(Report):
             if params.get('diagnosis', False):
                 for diag in params['diagnosis']:
                     search_domain.append(
-                        mk_domain_clause(diag,
-                                         'diagnostic_hypothesis.pathology.code'
-                                        )
+                        mk_domain_clause(diag, 'diagnosis.code')
+                        # ToDo: Verify if secondary_conditions needed here
                     )
-            # print("{}\nsearch_domain = {}\n{}".format('~'*80,
-            #                                           repr(search_domain),
-            #                                           '~'*80))
-            # import pdb; pdb.set_trace()
-            objects = Evaluation.search_read(search_domain,
-                                    order=(('evaluation_start','ASC'),
-                                           ('evaluation_endtime', 'ASC')),
-                                    fields_names=['id','evaluation_start',
-                                                  'patient.dob', 'patient'])
+            components = Clinical.search_read(
+                search_domain,
+                order=(('start_time', 'ASC'), ), fields_names=['encounter'])
+            if components:
+                encounter_domain_real = encounter_domain[:] + [
+                    ('id', 'in', [x['encounter'] for x in components])
+                ]
+                objects = Encounter.search_read(
+                    encounter_domain_real,
+                    order=(('start_time', 'ASC'), ('end_time', 'ASC')),
+                    fields_names=['start_time', 'patient', 'patient.dob'])
+            else:
+                objects = []
 
             line = {'title':heading, 'summary':False}
             counts, eval_groups = day_group_counts(objects)
             line.update(dict(counts))
-            for dayname, evallist in eval_groups:
-                patient_counter = Counter(map((lambda g: g['patient']),
-                                              evallist))
-                total_line.update({dayname:len(patient_counter.keys())})
+            # for dayname, evallist in eval_groups:
+                # patient_counter = Counter(map((lambda g: g['patient']),
+                #                               evallist))
 
             if params.get('age_groups', False):
                 line['title'] = '%s (Total)'%(heading,)
                 line['summary'] = True
 
-                output_lines.append(line) # total Line
+                output_lines.append(line)  # total Line
                 age_groupings = defaultdict(list)
-                grouper = make_age_grouper(params['age_groups'], end_date)
+                grouper = make_age_grouper(params['age_groups'], end_date,
+                                           'patient.dob')
                 for ev in objects:
                     age_groupings[grouper(ev)].append(ev)
 
@@ -150,15 +172,18 @@ class SyndromicSurveillanceReport(Report):
                 # make a single line for the heading
                 output_lines.append(line) # no-age-grouping line
 
-        # count Pneumonia Related Deaths
+        # Now find the numbers of curative patients that were seen
+        appointments = Appointment.search_read(appt_search_criteria,
+                                    order=(('appointment_date','ASC'),),
+                                    fields_names=['name','appointment_date',
+                                                  'patient'])
 
-
-        # count Admissions with LRTI (J09 - J18)
-
-        # print('{}\n OMG, what a function. These are usually quite sexy'.format('*'*80))
-        # print('{}\n\n{}'.format(repr(output_lines), '*'*80))
-        # calculate totals:total
+        tcounts, tgroups = day_group_counts(appointments, 'appointment_date')
+        for dayname, evallist in tgroups:
+                patients = set(map((lambda g: g['patient']), evallist))
+                total_line.update({dayname: len(patients)})
         total_line.update(total=sum(total_line.values()))
+
         localcontext.update(syndrome_counts=output_lines, totals=total_line,
                             epi_week=data['epi_week'],
                             now_date=datetime.now(timezone),
