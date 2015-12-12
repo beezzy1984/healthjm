@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<data>
+    <!-- <xpath expr="/form/label[@name=&quot;report_sort&quot;]" position="before"> -->
+    <xpath expr="/form/field[@name=&quot;institution&quot;]" position="after">
+        <newline />
+        <label name="dp_perm" />
+        <field name="dp_perm" />
+        <newline />
+        <group id="grp_disease_selection" string="Diseases" colspan="2" col="2">
+            <label name="disease_perm" />
+            <field name="disease_perm" />
+            <newline />
+            <field name="diseases" colspan="2" height="160" />
+        </group>
+        <group id="grp_procs_selection" string="Procedures" colspan="2" col="2">
+            <label name="procedure_perm" />
+            <field name="procedure_perm" />
+            <newline />
+            <field name="procedures" colspan="2" height="160" />
+        </group>
+    </xpath>
+</data>

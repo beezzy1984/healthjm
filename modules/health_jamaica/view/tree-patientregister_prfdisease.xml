@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<tree string="Diseases">
+    <field name="pathology" expand="1" />
+    <field name="invert" />
+    <field name="prf" />
+</tree>

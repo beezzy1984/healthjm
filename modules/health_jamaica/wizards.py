@@ -5,16 +5,17 @@ from sql import Literal, Join
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 from trytond.model import ModelView, ModelSQL, fields
-from trytond.pyson import Eval, Not, Bool, PYSONEncoder
+from trytond.pyson import Eval, Not, Bool, PYSONEncoder, Equal
 from trytond.wizard import (Wizard, StateView, StateTransition, Button,
                             StateAction)
 
 from .reports import DailyPatientRegister
 
 __all__ = ['PatientRegisterModel', 'PatientRegisterWizard',
-           'PatientRegisterByDiseaseView', 'PatientRegisterWithDiseaseWizard',
+           'PatientRegisterFilterView', 'PatientRegisterFilteredWizard',
            'AppointmentReport', 'OpenAppointmentReportStart',
-           'OpenAppointmentReport', 'StartEndDateModel']
+           'OpenAppointmentReport', 'StartEndDateModel', 'PRFDisease',
+           'PRFProcedure']
 
 
 
@@ -82,7 +83,8 @@ class PatientRegisterWizard(Wizard):
         data = {'start_date':self.start.on_or_after,
                 'end_date':self.start.on_or_after,
                 'specialty':None,
-                'facility':None}
+                'facility':None,
+                'x_extra_criteria': False}
 
         if self.start.on_or_before:
             data['end_date'] = self.start.on_or_before
@@ -99,67 +101,143 @@ class PatientRegisterWizard(Wizard):
         return action, data
 
 
-class PatientRegisterByDiseaseView(PatientRegisterModel):
+PERMUTE_OPTS = [
+    ('OR', 'Include ANY of the selected  (OR)'),
+    ('AND', 'Include ALL of the selected diseases (AND)')]
+    # ('nor', 'Include None of the selected (NOR)')]
+
+
+class PatientRegisterFilterView(PatientRegisterModel):
     'Patient Evaluation Register (by Disease)'
-    __name__ = 'healthjm.report.patientregister_wdisease.start'
-    disease1 = fields.Many2One('gnuhealth.pathology', 'Disease (1)',
-                               required=True)
-    disease2 = fields.Many2One('gnuhealth.pathology', 'Disease (2)')
-    disease_perm = fields.Selection(
-        [('OR', 'Include either disease (OR)'),
-         ('AND', 'Include both diseases (AND)')], 'Permutation', sort=False)
+    __name__ = 'healthjm.report.patientregister_filtered.start'
+    dp_perm = fields.Selection(
+        [('dp', 'Both Diseases and Procedures'), ('d', 'Diseases Only'),
+         ('p', 'Procedures Only'), ('o', 'Either Diseases or Procedures')],
+        'Filter by', sort=False)
+    diseases = fields.One2Many(
+        'healthjm.report.patientregister_filtered.disease_o2m', 'prf',
+        'Selected Diseases', states={'readonly': Equal(Eval('dp_perm'), 'p')})
+    procedures = fields.One2Many(
+        'healthjm.report.patientregister_filtered.procedure_o2m', 'prf',
+        'Selected Procedures', states={'readonly': Equal(Eval('dp_perm'), 'd')})
+
+    disease_perm = fields.Selection(PERMUTE_OPTS, 'Disease option', sort=False)
+    procedure_perm = fields.Selection(PERMUTE_OPTS, 'Procedure option',
+                                      sort=False)
 
     @staticmethod
     def default_disease_perm():
         return 'AND'
 
+    @staticmethod
+    def default_procedure_perm():
+        return 'AND'
 
-class PatientRegisterWithDiseaseWizard(PatientRegisterWizard):
+    @staticmethod
+    def default_dp_perm():
+        return 'o'
+
+
+class PRFDisease(ModelView):
+    'Patient Evaluation Register - Diseases'
+    __name__ = 'healthjm.report.patientregister_filtered.disease_o2m'
+    prf = fields.Many2One('healthjm.report.patientregister_filtered.start',
+                          'PRF', readonly=True)
+    pathology = fields.Many2One('gnuhealth.pathology', 'Disease',
+                                required=True)
+    invert = fields.Boolean('Invert',
+                            help='exclude rather than include this one')
+
+
+class PRFProcedure(ModelView):
+    'Patient Evaluation Register - Procedures'
+    __name__ = 'healthjm.report.patientregister_filtered.procedure_o2m'
+    prf = fields.Many2One('healthjm.report.patientregister_filtered.start',
+                          'PRF', readonly=True)
+    procedure = fields.Many2One('gnuhealth.procedure', 'Procedure',
+                                required=True)
+    invert = fields.Boolean('Invert',
+                            help='exclude rather than include this one')
+
+
+class PatientRegisterFilteredWizard(PatientRegisterWizard):
     '''Evaluation Register Wizard'''
-    __name__ = 'healthjm.report.patientregister_wdisease.wizard'
+    __name__ = 'healthjm.report.patientregister_filtered.wizard'
 
     start = StateView(
-        'healthjm.report.patientregister_wdisease.start',
-        'health_jamaica.healthjm_form_patientregisterwd_report_start', [
+        'healthjm.report.patientregister_filtered.start',
+        'health_jamaica.healthjm_form_patientregisterflt_report_start', [
             Button('Cancel', 'end', 'tryton-cancel'),
             Button('Generate Report', 'generate_report', 'tryton-ok',
                    default=True),
         ])
     generate_report = StateAction(
-        'health_jamaica.healthjm_report_patientregister_wdisease')
+        'health_jamaica.healthjm_report_patientregister_filtered')
 
     def transition_generate_report(self):
         return 'end'
 
     def do_generate_report(self, action):
-        bad_action, data = super(PatientRegisterWithDiseaseWizard, self).\
-            do_generate_report(action)
-        search_criteria = []
-        search_criteria_name = []
-        if self.start.disease1 and self.start.disease2:
-            search_criteria.append(self.start.disease_perm)
-            # search_criteria_name.append(self.start.disease_perm)
+        def make_disease_domain(disease):
+            if disease.invert:
+                return (['AND', ('diagnosis', '!=', disease.pathology.id),
+                        ('secondary_conditions.pathology', '!=',
+                         disease.pathology.id)],
+                        u'Not(%s [%s])' % (disease.pathology.name,
+                                           disease.pathology.code))
+            else:
+                return (['OR', ('diagnosis', '=', disease.pathology.id),
+                        ('secondary_conditions.pathology', '=',
+                         disease.pathology.id)],
+                        u'%s [%s]' % (disease.pathology.name,
+                                      disease.pathology.code))
 
-        def make_search_domain(disease):
-            return (['OR',
-                    ('diagnosis', '=', disease.id),
-                    ('diagnostic_hypothesis.pathology', '=', disease.id)],
-                    u'%s (%s)' % (disease.name, disease.code))
+        def make_procedure_domain(procedure):
+            if procedure.invert:
+                return (('procedures.procedure', '=', procedure.procedure.id),
+                        u'Not(%s [%s])' % (procedure.description,
+                                           procedure.name))
+            else:
+                return (('procedures.procedure', '=', procedure.procedure.id),
+                        u'%s [%s]' % (procedure.procedure.description,
+                                      procedure.procedure.name))
 
-        if self.start.disease1:
-            criteria, name = make_search_domain(self.start.disease1)
-            search_criteria.append(criteria)
-            search_criteria_name.append(name)
+        bad_action, data = super(
+            PatientRegisterFilteredWizard, self).do_generate_report(action)
 
-        if self.start.disease2:
-            criteria, name = make_search_domain(self.start.disease2)
-            search_criteria.append(criteria)
-            search_criteria_name.append(name)
+        search_criteria = {'disease': [], 'procedure': []}
+        search_criteria_names = {'disease': [], 'procedure': []}
 
-        data['x_search_criteria'] = search_criteria
-        data['x_selected_diseases'] = (
-            ' %s ' % self.start.disease_perm).lower().join(search_criteria_name)
-        data['x_selected_diseases_count'] = len(search_criteria_name)
+        if self.start.dp_perm in ('dp', 'd', 'o') and self.start.diseases:
+            for disease in self.start.diseases:
+                criteria, name = make_disease_domain(disease)
+                search_criteria['disease'].append(criteria)
+                search_criteria_names['disease'].append(name)
+            if len(search_criteria_names['disease']) == 1:
+                search_criteria['disease'] = search_criteria['disease'][0]
+            else:
+                search_criteria['disease'].insert(0, self.start.disease_perm)
+
+        if self.start.dp_perm in ('dp', 'p', 'o') and self.start.procedures:
+            for proc in self.start.procedures:
+                criteria, name = make_procedure_domain(proc)
+                search_criteria['procedure'].append(criteria)
+                search_criteria_names['procedure'].append(name)
+            if len(search_criteria_names['procedure']) == 1:
+                search_criteria['procedure'] = search_criteria['procedure'][0]
+            else:
+                search_criteria['procedure'].insert(0,
+                                                    self.start.procedure_perm)
+
+        data.update(x_extra_criteria=True, x_search_criteria=search_criteria,
+                    x_selected=search_criteria_names,
+                    x_dp_perm=self.start.dp_perm,
+                    x_encounter_fields=['patient.name.du.simple_address',
+                    'patient.name.du.address_subdivision.name'],
+                    x_selected_count=dict(
+                        [(a, len(b))
+                         for a, b in search_criteria_names.items()]))
+
         return action, data
 
 
@@ -207,6 +285,7 @@ class AppointmentReport(ModelSQL, ModelView):
             appointment.healthprof,
             appointment.speciality,
             where=where)
+
 
 class OpenAppointmentReportStart(ModelView):
     'Open Appointment Report'
