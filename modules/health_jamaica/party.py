@@ -225,11 +225,12 @@ class PartyPatient(ModelSQL, ModelView):
             namelist.append(self.middlename)
         return ' '.join(namelist)
 
-    def get_upi_display(self, name):
-        if self.is_patient and self.unidentified:
-            return u'NN-{}'.format(self.ref)
-        else:
-            return self.ref
+    @classmethod
+    def get_upi_display(cls, instances, name):
+        return dict([(i.id,
+                      'NN-%s' % i.ref if i.is_patient and
+                      i.unidentified else i.ref)
+                     for i in instances])
 
     @classmethod
     def search_upi(cls, field_name, clause):

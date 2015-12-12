@@ -110,8 +110,11 @@ class PatientData(ModelSQL, ModelView):
         cond = [replace_clause_column(clause, 'name.unidentified')]
         return cond
 
-    def get_patient_puid(self, name):
-        return self.name.get_upi_display('upi')
+    @classmethod
+    def get_patient_puid(cls, instances, name):
+        return dict([(i.id,
+                      'NN-%s' % i.name.ref if i.unidentified else i.name.ref)
+                     for i in instances])
 
     @classmethod
     def __setup__(cls):
