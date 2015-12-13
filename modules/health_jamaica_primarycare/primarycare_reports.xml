@@ -24,7 +24,7 @@
 			<field name="active" eval="True"></field>
 			<field name="report">health_jamaica_primarycare/report/syndromic_surveillance.odt</field>
 			<field name="template_extension">odt</field>
-			<field name="extension">pdf</field>
+			<field name="extension"></field>
 		</record>
 		<!-- report wizard view -->
         <record model="ir.ui.view" id="report_syndromic_surveillance_start">
@@ -47,7 +47,7 @@
             <field name="active" eval="True"></field>
             <field name="report">health_jamaica_primarycare/report/service_utilisation.odt</field>
             <field name="template_extension">odt</field>
-            <field name="extension">pdf</field>
+            <field name="extension"></field>
         </record>
         <!-- report wizard view -->
         <record model="ir.ui.view" id="report_service_utilisation_start">
