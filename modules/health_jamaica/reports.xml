@@ -15,7 +15,7 @@
 			<field name="active" eval="True" />
 			<field name="report">health_jamaica/report/patient_register.odt</field>
 			<field name="template_extension">odt</field>
-			<field name="extension">pdf</field>
+			<field name="extension"></field>
 		</record>
 
 		<!-- Form To Select start- -->
@@ -43,7 +43,7 @@
 			<field name="active" eval="True" />
 			<field name="report">health_jamaica/report/patient_register_filtered.odt</field>
 			<field name="template_extension">odt</field>
-			<field name="extension">pdf</field>
+			<field name="extension"></field>
 		</record>
 		<record model="ir.ui.view" id="healthjm_form_patientregisterflt_report_start">
 			<field name="model">healthjm.report.patientregister_filtered.start</field>

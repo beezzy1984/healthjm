@@ -223,7 +223,11 @@ class PatientRegisterFiltered(DailyPatientRegister):
     @classmethod
     def parse(cls, report, records, data, localcontext):
         localcontext = {} if localcontext is None else localcontext
+        dp_permval = {'o': 'Diseases or Procedures',
+                      'dp': 'Diseases and Procedures',
+                      'd': 'Diseases', 'p': 'Procedures'}
         localcontext.update(
+            filtered_by=dp_permval[data.get('x_dp_perm', 'o')],
             selected_diseases='; '.join(data['x_selected']['disease']),
             selected_procedures='; '.join(data['x_selected']['procedure']),
             disease_plural=(data['x_selected_count'].get('disease', 0) != 1),

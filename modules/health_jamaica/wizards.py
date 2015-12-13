@@ -101,10 +101,11 @@ class PatientRegisterWizard(Wizard):
         return action, data
 
 
-PERMUTE_OPTS = [
-    ('OR', 'Include ANY of the selected  (OR)'),
-    ('AND', 'Include ALL of the selected diseases (AND)')]
-    # ('nor', 'Include None of the selected (NOR)')]
+def permute_opts(name='diseases'):
+    return [
+        ('OR', 'Include ANY of the selected %s (OR)' % name),
+        ('AND', 'Include ALL of the selected %s (AND)' % name)]
+        # ('nor', 'Include None of the selected %s (NOR)' % name)]
 
 
 class PatientRegisterFilterView(PatientRegisterModel):
@@ -121,9 +122,9 @@ class PatientRegisterFilterView(PatientRegisterModel):
         'healthjm.report.patientregister_filtered.procedure_o2m', 'prf',
         'Selected Procedures', states={'readonly': Equal(Eval('dp_perm'), 'd')})
 
-    disease_perm = fields.Selection(PERMUTE_OPTS, 'Disease option', sort=False)
-    procedure_perm = fields.Selection(PERMUTE_OPTS, 'Procedure option',
-                                      sort=False)
+    disease_perm = fields.Selection(permute_opts(), 'Disease option', sort=False)
+    procedure_perm = fields.Selection(permute_opts('procedures'),
+                                      'Procedure option', sort=False)
 
     @staticmethod
     def default_disease_perm():
