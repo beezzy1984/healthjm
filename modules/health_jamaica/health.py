@@ -24,7 +24,7 @@ import hashlib
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from trytond.model import ModelView, ModelSQL, fields
-from trytond.pyson import Eval, And
+from trytond.pyson import Eval, And, In, Bool
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from .tryton_utils import (negate_clause, replace_clause_column, is_not_synchro,
@@ -35,7 +35,7 @@ __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'HealthProfessionalSpecialties', 'ProcedureCode',
            'PathologyGroup', 'Pathology', 'PatientEvaluation',
            'OperationalSector', 'HealthInstitutionOperationalSector',
-           'PatientEncounter']
+           'PatientEncounter', 'ClinicalComponent', 'SecondaryCondition']
 MENARCH = (9, 60)
 
 
@@ -404,8 +404,8 @@ class PathologyGroup(ModelSQL, ModelView):
     'Pathology Groups'
     __name__ = 'gnuhealth.pathology.group'
     track_first = fields.Boolean('Track first diagnosis',
-            help='Ask for status of first-diagnosis of diseases in this category upon creation of a diagnisis or diagnostic hypothesis',
-                                )
+            help='Ask for status of first-diagnosis of diseases in this'
+            ' category upon creation of a diagnisis or diagnostic hypothesis')
 
     @staticmethod
     def default_track_first():
@@ -577,11 +577,13 @@ class HealthInstitutionOperationalSector(ModelSQL, ModelView):
                                                    values['operational_sector'])
         return super(HealthInstitutionOperationalSector, cls).create(vlist)
 
+ENCTR_STATES = {'readonly': In(Eval('state'), ['signed', 'done', 'invalid'])}
+COMPT_STATES = {'readonly': Bool(Eval('signed_by'))}
 
 class PatientEncounter(ModelSQL, ModelView):
     'Patient Encounter'
     __name__ ='gnuhealth.encounter'
-    fvty = fields.Boolean('First visit this year',
+    fvty = fields.Boolean('First visit this year', states=ENCTR_STATES,
                           help='Check if this is known to be the first time '
                           'this patient is visiting this institution '
                           'for this year')
@@ -593,7 +595,7 @@ class PatientEncounter(ModelSQL, ModelView):
             search_parms = ['AND',
                             ('start_time', '<', self.start_time),
                             ('start_time', '>=',
-                             datetime(self.start_time.year,1,1,0,0,0)),
+                             datetime(self.start_time.year, 1, 1, 0, 0, 0)),
                             ('patient', '=', self.patient.id),
                             ('institution', '=', self.institution.id)]
 
@@ -601,3 +603,35 @@ class PatientEncounter(ModelSQL, ModelView):
             if others:
                 return False
         return True
+
+
+class ClinicalComponent(ModelSQL, ModelView):
+    'Clinical'
+    __name__ = 'gnuhealth.encounter.clinical'
+
+    newly_diagnosed = fields.Boolean('Newly Diagnosed', states=COMPT_STATES,
+                                     help='This is the first time this patient'
+                                     ' is diagnosed with this ailment')
+
+    @fields.depends('diagnosis')
+    def on_change_with_newly_diagnosed(self, *arg, **kwarg):
+        pass
+        # this method should search for previous components with this
+        # diagnosis or a secondary with this pathology
+        # returns True if no previous diagnoses found
+
+
+class SecondaryCondition(ModelSQL, ModelView):
+    'Secondary Condition'
+    __name__ = 'gnuhealth.secondary_condition'
+
+    newly_diagnosed = fields.Boolean('Newly Diagnosed', states=COMPT_STATES,
+                                     help='This is the first time this patient'
+                                     ' is diagnosed with this ailment')
+
+    @fields.depends('diagnosis')
+    def on_change_with_newly_diagnosed(self, *arg, **kwarg):
+        pass
+        # this method should search for previous components with this
+        # diagnosis or a secondary with this pathology
+        # returns True if no previous diagnoses found

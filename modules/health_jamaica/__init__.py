@@ -52,6 +52,8 @@ def register():
         Pathology,
         PatientEvaluation,
         PatientEncounter,
+        ClinicalComponent,
+        SecondaryCondition,
         PatientRegisterModel,
         PatientRegisterFilterView,
         PRFDisease,

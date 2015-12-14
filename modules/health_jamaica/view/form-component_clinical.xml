@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+    <xpath expr="//field[@name=&quot;diagnosis&quot;]" position="replace_attributes">
+        <field name="diagnosis" colspan="5" />
+    </xpath>
+    <xpath expr="//field[@name=&quot;diagnosis&quot;]" position="after">
+        <group id="grp_newly_diagnosed">
+            <label name="newly_diagnosed" />
+            <field name="newly_diagnosed" />
+        </group>
+    </xpath>
+</data>

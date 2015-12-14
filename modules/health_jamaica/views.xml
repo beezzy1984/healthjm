@@ -133,6 +133,29 @@
 			<field name="name">form-pathology_group</field>
 		</record>
 
+		<!-- Patient Encounter Form -->
+		<record model="ir.ui.view" id="healthjm_form_patient_encounter">
+			<field name="model">gnuhealth.encounter</field>
+			<field name="type">form</field>
+			<field name="inherit" ref="health_encounter.health_view_form_encounter" />
+			<field name="name">form-encounter</field>
+		</record>
+
+		<!-- Add first diagnosis to Clinical screen -->
+		<record model="ir.ui.view" id="healthjm_form_component_clinical">
+            <field name="inherit" ref="health_encounter.health_view_form_encounter_clinical" />
+            <field name="model">gnuhealth.encounter.clinical</field>
+            <field name="type">form</field>
+            <field name="name">form-component_clinical</field>
+        </record>
+        <!-- And Add it to secondary conditions -->
+        <record model="ir.ui.view" id="healthjm_form_secondary_conditions">
+            <field name="inherit" ref="health.gnuhealth_secondary_condition_form" />
+            <field name="model">gnuhealth.secondary_condition</field>
+            <field name="type">form</field>
+            <field name="name">form-secondary_conditions</field>
+        </record>
+
 		<!-- Rename Confirmed Appointment state to Scheduled -->
 		<record model="ir.action.act_window.domain" id="health.act_gnuhealth_appointment_domain_confirmed">
 			<field name="sequence" eval="10"/>
