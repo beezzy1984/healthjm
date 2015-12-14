@@ -195,6 +195,7 @@
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
+        <!-- Access to ICD and ICPM for relevant parties -->
         <record model="ir.model.access" id="model-grp_records_pathology">
             <field name="model" search="[('model','=', 'gnuhealth.pathology')]"/>
             <field name="group" ref="group_records_staff"/>
@@ -219,6 +220,56 @@
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
+        <record model="ir.model.access" id="model-grp_nurses_pathology">
+            <field name="model" search="[('model','=', 'gnuhealth.pathology')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_nurses_pathology_category">
+            <field name="model" search="[('model','=', 'gnuhealth.pathology.category')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_nurses_procedure">
+            <field name="model" search="[('model','=', 'gnuhealth.procedure')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+
+        <record model="ir.model.access" id="model-grp_doctors_pathology">
+            <field name="model" search="[('model','=', 'gnuhealth.pathology')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_doctors_pathology_category">
+            <field name="model" search="[('model','=', 'gnuhealth.pathology.category')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_doctors_procedure">
+            <field name="model" search="[('model','=', 'gnuhealth.procedure')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+
 
         <!-- Customer Service and Administrators should not see Diseases -->
         <record model="ir.model.access" id="model-grp_custserv_diseases">
