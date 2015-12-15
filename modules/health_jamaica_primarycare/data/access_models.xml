@@ -220,6 +220,14 @@
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
+        <record model="ir.model.access" id="model-grp_records_directions">
+            <field name="model" search="[('model','=', 'gnuhealth.directions')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
         <record model="ir.model.access" id="model-grp_nurses_pathology">
             <field name="model" search="[('model','=', 'gnuhealth.pathology')]"/>
             <field name="group" ref="group_nurses"/>
@@ -243,6 +251,14 @@
             <field name="perm_write" eval="False" />
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_nurses_directions">
+            <field name="model" search="[('model','=', 'gnuhealth.directions')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
         </record>
 
         <record model="ir.model.access" id="model-grp_doctors_pathology">
@@ -269,7 +285,14 @@
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
-
+        <record model="ir.model.access" id="model-grp_doctors_directions">
+            <field name="model" search="[('model','=', 'gnuhealth.directions')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
 
         <!-- Customer Service and Administrators should not see Diseases -->
         <record model="ir.model.access" id="model-grp_custserv_diseases">
