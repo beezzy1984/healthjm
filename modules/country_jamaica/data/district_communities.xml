@@ -16370,7 +16370,7 @@
 			<field name="name">Woodstock</field>
 		</record>
 		<record id="jmdisco_4093" model="country.district_community">
-			<field name="code">8699B0-12</field><field name="post_office" ref="country_jamaica.jmpo_G121142" />
+			<field name="code">8699B0-12</field><field name="post_office" ref="country_jamaica.jmpo_G071142" />
 			<field name="name">Joe Hut District</field>
 		</record>
 		<record id="jmdisco_4094" model="country.district_community">
