@@ -1,6 +1,7 @@
 from trytond.pool import Pool
 from .history import *
 
+
 def register():
     Pool.register(
         Party,
@@ -18,4 +19,10 @@ def register():
         SecondaryCondition, 
         SignsAndSymptoms,
         Directions,
+        PatientEncounter,
+        EncounterClinical,
+        EncounterProcedures,
+        EncounterAnthro,
+        EncounterAmbulatory,
+        EncounterMentalStatus,
         module='health_jamaica_history', type_='model')

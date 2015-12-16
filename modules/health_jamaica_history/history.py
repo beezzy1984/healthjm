@@ -1,12 +1,14 @@
-import os
+
 from trytond.model import ModelSQL
-from trytond.pool import PoolMeta
-from trytond.transaction import Transaction
-__all__ = ['Party', 'PartyAddress', 'DomiciliaryUnit', 'AlternativePersonID',
+__all__ = [
+    'Party', 'PartyAddress', 'DomiciliaryUnit', 'AlternativePersonID',
     'HealthProfessional', 'PatientVaccination',
     'HealthProfessionalSpecialties', 'PatientData', 'Appointment',
     'PatientDiseaseInfo', 'Directions', 'PatientEvaluation',
-    'SecondaryCondition', 'SignsAndSymptoms', 'DiagnosticHypothesis']
+    'SecondaryCondition', 'SignsAndSymptoms', 'DiagnosticHypothesis',
+    'PatientEncounter', 'EncounterClinical', 'EncounterProcedures',
+    'EncounterAnthro', 'EncounterAmbulatory', 'EncounterMentalStatus']
+
 
 class HistoryMixin(ModelSQL):
     _history = True
@@ -14,6 +16,7 @@ class HistoryMixin(ModelSQL):
 
 class Party(HistoryMixin):
     __name__ = 'party.party'
+
 
 class PartyAddress(HistoryMixin):
     __name__ = 'party.address'
@@ -24,7 +27,7 @@ class DomiciliaryUnit(HistoryMixin):
 
 
 class AlternativePersonID (HistoryMixin):
-    __name__ = 'gnuhealth.person_alternative_identification' 
+    __name__ = 'gnuhealth.person_alternative_identification'
 
 
 class PatientData(HistoryMixin):
@@ -38,11 +41,14 @@ class PatientDiseaseInfo(HistoryMixin):
 class Appointment(HistoryMixin):
     __name__ = 'gnuhealth.appointment'
 
+
 class HealthInstitutionSpecialties(HistoryMixin):
     __name__ = 'gnuhealth.institution.specialties'
 
+
 class HealthProfessional(HistoryMixin):
     __name__ = 'gnuhealth.healthprofessional'
+
 
 class HealthProfessionalSpecialties(HistoryMixin):
     __name__ = 'gnuhealth.hp_specialty'
@@ -70,3 +76,29 @@ class PatientEvaluation(HistoryMixin):
 
 class PatientVaccination(HistoryMixin):
     __name__ = 'gnuhealth.vaccination'
+
+
+# History mixin for stuff related to encounters
+
+class PatientEncounter(HistoryMixin):
+    __name__ = 'gnuhealth.encounter'
+
+
+class EncounterClinical(HistoryMixin):
+    __name__ = 'gnuhealth.encounter.clinical'
+
+
+class EncounterProcedures(HistoryMixin):
+    __name__ = 'gnuhealth.encounter.procedures'
+
+
+class EncounterAnthro(HistoryMixin):
+    __name__ = 'gnuhealth.encounter.anthropometry'
+
+
+class EncounterAmbulatory(HistoryMixin):
+    __name__ = 'gnuhealth.encounter.ambulatory'
+
+
+class EncounterMentalStatus(HistoryMixin):
+    __name__ = 'gnuhealth.encounter.mental_status'
