@@ -438,6 +438,79 @@
             <field name="perm_delete" eval="True" />
         </record>
 
-
+        <!-- And them some people have access to Encounters and Components -->
+        <record model="ir.model.access" id="model-grp_nurses_encounter">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_doctors_encounter">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_encounter">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_admins_encounter">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter')]"/>
+            <field name="group" ref="group_admin_staff"/>
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_health_doctor_encounter">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter')]"/>
+            <field name="group" ref="health.group_health_doctor"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <!-- Some of those same people also have access to the components -->
+        <record model="ir.model.access" id="model-grp_nurses_encounter_component">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter.component')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_doctors_encounter_component">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter.component')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_records_encounter_component">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter.component')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_health_doctor_encounter_component">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter.component')]"/>
+            <field name="group" ref="health.group_health_doctor"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
     </data>
 </tryton>
