@@ -54,5 +54,46 @@
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
+        <!-- Only records and customer service can write on appointment patients -->
+        <record model="ir.model.field.access" id="field-grp_nurses_appointment_patient">
+            <field name="group" ref="group_nurses" />
+            <field name="field" search="[('name','=','patient'),('model.model','=','gnuhealth.appointment')]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.field.access" id="field-grp_doctors_appointment_patient">
+            <field name="group" ref="group_doctors" />
+            <field name="field" search="[('name','=','patient'),('model.model','=','gnuhealth.appointment')]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.field.access" id="field-grp_admins_appointment_patient">
+            <field name="group" ref="group_admin_staff" />
+            <field name="field" search="[('name','=','patient'),('model.model','=','gnuhealth.appointment')]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.field.access" id="field-grp_records_appointment_patient">
+            <field name="group" ref="group_records_staff" />
+            <field name="field" search="[('name','=','patient'),('model.model','=','gnuhealth.appointment')]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.field.access" id="field-grp_custserv_appointment_patient">
+            <field name="group" ref="group_customer_service" />
+            <field name="field" search="[('name','=','patient'),('model.model','=','gnuhealth.appointment')]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
     </data>
 </tryton>

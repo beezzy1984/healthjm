@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<tryton>
+    <data>
+        <!-- Record Template
+
+        <record model="ir.model.button-res.group" id="btngrp-BTN-GRP">
+            <field name="button" ref="" />
+            <field name="group" ref="" />
+        </record>
+         -->
+
+         <!-- Some people can click Start Encounter -->
+        <record model="ir.model.button-res.group" id="btngrp-start_encounter-records_techs">
+            <field name="button" ref="health_jamaica.appt-start_encounter_button" />
+            <field name="group" ref="group_records_technicians" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-start_encounter-records_admins">
+            <field name="button" ref="health_jamaica.appt-start_encounter_button" />
+            <field name="group" ref="group_records_admins" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-start_encounter-nurses">
+            <field name="button" ref="health_jamaica.appt-start_encounter_button" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-start_encounter-doctors">
+            <field name="button" ref="health_jamaica.appt-start_encounter_button" />
+            <field name="group" ref="group_doctors" />
+        </record>
+
+        <!-- Other people can actually go to the encounter -->
+        <record model="ir.model.button-res.group" id="btngrp-goto_encounter-records_staff">
+            <field name="button" ref="appt_btn-goto_encounter" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-goto_encounter-nurses">
+            <field name="button" ref="appt_btn-goto_encounter" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-goto_encounter-doctors">
+            <field name="button" ref="appt_btn-goto_encounter" />
+            <field name="group" ref="group_doctors" />
+        </record>
+
+        <!-- Some people can Add Components -->
+        <record model="ir.model.button-res.group" id="btngrp-addcomponent-records_staff">
+            <field name="button" ref="encounter_btn-add_component" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-addcomponent-nurses">
+            <field name="button" ref="encounter_btn-add_component" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-addcomponent-doctors">
+            <field name="button" ref="encounter_btn-add_component" />
+            <field name="group" ref="group_doctors" />
+        </record>
+
+        <!-- Some people can finish encounters -->
+        <record model="ir.model.button-res.group" id="btngrp-encounterfinish-records_staff">
+            <field name="button" ref="encounter_btn-finish" />
+            <field name="group" ref="group_records_staff" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-encounterfinish-nurses">
+            <field name="button" ref="encounter_btn-finish" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-encounterfinish-doctors">
+            <field name="button" ref="encounter_btn-finish" />
+            <field name="group" ref="group_doctors" />
+        </record>
+
+    </data>
+</tryton>

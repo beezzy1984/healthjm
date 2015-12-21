@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<tryton>
+    <data>
+        <!-- <record model="ir.model.button" id="appt_btn-start_encounter">
+            <field name="name">start_encounter</field>
+            <field name="model" search="[('model', '=', 'gnuhealth.appointment')]"/>
+        </record> 
+        This button defined as health_jamaica.appt-start_encounter_button
+        -->
+        <record model="ir.model.button" id="appt_btn-goto_encounter">
+            <field name="name">goto_encounter</field>
+            <field name="model" search="[('model', '=', 'gnuhealth.appointment')]"/>
+        </record>
+        <record model="ir.model.button" id="encounter_btn-add_component">
+            <field name="name">add_component</field>
+            <field name="model" search="[('model', '=', 'gnuhealth.encounter')]"/>
+        </record>
+        <record model="ir.model.button" id="encounter_btn-finish">
+            <field name="name">set_done</field>
+            <field name="model" search="[('model', '=', 'gnuhealth.encounter')]"/>
+        </record>
+
+    </data>
+</tryton>
