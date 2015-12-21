@@ -251,5 +251,18 @@
             <field name="code">Z39.7</field>
             <field name="category" ref="health_icd10.icdcat21-3" />
         </record>
+
+        <!-- Codes Added for Zika Virus 2015-12-21 -->
+        <record id="U06" model="gnuhealth.pathology">
+            <field name="name">Zika Virus Disease</field>
+            <field name="code">U06</field>
+            <field name="category" ref="health_icd10.icdcat22" />
+        </record>
+        <record id="U069" model="gnuhealth.pathology">
+            <field name="name">Zika Virus Disease, unspecified</field>
+            <field name="code">U06.9</field>
+            <field name="category" ref="health_icd10.icdcat22" />
+        </record>
+        <!-- End Zika codes -->
     </data>
 </tryton>
