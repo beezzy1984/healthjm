@@ -133,7 +133,7 @@ class DailyPatientRegister(BaseReport):
                 encounter_field_names.extend(data['x_encounter_fields'])
 
         if data.get('specialty', False):
-            search_criteria.append(('appointment.specialty', '=',
+            search_criteria.append(('appointment.speciality', '=',
                                     data['specialty']))
             localcontext['specialty'] = Specialty(data['specialty'])
         # print 'Encounter search criteria : %s' % repr(search_criteria)
