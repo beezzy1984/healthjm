@@ -29,6 +29,13 @@ class Appointment(ModelSQL, ModelView):
                                     'appointment', 'State Changes',
                                     order=([('create_date', 'DESC')]),
                                     readonly=True)
+    # Patient identifier fields
+    upi = fields.Function(fields.Char('UPI'), 'get_upi_mrn')
+    medical_record_num = fields.Function(
+        fields.Char('Medical Record Number'), 'get_upi_mrn')
+    sex_display = fields.Function(fields.Char('Sex'),
+                                  'get_person_patient_field')
+    age = fields.Function(fields.Char('Age'), 'get_person_patient_field')
 
     @staticmethod
     def default_state():
@@ -190,6 +197,23 @@ class Appointment(ModelSQL, ModelView):
     @ModelView.button
     def client_arrived(cls, appointments):
         cls.write(appointments, {'state': 'arrived'})
+
+    def get_person_patient_field(self, name):
+        if name in ['sex_display']:
+            sex = getattr(self.patient.name, name,
+                          getattr(self.patient.name, 'sex', '?'))
+            return len(sex) == 1 and sex.upper() or sex
+        if name in ['age']:
+            return getattr(self.patient, name)
+        return ''
+
+    def get_upi_mrn(self, name):
+        if name == 'upi':
+            return self.patient.puid
+        elif name == 'medical_record_num':
+            return getattr(self.patient, 'medical_record_num', '')
+        return ''
+
 
 
 class AppointmentStateChange(ModelSQL, ModelView):
