@@ -5,10 +5,9 @@
     </xpath>
     <xpath expr="/tree/field[@name=&quot;healthprof&quot;]" position="replace" />
     <xpath expr="/tree/field[@name=&quot;appointment_type&quot;]" position="replace" />
-    <xpath expr="/tree/field[@name=&quot;institution&quot;]" position="replace_attributes">
-        <field name="institution" expand="1" tree_invisible="1" />
+    <xpath expr="/tree/field[@name=&quot;patient&quot;]" position="replace_attributes">
+        <field name="patient" expand="1" />
     </xpath>
-
     <xpath expr="/tree/field[@name=&quot;patient&quot;]" position="after">
         <field name="upi" />
         <field name="sex_display" />

@@ -80,7 +80,6 @@ class Appointment(ModelSQL, ModelView):
 
         return dict(map(istoday, instances))
 
-
     @classmethod
     def get_tree_color(cls, instances, name):
         colord = dict([(x, 'grey') for x in

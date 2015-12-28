@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data>
     <xpath expr="/form/group[@id=&quot;appointment_header&quot;]" position="replace">
-        <group colspan="4" col="6" id="appointment_header">
-            <label name="patient"/>
-            <field name="patient" xexpand="1" />
-            <label name="urgency"/>
-            <field name="urgency"/>
-            <label name="visit_type"/>
-            <field name="visit_type"/>
-
+        <group colspan="4" col="8" string="Patient" id="appt_header_patient">
+            <field name="patient" colspan="2" xexpand="1" />
+            <label string="UPI/MRN" id="lbl_upimrn" />
+            <field name="upi" width="70"/>
+            <field name="medical_record_num" width="40" />
+            <field name="sex_display" width="35" />
+            <field name="age" width="35"/>
+        </group>
+        <newline />
+        <group colspan="4" col="8" id="appointment_header_remix">
             <label name="appointment_date"/>
             <field name="appointment_date"/>
             <label name="appointment_type"/>
             <field name="appointment_type"/>
+
+            <label name="urgency"/>
+            <field name="urgency"/>
+            <label name="visit_type"/>
+            <field name="visit_type"/>
         </group>
     </xpath>
 
@@ -22,15 +29,20 @@
     <xpath expr="/form/field[@name=&quot;comments&quot;]" position="after">
         <field name="state_changes" colspan="2" />
         <group colspan="2" id="tail_group" col="2">
-            <label name="state"/>
-            <field name="state"/>
-            <label name="institution"/>
-            <field name="institution"/>
-            <label name="name"/>
-            <field name="name"/>
-            <button name="client_arrived" string="Patient Arrive_d" icon="tryton-go-next" colspan="2" />
-            <button name="goto_encounter" string="Go to En_counter" icon="tryton-go-next" colspan="2" />
-            <button name="start_encounter" help="Start Encounter" string="Begin En_counter" icon="tryton-go-next" colspan="2" />
+            <group id="tail_group_fields" col="2">
+                <label name="state"/>
+                <field name="state"/>
+                <label name="institution"/>
+                <field name="institution"/>
+                <label name="name"/>
+                <field name="name"/>
+            </group>
+            <group id="tail_group_buttons" colspan="2" col="3">
+                    
+                <button name="client_arrived" string="Patient Arrive_d" icon="tryton-go-next" />
+                <button name="goto_encounter" string="Go to En_counter" icon="tryton-go-next" />
+                <button name="start_encounter" help="Start Encounter" string="Begin En_counter" icon="tryton-go-next" />
+            </group>
         </group>
     </xpath>
 </data>
