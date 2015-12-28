@@ -289,6 +289,34 @@ class HealthInstitution(ModelSQL, ModelView):
         return ['OR', replace_clause_column(clause, 'code'),
                 replace_clause_column(clause, 'name.name')]
 
+    @classmethod
+    def get_institution(cls):
+        '''Retrieve the institution associated to this GNU Health instance
+        That is associated to the Company.'''
+        tact = Transaction()
+        company_id = tact.context.get('company')
+        if hasattr(cls, '_company_facility_map'):
+            if company_id in cls._company_facility_map:
+                return cls._company_facility_map[company_id]
+        else:
+            cls._company_facility_map = {}
+
+        pool = Pool()
+        company_model = pool.get('company.company')
+        institution_model = pool.get('gnuhealth.institution')
+        company = company_model.search_read([('id', '=', company_id)],
+                                            fields_names=['id', 'party'])
+        if company:
+            company = company[0]
+            insti = institution_model.search([('name', '=', company['party'])])
+            if insti:
+                institution_id = int(insti[0])
+                cls._company_facility_map[company_id] = institution_id
+        # Todo: Update cls.write to erase this cache when this institution
+        # is written to. Or else, may have wrong value in _company_facility_map
+                return institution_id
+        return -1
+
 
 class HealthInstitutionSpecialties(ModelSQL, ModelView):
     'Health Institution Specialties'
