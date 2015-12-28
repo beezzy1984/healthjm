@@ -11,11 +11,13 @@ class Appointment(ModelSQL, ModelView):
     is_local = fields.Function(fields.Boolean('is local'), 'get_is_local',
                                searcher='search_is_local')
 
-    def get_is_local(self, name):
+    @classmethod
+    def get_is_local(cls, instances, name):
         if not (name == 'is_local'):
-            return None
+            return dict([(i.id, None) for i in instances])
         else:
-            return self.institution == ThisInstitution()
+            here = ThisInstitution()
+            return dict([(i.id, here == i.institution) for i in instances])
 
     @classmethod
     def search_is_local(cls, field_name, clause):
@@ -24,5 +26,6 @@ class Appointment(ModelSQL, ModelView):
                 if clause[-1]:
                     return [('institution', '=', ThisInstitution())]
                 else:
-                    return [('institution', '!=', ThisInstitution())]
+                    return ['OR', ('institution', '=', None),
+                            ('institution', '!=', ThisInstitution())]
         return []

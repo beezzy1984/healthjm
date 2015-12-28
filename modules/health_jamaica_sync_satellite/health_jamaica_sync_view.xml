@@ -114,12 +114,5 @@
         </record>
         <!-- End of Remote Party Import Stuff -->
 
-<!--         <record model="ir.ui.view" id="view_appointment_tree">
-            <field name="model">gnuhealth.appointment</field>
-             <field name="inherit" ref="health.gnuhealth_appointment_tree"/>
-            <field name="type">tree</field>
-            <field name="name">tree-appointment</field>
-        </record> -->
-
     </data>
 </tryton>
