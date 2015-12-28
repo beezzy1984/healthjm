@@ -50,7 +50,7 @@
         <record id="R523" model="gnuhealth.pathology">
             <field name="category" ref="health_icd10.icdcat18-8" />
             <field name="code">R52.3</field>
-            <field name="name">Muscle Pain</field>
+            <field name="name">Muscle Pain (myalgia)</field>
         </record>
         <record id="R524" model="gnuhealth.pathology">
             <field name="category" ref="health_icd10.icdcat18-8" />
@@ -122,11 +122,6 @@
             <field name="name">Urethral discharge with blood</field>
             <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
-        <record id="R362" model="gnuhealth.pathology">
-            <field name="code">R36.2</field>
-            <field name="name">Haematospermia (blood in semen)</field>
-            <field name="category" ref="health_icd10.icdcat18-5" />
-        </record>
         <record id="R37" model="gnuhealth.pathology">
             <field name="code">R37</field>
             <field name="name">Vaginal discharge</field>
@@ -173,8 +168,6 @@
             <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
 
-
-<!-- -->
         <!-- ICD Codes added for Growth Indicators -->
         <record id="E663" model="gnuhealth.pathology">
             <field name="name">Normal Nutrition (BMI 19-24.99 or less)</field>
@@ -236,6 +229,11 @@
             <field name="code">E45.2</field>
             <field name="category" ref="health_icd10.icdcat4-5" />
         </record>
+        <record model="gnuhealth.pathology" id="Z393">
+            <field name="name">Routine postpartum follow-up (baby)</field>
+            <field name="code">Z39.3</field>
+            <field name="category" ref="health_icd10.icdcat21-3" />
+        </record>
         <record id="Z395" model="gnuhealth.pathology">
             <field name="name">Exclusive breastfeeding of infant</field>
             <field name="code">Z39.5</field>
@@ -264,5 +262,46 @@
             <field name="category" ref="health_icd10.icdcat22" />
         </record>
         <!-- End Zika codes -->
+
+        <record model="gnuhealth.pathology" id="health_icd10.R070">
+            <field name="name">Pain in throat (sore throat)</field>
+            <field name="code">R07.0</field>
+            <field name="category" ref="health_icd10.icdcat18-1"></field>
+        </record>
+        <record model="gnuhealth.pathology" id="R362">
+            <field name="name">Haematospermia (blood in semen)</field>
+            <field name="code">R36.2</field>
+            <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record model="gnuhealth.pathology" id="R684">
+            <field name="name">Blood in stools (melaena)</field>
+            <field name="code">R68.4</field>
+            <field name="category" ref="health_icd10.icdcat18-8" />
+        </record>
+        <record model="gnuhealth.pathology" id="R685">
+            <field name="name">Purulent conjunctivitis</field>
+            <field name="code">R68.5</field>
+            <field name="category" ref="health_icd10.icdcat18-8" />
+        </record>
+        <record model="gnuhealth.pathology" id="R686">
+            <field name="name">Non-purulent conjunctivitis</field>
+            <field name="code">R68.6</field>
+            <field name="category" ref="health_icd10.icdcat18-8" />
+        </record>
+        <record model="gnuhealth.pathology" id="R687">
+            <field name="name">Conjunctival hyperaemia</field>
+            <field name="code">R68.7</field>
+            <field name="category" ref="health_icd10.icdcat18-8" />
+        </record>
+        <record model="gnuhealth.pathology" id="R511">
+            <field name="name">Retro-orbital pain</field>
+            <field name="code">R51.1</field>
+            <field name="category" ref="health_icd10.icdcat18-8" />
+        </record>
+        <record model="gnuhealth.pathology" id="health_icd10.R876">
+            <field name="name">Abnormal Pap Smear</field>
+            <field name="code">R87.6</field>
+            <field name="category" ref="health_icd10.icdcat18-11" />
+        </record>
     </data>
 </tryton>

@@ -118,6 +118,34 @@
             <field name="description">PREGNANCY SCREENING TEST</field>
             <field name="name">2-444</field>
         </record>
+<!--         <record id="icpm_5-242" model="gnuhealth.procedure">
+            <field name="description">Sutures (gum)</field>
+            <field name="name">5-242</field>
+        </record> -->
+        <record id="icpm_6-001" model="gnuhealth.procedure">
+            <field name="description">BENZATHINE PENICILLIN G INJ (PENADUR)</field>
+            <field name="name">6-001</field>
+        </record>
+        <record id="icpm_6-400" model="gnuhealth.procedure">
+            <field name="description">ORAL IRON FERROUS SULPHATE</field>
+            <field name="name">6-400</field>
+        </record>
+        <record id="icpm_6-412" model="gnuhealth.procedure">
+            <field name="description">FOLIC ACID / FOLINIC ACID</field>
+            <field name="name">6-412</field>
+        </record>
+        <record id="icpm_7-467" model="gnuhealth.procedure">
+            <field name="description">ORAL REHYDRATION THERAPY</field>
+            <field name="name">7-467</field>
+        </record>
+        <record id="icpm_8-897" model="gnuhealth.procedure">
+            <field name="description">REMOVAL OF SUTURES OR CLIPS FROM WOUND</field>
+            <field name="name">8-897</field>
+        </record>
+        <record id="icpm_8-190" model="gnuhealth.procedure">
+            <field name="description">WOUND CLEANING</field>
+            <field name="name">8-190</field>
+        </record>
 
 <!-- Corrections from GNU Health Default -->
         <record model="gnuhealth.procedure" id="health_icpm.icpm_5-913">
