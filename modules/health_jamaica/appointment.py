@@ -105,8 +105,7 @@ class Appointment(ModelSQL, ModelView):
         "Allow the default search to be by name, upi or appointment ID"
         field, operator, value = clause
         retests = {'patient.name.name': re.compile('^\D+$'),
-                   'patient.name.upi': re.compile('^[a-z]{3}\d+?(\w+)?$', re.I)
-                  }
+                   'patient.name.upi': re.compile('^[a-z]{3}\d+?(\w+)?$', re.I)}
         clauses = super(Appointment, cls).search_rec_name(name, clause)
         for newfield, test in retests.items():
             if test.match(value.strip('%')):
@@ -163,7 +162,7 @@ class Appointment(ModelSQL, ModelView):
                 warning_msg.extend([other_specialty, ' appointment for ',
                                    appt.appointment_date.strftime('%b %d'),
                                    '\nAre you sure you need this ',
-                                   appt.speciality.name, ' one?'])
+                                    appt.speciality.name, ' one?'])
 
                 cls.raise_user_warning(warning_code, u''.join(warning_msg))
 
@@ -197,22 +196,26 @@ class Appointment(ModelSQL, ModelView):
     def client_arrived(cls, appointments):
         cls.write(appointments, {'state': 'arrived'})
 
-    def get_person_patient_field(self, name):
-        if name in ['sex_display']:
-            sex = getattr(self.patient.name, name,
-                          getattr(self.patient.name, 'sex', '?'))
-            return len(sex) == 1 and sex.upper() or sex
-        if name in ['age']:
-            return getattr(self.patient, name)
-        return ''
+    @classmethod
+    def get_person_patient_field(cls, instances, name):
+        pattr = lambda x: getattr(x.patient, name) if x.patient else ''
+        if name in ['sex_display', 'age', 'sex']:
+            return dict([(i.id, pattr(i)) for i in instances])
+        else:
+            return dict([(i.id, '') for i in instances])
 
-    def get_upi_mrn(self, name):
+    @classmethod
+    def get_upi_mrn(cls, instances, name):
+        attr = ''
         if name == 'upi':
-            return self.patient.puid
+            attr = 'puid'
         elif name == 'medical_record_num':
-            return getattr(self.patient, 'medical_record_num', '')
-        return ''
-
+            attr = 'medical_record_num'
+        pattr = lambda x: getattr(x.patient, attr) if x.patient else ''
+        if attr:
+            return dict([(i.id, pattr(i)) for i in instances])
+        else:
+            return dict([(i.id, '') for i in instances])
 
 
 class AppointmentStateChange(ModelSQL, ModelView):
