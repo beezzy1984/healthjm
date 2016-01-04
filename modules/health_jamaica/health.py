@@ -28,7 +28,8 @@ from trytond.pyson import Eval, And, In, Bool
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from .tryton_utils import (negate_clause, replace_clause_column, is_not_synchro,
-                           get_timezone, make_selection_display, get_day_comp)
+                           get_timezone, make_selection_display, get_day_comp,
+                           localtime)
 
 __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'HealthInstitutionSpecialties', 'HealthProfessional',
@@ -631,6 +632,13 @@ class PatientEncounter(ModelSQL, ModelView):
             if others:
                 return False
         return True
+
+    def get_rec_name(self, name):
+        localstart = localtime(self.start_time)
+        line = ['EV%06d' % self.id,
+                '(%s /MRN:%s)' % (self.upi, self.medical_record_num),
+                self.sex_display, self.age, 'on %s' % localstart.ctime()]
+        return ' '.join(line)
 
 
 class ClinicalComponent(ModelSQL, ModelView):
