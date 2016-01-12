@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from trytond.pool import Pool
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pyson import Eval, Equal, In, Not, And, Bool
@@ -128,13 +128,11 @@ class Appointment(ModelSQL, ModelView):
                 comp_startdate = datetime(
                     *(appt.appointment_date.timetuple()[:3] + (0, 0, 0)),
                     tzinfo=tz)
-                comp_enddate = datetime(
-                    *(appt.appointment_date.timetuple()[:3]+(23, 59, 59)),
-                    tzinfo=tz)
+                comp_enddate = comp_startdate + timedelta(1)
                 search_terms = ['AND',
                                 ('patient', '=', appt.patient),
                                 ('appointment_date', '>=', comp_startdate),
-                                ('appointment_date', '<=', comp_enddate)]
+                                ('appointment_date', '<', comp_enddate)]
                 if appt.id:
                     search_terms.append(('id', '!=', appt.id))
                 others = cls.search(search_terms)
@@ -163,7 +161,11 @@ class Appointment(ModelSQL, ModelView):
                                    appt.appointment_date.strftime('%b %d'),
                                    '\nAre you sure you need this ',
                                     appt.speciality.name, ' one?'])
-
+                # ToDo:
+                # This is soo not translatable. The best way to sort it
+                # so that the message is more easily translatable is to
+                # use one generic message where we can put in the date
+                # and the two specialties.
                 cls.raise_user_warning(warning_code, u''.join(warning_msg))
 
     @classmethod
