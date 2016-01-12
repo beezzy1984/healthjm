@@ -15,8 +15,16 @@
             <field name="name">add_component</field>
             <field name="model" search="[('model', '=', 'gnuhealth.encounter')]"/>
         </record>
+        <record model="ir.model.button" id="encounter_btn-add_extra_component">
+            <field name="name">add_extra_component</field>
+            <field name="model" search="[('model', '=', 'gnuhealth.encounter')]"/>
+        </record>
         <record model="ir.model.button" id="encounter_btn-finish">
             <field name="name">set_done</field>
+            <field name="model" search="[('model', '=', 'gnuhealth.encounter')]"/>
+        </record>
+        <record model="ir.model.button" id="encounter_btn-sign">
+            <field name="name">sign_finish</field>
             <field name="model" search="[('model', '=', 'gnuhealth.encounter')]"/>
         </record>
 

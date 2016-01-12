@@ -69,5 +69,38 @@
             <field name="group" ref="group_doctors" />
         </record>
 
+        <!-- And some folks get to add components after the encounter has ended -->
+        <record model="ir.model.button-res.group" id="btngrp-encounter_add_extra-records_techs">
+            <field name="button" ref="encounter_btn-add_extra_component" />
+            <field name="group" ref="group_records_technicians" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-encounter_add_extra-records_admins">
+            <field name="button" ref="encounter_btn-add_extra_component" />
+            <field name="group" ref="group_records_admins" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-encounter_add_extra-managing_docs">
+            <field name="button" ref="encounter_btn-add_extra_component" />
+            <field name="group" ref="group_managing_doctors" />
+        </record>
+
+        <!-- Only special folks get to sign-off on encounters -->
+        <record model="ir.model.button-res.group" id="btngrp-encounter_sign-records_techs">
+            <field name="button" ref="encounter_btn-sign" />
+            <field name="group" ref="group_records_technicians" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-encounter_sign-records_admins">
+            <field name="button" ref="encounter_btn-sign" />
+            <field name="group" ref="group_records_admins" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-encounter_sign-senior_docs">
+            <field name="button" ref="encounter_btn-sign" />
+            <field name="group" ref="group_sr_doctors" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-encounter_sign-managing_docs">
+            <field name="button" ref="encounter_btn-sign" />
+            <field name="group" ref="group_managing_doctors" />
+        </record>
+
+
     </data>
 </tryton>
