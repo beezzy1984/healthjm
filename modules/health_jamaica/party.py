@@ -365,7 +365,8 @@ class AlternativePersonID (ModelSQL, ModelView):
             'invalid_format': 'Invalid format for %s',
             'mismatched_issue_expiry': '%s issue date cannot be after the expiry date',
             'expiry_date_required': 'An expiry date is required for %s',
-            'invalid_nhfcard': 'Invalid format for NHF Card (9-10 digits only)'
+            'invalid_nhfcard': 'Invalid format for NHF Card (9-10 digits only)',
+            'duplicate_idcode': 'A party named "%s" with this %s (%s) already exists.'
         })
         cls.format_test = {
             'trn': re.compile('^1\d{8}$'),
@@ -401,6 +402,7 @@ class AlternativePersonID (ModelSQL, ModelView):
         super(AlternativePersonID, cls).validate(records)
         for alternative_id in records:
             alternative_id.check_format()
+            cls.validate_existing(alternative_id)
             if (alternative_id.expiry_date and alternative_id.issue_date and
                     alternative_id.issue_date > alternative_id.expiry_date):
                 alternative_id.raise_user_error('mismatched_issue_expiry',
@@ -420,6 +422,26 @@ class AlternativePersonID (ModelSQL, ModelView):
                 if error_msg not in self._error_messages:
                     error_msg = 'invalid_format'
                 self.raise_user_error(error_msg, (self.type_display,))
+        return True
+
+    @classmethod
+    def validate_existing(cls, altid):
+        if altid.alternative_id_type in ['medical_record', 'jm_license', 'trn']:
+            # check if a party with this one is already here
+            search_parm = [
+                ('alternative_id_type', '=', altid.alternative_id_type),
+                ('code', '=', altid.code),
+                ('issuing_institution', '=', altid.issuing_institution)]
+            if altid.id > 0:
+                search_parm.append(('id', '!=', altid.id))
+            others = cls.search_read(search_parm,
+                                     fields_names=['name.name', 'id'])
+            if others:
+                other_name = others[0]['name.name']
+                altid.raise_user_error('duplicate_idcode',
+                                      (other_name, altid.type_display,
+                                       altid.code))
+        return True
 
 
 class PartyRelative(ModelSQL, ModelView):
