@@ -87,6 +87,10 @@
             <field name="menu" ref="health.gnuhealth_menu" />
             <field name="group" ref="group_customer_service" />
         </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_chw_health">
+            <field name="menu" ref="health.gnuhealth_menu" />
+            <field name="group" ref="group_community_hw" />
+        </record>
 
         <!-- And for these folks access to the health-patient menu -->
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_patient">
@@ -104,6 +108,10 @@
         <record model="ir.ui.menu-res.group" id="menu-grp_custserv_patient">
             <field name="menu" ref="health.gnuhealth_patients_menu" />
             <field name="group" ref="group_customer_service" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_chw_patient">
+            <field name="menu" ref="health.gnuhealth_patients_menu" />
+            <field name="group" ref="group_community_hw" />
         </record>
 
 
@@ -127,6 +135,10 @@
         <record model="ir.ui.menu-res.group" id="menu-grp_custsrv_appointment">
             <field name="menu" ref="health.gnuhealth_appointment_menu" />
             <field name="group" ref="group_customer_service" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_chw_appointment">
+            <field name="menu" ref="health.gnuhealth_appointment_menu" />
+            <field name="group" ref="group_community_hw" />
         </record>
 
         <!-- Only Senior Records folks and Managing Dr.s get direct access
@@ -161,6 +173,10 @@
             <field name="menu" ref="health.gnuhealth_menu_institution" />
             <field name="group" ref="group_admin_staff" />
         </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_chw_institutions">
+            <field name="menu" ref="health.gnuhealth_menu_institution" />
+            <field name="group" ref="group_community_hw" />
+        </record>
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_institutions_os">
             <field name="menu" ref="health.gnuhealth_institution_operationalsector" />
             <field name="group" ref="group_nurses" />
@@ -177,6 +193,10 @@
             <field name="menu" ref="health.gnuhealth_institution_operationalsector" />
             <field name="group" ref="group_admin_staff" />
         </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_chw_institutions_os">
+            <field name="menu" ref="health.gnuhealth_institution_operationalsector" />
+            <field name="group" ref="group_community_hw" />
+        </record>
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_institutions_specialties">
             <field name="menu" ref="health.gnuhealth_institution_specialties" />
             <field name="group" ref="group_nurses" />
@@ -192,6 +212,10 @@
         <record model="ir.ui.menu-res.group" id="menu-grp_admins_institutions_specialties">
             <field name="menu" ref="health.gnuhealth_institution_specialties" />
             <field name="group" ref="group_admin_staff" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_chw_institutions_specialties">
+            <field name="menu" ref="health.gnuhealth_institution_specialties" />
+            <field name="group" ref="group_community_hw" />
         </record>
 
         <!-- Some people get access to the reporting menu -->

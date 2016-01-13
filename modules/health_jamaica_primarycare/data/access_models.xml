@@ -437,8 +437,16 @@
             <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="True" />
         </record>
+        <record model="ir.model.access" id="model-grp_chw_appointment">
+            <field name="model" search="[('model','=', 'gnuhealth.appointment')]"/>
+            <field name="group" ref="group_community_hw"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
 
-        <!-- And them some people have access to Encounters and Components -->
+        <!-- And then some people have access to Encounters and Components -->
         <record model="ir.model.access" id="model-grp_nurses_encounter">
             <field name="model" search="[('model','=', 'gnuhealth.encounter')]"/>
             <field name="group" ref="group_nurses"/>
@@ -479,6 +487,14 @@
             <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="False" />
         </record>
+        <record model="ir.model.access" id="model-grp_chw_encounter">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter')]"/>
+            <field name="group" ref="group_community_hw"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
         <!-- Some of those same people also have access to the components -->
         <record model="ir.model.access" id="model-grp_nurses_encounter_component">
             <field name="model" search="[('model','=', 'gnuhealth.encounter.component')]"/>
@@ -512,5 +528,56 @@
             <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="False" />
         </record>
+        <record model="ir.model.access" id="model-grp_chw_encounter_component">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter.component')]"/>
+            <field name="group" ref="group_community_hw"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+
+        <!-- Community Health Workers only have access to the Anthro Component -->
+        <record model="ir.model.access" id="model-grp_chw_encounter_anthro">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter.anthropometry')]"/>
+            <field name="group" ref="group_community_hw"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_chw_encounter_clinical">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter.clinical')]"/>
+            <field name="group" ref="group_community_hw"/>
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_chw_encounter_ambu">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter.ambulatory')]"/>
+            <field name="group" ref="group_community_hw"/>
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_chw_encounter_mental">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter.mental_status')]"/>
+            <field name="group" ref="group_community_hw"/>
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_chw_encounter_procedures">
+            <field name="model" search="[('model','=', 'gnuhealth.encounter.procedures')]"/>
+            <field name="group" ref="group_community_hw"/>
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+
     </data>
 </tryton>

@@ -43,6 +43,11 @@
             <field name="name">Managing Doctors</field>
         </record>
 
+        <!-- Group for community health aides, students and volunteers -->
+        <record id="group_community_hw" model="res.group">
+            <field name="name">Community Health Workers</field>
+        </record>
+
         <!-- Specialised groups for NURSES -->
         <record id="group_junior_nurses" model="res.group">
             <field name="name">Junior Nurses</field>

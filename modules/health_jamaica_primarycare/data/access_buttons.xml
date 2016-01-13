@@ -22,6 +22,10 @@
             <field name="button" ref="health_jamaica.appt-start_encounter_button" />
             <field name="group" ref="group_nurses" />
         </record>
+        <record model="ir.model.button-res.group" id="btngrp-start_encounter-chw">
+            <field name="button" ref="health_jamaica.appt-start_encounter_button" />
+            <field name="group" ref="group_community_hw" />
+        </record>
         <record model="ir.model.button-res.group" id="btngrp-start_encounter-doctors">
             <field name="button" ref="health_jamaica.appt-start_encounter_button" />
             <field name="group" ref="group_doctors" />
@@ -40,6 +44,10 @@
             <field name="button" ref="appt_btn-goto_encounter" />
             <field name="group" ref="group_doctors" />
         </record>
+        <record model="ir.model.button-res.group" id="btngrp-goto_encounter-chw">
+            <field name="button" ref="appt_btn-goto_encounter" />
+            <field name="group" ref="group_community_hw" />
+        </record>
 
         <!-- Some people can Add Components -->
         <record model="ir.model.button-res.group" id="btngrp-addcomponent-records_staff">
@@ -53,6 +61,10 @@
         <record model="ir.model.button-res.group" id="btngrp-addcomponent-doctors">
             <field name="button" ref="encounter_btn-add_component" />
             <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.model.button-res.group" id="btngrp-addcomponent-chw">
+            <field name="button" ref="encounter_btn-add_component" />
+            <field name="group" ref="group_community_hw" />
         </record>
 
         <!-- Some people can finish encounters -->
