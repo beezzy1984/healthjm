@@ -42,7 +42,7 @@ myversion = '==%s' % info.get('version', '0.0.1')
 requires = [
     'pytz>=2014.7',
     'trytond' + tryton_version,
-    'trytond_health_encounter>=0.2.6,<0.3.0',
+    'trytond_health_encounter>=0.2.9,<0.3.0',
     'trytond_health' + gnuhealth_version,
     'trytond_country_jamaica' + myversion
 ]
