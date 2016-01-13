@@ -73,9 +73,10 @@ class SyndromicSurveillanceReport(Report):
 
 
         common_age_groups = [('< 5yrs',0,5), ('> 5yrs', 5,None)]
+        fevers = ['R50', 'R50.5', 'R50.8', 'R50.9']
         syndromes = [
-            ('Fever and Rash', {'signs':['R50.5', 'R21']}),
-            ('Fever', {'signs':['R50.5'], 'age_groups':common_age_groups}),
+            ('Fever and Rash', {'signs':['R21', fevers]}),
+            ('Fever', {'signs':fevers[:], 'age_groups':common_age_groups}),
             ('Gastroenteritis', {'signs':['R19.7'],
                                  'age_groups':common_age_groups}),
             ('Accidents', {'signs':[], 'diagnosis':['V01 - X59'],
@@ -85,22 +86,27 @@ class SyndromicSurveillanceReport(Report):
             ('Fever and respiratory symptoms', {
                     'age_groups':[('<5 yrs', 0, 5), ('5-59 yrs', 5, 60),
                                   ('>60 yrs', 60, None)],
-                    'signs':['R50.5', 'R05 - R07']
+                    'signs':['R05 - R07', fevers]
             }),
-            ('Fever and Haemorrhagic Symptoms', {'signs':['R50.5', 'R58']}),
-            ('Fever and Jaundice',{'signs':['R50.5', 'R17']}),
+            ('Fever and Haemorrhagic Symptoms', {'signs':[fevers, 'R58']}),
+            ('Fever and Jaundice',{'signs':['R17', fevers]}),
             ('Fever and Neurological Symptoms',{
-                    'signs':['R50.5', ['R40','R56','R26']]}),
+                    'signs':[fevers, ['R40','R56','R26']]}),
             ('Asthma',{'signs':[], 'diagnosis':['J45 - J46']}),
-            ('Severe Acute Respiratory Illness (SARI)', {
-                    'signs':['R50.5', 'R06', ['R05', 'R07']],
-                    'diagnosis':[]
-             }),
-            ('Upper Respiratory Tract Infection', {
+            # ('Severe Acute Respiratory Illness (SARI)', {
+            #         'signs':[fevers, 'R06', ['R05', 'R07']],
+            #         'diagnosis':[]
+            #  }),
+            # only for people hospitalised
+            # if child is hospitalised with pneumonia then count as SARI as well
+            # child is < 5 years old
+            ('Upper Respiratory Tract Infections', {
                     'signs':[],
-                    'diagnosis':[('J00 - J06.999',), ('J30 - J39.999')]
-             })
-            # ('Lower Resiratory Tract Infections', {}),
+                    'diagnosis': ['J00 - J06.999', 'J30 - J39.999']
+             }),
+            ('Lower Resiratory Tract Infections', {
+                    'signs': [],
+                    'diagnosis': ['J09 - J18.999', 'J20 - J22.999']}),
             # ('Upper Repiratory Tract Infections', {})
 
         ]
@@ -110,7 +116,7 @@ class SyndromicSurveillanceReport(Report):
             # restricted to using day names as the keys since we're sure
             # this will only be run for a single week
             # dayfunc = lambda x: x['evaluation_start'].timetuple()[:3]
-            dayfunc = lambda x: x[field].strftime('%a')
+            dayfunc = lambda x: utils.localtime(x[field]).strftime('%a')
             # #assuming evaluations are ordered by evaluation_start
             evgroups = groupby(evaluation_list, dayfunc)
             # return [(d, len(list(i))) for d,i in evgroups]
@@ -244,7 +250,7 @@ Please contact your system administrator to have this resolved.'''
 class SyndromicSurveillanceWizard(Wizard):
     '''Syndromic Surveillance Report Wizard'''
     __name__ = 'healthjm_primarycare.report.syndromic_surveillance.wizard'
-    
+
     start = StateView(
             'healthjm_primarycare.report.syndromic_surveillance.start',
             'health_jamaica_primarycare.report_syndromic_surveillance_start',
@@ -276,5 +282,3 @@ class SyndromicSurveillanceWizard(Wizard):
             return 'start'
 
         return action, data
-
-
