@@ -127,9 +127,9 @@ class SyndromicSurveillanceReport(Report):
                     search_domain.append(mk_domain_clause(sign))
             if params.get('diagnosis', False):
                 for diag in params['diagnosis']:
-                    search_domain.append(
-                        mk_domain_clause(diag, 'diagnosis.code')
-                        # ToDo: Verify if secondary_conditions needed here
+                    search_domain.append(['OR',
+                        mk_domain_clause(diag, 'diagnosis.code'),
+                        mk_domain_clause(diag, 'secondary_conditions.pathology.code')]
                     )
             components = Clinical.search_read(
                 search_domain,
