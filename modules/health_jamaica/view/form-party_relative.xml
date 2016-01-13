@@ -2,11 +2,39 @@
 <form string="Relative" col="2">
     <label name="party" />
     <field name="party" />
-    <label name="relative" />
-    <field name="relative" />
     <label name="relationship" />
-    <field name="relationship" />
+    <group id="grp_relationship_is_party" colspan="1" col="3">
+        <field name="relationship" />
+        <label name="is_party" />
+        <field name="is_party" width="30" />
+    </group>
+    <label name="relative_name" />
+    <group id="grp_relative_name" col="6" colspan="1">
+        <field name="relative" colspan="6" />
+        <label name="relative_lastname" />
+        <field name="relative_lastname" />
+        <label name="relative_firstname" />
+        <field name="relative_firstname" />
+        <label name="relative_sex" />
+        <field name="relative_sex" width="60" />
+    </group>
+    <newline />
+    <label name="relative_phone" />
+    <field name="relative_phone" />
+    <label name="relative_address" />
+    <group id="group_heigher" colspan="1" col="4">
+        <field name="relative_address" height="48" colspan="4" />
+    </group>
+    <label id="franken_space" string="    " />
+    <group id="grp_relative_internal_address" colspan="1" col="4">
+        <label name="relative_country" />
+        <field name="relative_country" />
+        <label name="relative_state" />
+        <field name="relative_state" />
+    </group>
     <label name="relative_summary" />
-    <field name="relative_summary" colspan="2"  height="150" yexpand="0" />
+    <group id="group_party_summary" colspan="1" col="4">
+        <field name="relative_summary" colspan="4"  height="150" yexpand="0" />
+    </group>
 
 </form>

@@ -49,6 +49,11 @@
 			<field name="type">tree</field>
 			<field name="name">tree-party_reverse_relative</field>
 		</record>
+		<record model="ir.ui.view" id="healthjm_form-party_reverse_relative">
+			<field name="model">party.relative</field>
+			<field name="type">form</field>
+			<field name="name">form-party_relative_reverse</field>
+		</record>
 
 		<!-- AlternativeID -->
 		<record model="ir.ui.view" id="healthjm_form_alternative_id">

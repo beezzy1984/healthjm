@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form string="Relative of" col="2">
+    <label name="party" />
+    <field name="party" />
+    <label name="relationship_reverse" />
+    <field name="relationship_reverse" />
+    <newline />
+    <label name="relative_phone" />
+    <field name="party_phone_number" />
+    
+    <label name="relative_summary" />
+    <group id="group_party_summary" colspan="1" col="4">
+        <field name="party_relative_summary" colspan="4"  height="150" yexpand="0" />
+    </group>
+
+</form>

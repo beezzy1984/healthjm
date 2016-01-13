@@ -2,6 +2,6 @@
 <tree string="Relatives">
     <field name="party" expand="1" />
     <field name="relative" expand="1" />
-    <field name="relationship" expand="1" />
+    <field name="relationship_reverse" expand="1" />
     <field name="party_phone_number" expand="1" />
 </tree>

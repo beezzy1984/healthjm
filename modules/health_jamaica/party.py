@@ -65,18 +65,33 @@ RELATIONSHIP_LIST = [
     ('spouse', 'Spouse (husband/wife)'),
     ('parent', 'Parent (mother/father)'),
     ('guardian', 'Guardian/Foster parent'),
+    ('ward', 'Ward (Foster child)'),
     ('sibling', 'Sibling (brother/sister)'),
     ('grandparent', 'Grandparent'),
     ('grandchild', 'Grandchild'),
     ('cousin', 'Cousin'),
     ('auntuncle', 'Aunt/Uncle'),
+    ('niecenephew', 'Niece/Nephew'),
     ('girlboyfriend', 'Girlfriend/Boyfriend'),
     ('friend', 'Friend'),
     ('coworker', 'Co-worker'),
     ('employer', 'Employer'),
+    ('employee', 'Employee'),
     ('other', 'Other')
 ]
-
+RELATIONSHIP_REVERSE_MAP = [
+    ('offspring', 'parent'),
+    ('spouse', 'spouse'),
+    ('sibling', 'sibling'),
+    ('grandparent', 'grandchild'),
+    ('auntuncle', 'niecenephew'),
+    ('cousin', 'cousin'),
+    ('friend', 'friend'),
+    ('coworker', 'coworker'),
+    ('girlboyfriend', 'girlboyfriend'),
+    ('employer', 'employee'),
+    ('other', 'other'),
+]
 
 NNre = re.compile('(%?)NN-(.*)', re.I)
 
@@ -444,19 +459,28 @@ class AlternativePersonID (ModelSQL, ModelView):
         return True
 
 
+NOTPARTY_STATES = {'invisible': Eval('is_party', False)}
+NOTPARTY_RSTATES = {'required': Not(Eval('is_party', False)),
+                    'invisible': Eval('is_party', False)}
+
+
 class PartyRelative(ModelSQL, ModelView):
     'Relative/NOK/Employer'
     __name__ = 'party.relative'
 
     party = fields.Many2One('party.party', 'Patient', required=True,
                             ondelete='CASCADE')
-    relative = fields.Many2One('party.party', 'Relative', required=True,
-                               ondelete='CASCADE',
-                               domain=[('id', '!=', Eval('party'))])
+    relative = fields.Many2One(
+        'party.party', 'Relative', ondelete='CASCADE',
+        domain=[('id', '!=', Eval('party'))],
+        states={'invisible': Not(Eval('is_party', False)),
+                'required': Eval('is_party', False),
+                'readonly': Eval('id', 0) > 0})
     relationship = fields.Selection(RELATIONSHIP_LIST, 'Relationship',
                                     help='Relationship of contact to patient')
     relative_summary = fields.Function(fields.Text('Relative Summary',
-                                       states={'invisible': Eval('id', 0) <= 0}),
+                                       states={'invisible': Or(Eval('id', 0) <= 0,
+                                                               ~Eval('is_party', False))}),
                                        'get_relative_val')
     phone_number = fields.Function(fields.Char('Phone/Mobile'),
                                    'get_relative_val')
@@ -465,31 +489,73 @@ class PartyRelative(ModelSQL, ModelView):
                                              'get_relative_val')
     party_phone_number = fields.Function(fields.Char('Phone/Mobile'),
                                          'get_relative_val')
+    relationship_reverse = fields.Function(fields.Selection(RELATIONSHIP_LIST,
+                                           'Relationship'), 'get_reverse_relationship')
+    is_party = fields.Boolean('Relative is a party',
+                              help='Check to select the party that represents'
+                              ' this relative',
+                              states={'readonly': Eval('id', 0) > 0})
+    relative_name = fields.Function(fields.Char('Relative'), 'get_relative_name',
+                                    searcher='search_relative_name')
+    relative_lastname = fields.Char('Last name', states=NOTPARTY_RSTATES)
+    relative_firstname = fields.Char('Given name(s)', states=NOTPARTY_RSTATES)
+    relative_sex = fields.Selection([(None, '')] + SEX_OPTIONS, 'Sex',
+                                    states=NOTPARTY_RSTATES)
+    relative_country = fields.Many2One('country.country', 'Country',
+                                       states=NOTPARTY_STATES)
+    relative_state = fields.Many2One('country.subdivision', 'Parish/Province',
+                                     states=NOTPARTY_STATES)
+    relative_address = fields.Text('Address details', states=NOTPARTY_STATES)
+    relative_phone = fields.Char('Phone/Mobile number(s)',
+                                 states=NOTPARTY_STATES,
+                                 help='Separate multiple numbers with comma (,)')
+
+    @staticmethod
+    def default_is_party():
+        return False
 
     def get_relative_val(self, field_name):
         if field_name in ['phone_number', 'party_phone_number',
                           'relative_summary', 'party_relative_summary']:
             # return a formatted text summary for the NOK
             # to include phone(s), email, address[0]
+            sexdict = dict([(None, '')] + SEX_OPTIONS)
             if field_name.startswith('party'):
                 partyobj = self.party
-            else:
+            elif self.is_party:
                 partyobj = self.relative
-            rdata = []
-            contact_types = ['phone', 'mobile', 'email']
-            for mech in partyobj.contact_mechanisms:
-                if mech.type in contact_types:
-                    rdata.append((mech.type.capitalize(), mech.value))
-            if 'phone_number' in field_name:
-                v = ', '.join([y for x,y in rdata if x in ['Phone', 'Mobile']])
             else:
-                num_addresses = len(self.relative.addresses) - 1
-                if num_addresses >= 0:
-                    rdata.append(('Address', ''))
-                    rdata.append(('', self.relative.addresses[0].simple_address))
-                    if num_addresses:
-                        rdata.append(('...', '(and %d more)' % num_addresses))
-                v = '\n'.join([': '.join(x) for x in rdata])
+                # work out the required field using the internal fields
+                if 'phone_number' in field_name:
+                    return self.relative_phone
+                else:
+                    # summary, we'll include sex and address
+                    rdata = [('Sex', sexdict.get(self.relative_sex, '')),
+                             ('Address', '')]
+                    if self.relative_address and self.relative_state and self.relative_country:
+                        rdata.append(
+                            ('', '%s\n%s, %s' % (self.relative_address,
+                             self.relative_state.name,
+                             self.relative_country.name)))
+                    partyobj = False
+                    v = '\n'.join([': '.join(x) for x in rdata])
+            if partyobj:
+                rdata = []
+                contact_types = ['phone', 'mobile', 'email']
+                for mech in partyobj.contact_mechanisms:
+                    if mech.type in contact_types:
+                        rdata.append((mech.type.capitalize(), mech.value))
+                if 'phone_number' in field_name:
+                    v = ', '.join([y for x,y in rdata if x in ['Phone', 'Mobile']])
+                else:
+                    rdata.insert(0, ('Sex', sexdict.get(partyobj.sex, '')))
+                    num_addresses = len(partyobj.addresses) - 1
+                    if num_addresses >= 0:
+                        rdata.append(('Address', ''))
+                        rdata.append(('', partyobj.addresses[0].simple_address))
+                        if num_addresses:
+                            rdata.append(('...', '(and %d more)' % num_addresses))
+                    v = '\n'.join([': '.join(x) for x in rdata])
         else:
             # return the singular value from the NOK if we can
             try:
@@ -498,3 +564,31 @@ class PartyRelative(ModelSQL, ModelView):
                 print repr(e)
                 v = None
         return v
+
+    @classmethod
+    def get_relative_name(cls, instances, name):
+        namefilter = lambda x: (x.id, x.relative.name if x.is_party else
+                                '%s, %s' % (x.relative_lastname,
+                                            x.relative_firstname))
+        return dict(map(namefilter, instances))
+
+    @classmethod
+    def search_relative_name(cls, field_name, clause):
+        operator, operand = clause[1:]
+        newclause = [[
+            'OR',
+            ['AND', ('relative.name', operator, operand),
+             ('is_party', '=', True)],
+            ['AND', ('is_party', '=', False),
+             ['OR',
+              ('relative_lastname', operator, operand),
+              ('relative_firstname', operator, operand)]]
+        ]]
+        return newclause
+
+    @classmethod
+    def get_reverse_relationship(cls, instances, name):
+        reversemap = dict([(x, y) for x, y in RELATIONSHIP_REVERSE_MAP])
+        reversemap.update([(y, x) for x, y in RELATIONSHIP_REVERSE_MAP])
+        rmapper = lambda i: (i.id, reversemap.get(i.relationship, None))
+        return dict(map(rmapper, instances))

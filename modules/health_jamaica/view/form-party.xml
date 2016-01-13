@@ -90,8 +90,8 @@
             <field name="relatives" xexpand="1" colspan="4" mode="tree,form"
                view_ids="health_jamaica.healthjm_tree-party_relative,health_jamaica.healthjm_form-party_relative" />
             <newline />
-            <field name="reverse_relatives" xexpand="1" colspan="4" mode="tree"
-                view_ids="health_jamaica.healthjm_tree-party_reverse_relative" />
+            <field name="reverse_relatives" xexpand="1" colspan="4" mode="tree,form"
+                view_ids="health_jamaica.healthjm_tree-party_reverse_relative,health_jamaica.healthjm_form-party_reverse_relative" />
         </page>
     </xpath>
 
