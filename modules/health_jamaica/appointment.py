@@ -47,6 +47,9 @@ class Appointment(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(Appointment, cls).__setup__()
+        cls._error_messages.update(
+            no_institution="No institution specified in appointment [%s]"
+        )
         cls.state.selection = APPOINTMENT_STATES
         cls._buttons.update({
             'start_encounter': {'readonly': Not(And(Equal(Eval('state'),
@@ -58,6 +61,11 @@ class Appointment(ModelSQL, ModelView):
             'client_arrived': {'readonly': Not(And(Equal(Eval('state'),
                                                'confirmed'), Bool(Eval('name'))))}
         })
+        ro_states={'readonly': Not(In(Eval('state'), ['confirmed', 'free']))}
+        cls.patient.states.update(ro_states)
+        cls.institution.states = ro_states
+        cls.state.states = ro_states
+        cls.appointment_date.states = ro_states
 
     @staticmethod
     def default_healthprof():
@@ -196,6 +204,9 @@ class Appointment(ModelSQL, ModelView):
     @classmethod
     @ModelView.button
     def client_arrived(cls, appointments):
+        for a in appointments:
+            if not a.institution:
+                cls.raise_user_error('no_institution', (a.name, ))
         cls.write(appointments, {'state': 'arrived'})
 
     @classmethod
