@@ -88,7 +88,7 @@ class SyndromicSurveillanceReport(Report):
                                   ('>60 yrs', 60, None)],
                     'signs':['R05 - R07', fevers]
             }),
-            ('Fever and Haemorrhagic Symptoms', {'signs':[fevers, 'R58']}),
+            ('Fever and Haemorrhagic Symptoms', {'signs':[fevers, ('R58', 'R23.3')]}),
             ('Fever and Jaundice',{'signs':['R17', fevers]}),
             ('Fever and Neurological Symptoms',{
                     'signs':[fevers, ['R40','R56','R26']]}),

@@ -324,12 +324,6 @@
             <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
-        <record model="gnuhealth.pathology" id="R581">
-            <field name="name">Ecchymoses</field>
-            <field name="code">R58.1</field>
-            <field name="active" eval="True" />
-            <field name="category" ref="health_icd10.icdcat18-8" />
-        </record>
         <record model="gnuhealth.pathology" id="R684">
             <field name="name">Blood in stools (melaena)</field>
             <field name="code">R68.4</field>
