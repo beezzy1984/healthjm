@@ -211,7 +211,7 @@ class PatientData(ModelSQL, ModelView):
         if self.name.relatives:
             content.append(('Next of Kin', ''))
             for relative in self.name.relatives:
-                content.append(('', '    %s (%s)' % (relative.relative.name,
+                content.append(('', '    %s (%s)' % (relative.relative_name,
                                                      relative.phone_number)))
         # if self.name.occupation:
         #     content.append(('Occupational Group', self.name.occupation.name))
