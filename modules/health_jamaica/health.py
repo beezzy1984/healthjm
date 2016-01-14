@@ -410,6 +410,8 @@ class ProcedureCode(ModelSQL, ModelView):
     'Medical Procedures'
     __name__ = 'gnuhealth.procedure'
 
+    active = fields.Boolean('Active')
+
     @classmethod
     def __setup__(cls):
         super(ProcedureCode, cls).__setup__()
@@ -423,10 +425,12 @@ class ProcedureCode(ModelSQL, ModelView):
         return ['OR', replace_clause_column(clause, 'name'),
                 replace_clause_column(clause, 'description')]
 
-
     def get_rec_name(self, name):
         return '%s [%s]' % (self.description, self.name)
 
+    @staticmethod
+    def default_active():
+        return True
 
 
 class PathologyGroup(ModelSQL, ModelView):
@@ -445,6 +449,7 @@ class Pathology(ModelSQL, ModelView):
     'Diseases'
     __name__ = 'gnuhealth.pathology'
 
+    active = fields.Boolean('Active')
     track_first = fields.Function(fields.Boolean('Track first diagnosis'),
                                   'get_track_first')
 
@@ -466,6 +471,10 @@ class Pathology(ModelSQL, ModelView):
 
     def get_rec_name(self, name):
         return '%s [%s]' % (self.name, self.code)
+
+    @staticmethod
+    def default_active():
+        return True
 
 
 class PatientEvaluation(ModelSQL, ModelView):

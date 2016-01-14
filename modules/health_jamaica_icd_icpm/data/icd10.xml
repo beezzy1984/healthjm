@@ -2,67 +2,102 @@
 <tryton>
     <data>
         <!-- ICD R Codes -->
+
+        <!-- Disable these R codes -->
+        <record model="gnuhealth.pathology" id="health_icd10.R500">
+            <field name="name">Fever with chills (invalid)</field>
+            <field name="code">R50.0(invalid)</field>
+            <field name="category" ref="health_icd10.icdcat18-8" />
+            <field name="active" eval="False" />
+        </record>
+        <record model="gnuhealth.pathology" id="health_icd10.R501">
+            <field name="name">Persistent fever (invalid)</field>
+            <field name="code">R50.1(invalid)</field>
+            <field name="category" ref="health_icd10.icdcat18-8" />
+            <field name="active" eval="False" />
+        </record>
+
+         <!-- Add these codes -->
         <record id="R197" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-2" />
             <field name="code">R19.7</field>
             <field name="name">Diarrhoea, Unspecified</field>
         </record>
         <record id="R531" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
             <field name="code">R53.1</field>
             <field name="name">Asthenia (Generalized Weakness)</field>
         </record>
         <record id="R532" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
             <field name="code">R53.2</field>
             <field name="name">Debility</field>
         </record>
         <record id="R533" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
             <field name="code">R53.3</field>
             <field name="name">General Physical Deterioration</field>
         </record>
         <record id="R534" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
             <field name="code">R53.4</field>
             <field name="name">Lethargy</field>
         </record>
         <record id="R535" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
             <field name="code">R53.5</field>
             <field name="name">Tiredness</field>
         </record>
         <record id="R295" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-4" />
             <field name="code">R29.5</field>
             <field name="name">Joint Pain Or Stiffness (arthralgia)</field>
         </record>
         <record id="R297" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-4" />
             <field name="code">R29.7</field>
             <field name="name">Joint Swelling </field>
         </record>
         <record id="R602" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
             <field name="code">R60.2</field>
             <field name="name">Periarticular Oedema</field>
         </record>
         <record id="R523" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
             <field name="code">R52.3</field>
             <field name="name">Muscle Pain (myalgia)</field>
         </record>
         <record id="R524" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
             <field name="code">R52.4</field>
             <field name="name">Back Pain</field>
         </record>
+        <record id="R525" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
+            <field name="category" ref="health_icd10.icdcat18-8" />
+            <field name="code">R52.5</field>
+            <field name="name">Painful Red Eye</field>
+        </record>
         <record id="R110" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-2" />
             <field name="code">R11.0</field>
             <field name="name">Nausea</field>
         </record>
         <record id="R111" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-2" />
             <field name="code">R11.1</field>
             <field name="name">Vomitting</field>
@@ -70,19 +105,23 @@
         <record model="gnuhealth.pathology" id="health_icd10.R10">
             <field name="name">Abdominal Pain</field>
             <field name="code">R10</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-2" />
         </record>
         <record id="R105" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-2" />
             <field name="code">R10.5</field>
             <field name="name">Pelvic Pain</field>
         </record>
         <record id="R106" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-2" />
             <field name="code">R10.6</field>
             <field name="name">Perineal Pain</field>
         </record>
         <record id="R107" model="gnuhealth.pathology">
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-2" />
             <field name="code">R10.7</field>
             <field name="name">Generalized abdominal pain</field>
@@ -90,81 +129,73 @@
         <record model="gnuhealth.pathology" id="R502">
             <field name="name">Drug Induced Fever</field>
             <field name="code">R50.2</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
         <record model="gnuhealth.pathology" id="R505">
             <field name="name">High Fever greater than 38&#176;C (100.4&#176;F)</field>
             <field name="code">R50.5</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
         <record model="gnuhealth.pathology" id="R508">
             <field name="name">Persistent Fever or Fever with Chills/Rigors</field>
             <field name="code">R50.8</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
-        </record>
-        <!-- Disable these R codes -->
-        <!--active=False doesn't work on them, so the next two below
-            overwrites them -->
-<!--         <record model="gnuhealth.pathology" id="health_icd10.R500">
-            <field name="active" eval="False" />
-        </record>
-        <record model="gnuhealth.pathology" id="health_icd10.R501">
-            <field name="active" eval="False" />
-        </record> -->
-
-        <record model="gnuhealth.pathology" id="health_icd10.R500">
-            <field name="code">R36.0</field>
-            <field name="name">Urethral discharge without blood</field>
-            <field name="category" ref="health_icd10.icdcat18-5" />
-        </record>
-        <record model="gnuhealth.pathology" id="health_icd10.R501">
-            <field name="code">R36.1</field>
-            <field name="name">Urethral discharge with blood</field>
-            <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
         <record id="R37" model="gnuhealth.pathology">
             <field name="code">R37</field>
             <field name="name">Vaginal discharge</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
         <record id="R371" model="gnuhealth.pathology">
             <field name="code">R37.1</field>
             <field name="name">Vaginal discharge with blood</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
         <record id="R372" model="gnuhealth.pathology">
             <field name="code">R37.2</field>
             <field name="name">Vaginal itching</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
         <record id="R373" model="gnuhealth.pathology">
             <field name="code">R37.3</field>
             <field name="name">Vaginal swelling, mass</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
         <record id="R374" model="gnuhealth.pathology">
             <field name="code">R37.4</field>
             <field name="name">Perineal itching</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
         <record id="R375" model="gnuhealth.pathology">
             <field name="code">R37.5</field>
             <field name="name">Perineal swelling, mass</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
         <record id="R376" model="gnuhealth.pathology">
             <field name="code">R37.6</field>
             <field name="name">Pain associated with sexual intercourse (females)</field>
-        <field name="category" ref="health_icd10.icdcat18-5" />
+        <field name="active" eval="True" />
+            <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
         <record id="R377" model="gnuhealth.pathology">
             <field name="code">R37.7</field>
             <field name="name">Vaginal bleeding</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
         <record id="R378" model="gnuhealth.pathology">
             <field name="code">R37.8</field>
             <field name="name">Abnormal menstrual bleeding</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-5" />
         </record>
 
@@ -172,81 +203,97 @@
         <record id="E663" model="gnuhealth.pathology">
             <field name="name">Normal Nutrition (BMI 19-24.99 or less)</field>
             <field name="code">E66.3</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat4-7" />
         </record>
         <record id="E664" model="gnuhealth.pathology">
             <field name="name">Overweight (BMI 25-29.99)</field>
             <field name="code">E66.4</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat4-7" />
         </record>
         <record id="E665" model="gnuhealth.pathology">
             <field name="name">Obsesity (BMI 30-34.99)</field>
             <field name="code">E66.5</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat4-7" />
         </record>
         <record id="E666" model="gnuhealth.pathology">
             <field name="name">Obesity (BMI 35-39.99)</field>
             <field name="code">E66.6</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat4-7" />
         </record>
         <record id="E667" model="gnuhealth.pathology">
             <field name="name">Obesity (BMI 40 or greater) </field>
             <field name="code">E66.7</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat4-7" />
         </record>
         <record id="health_icd10.E440" model="gnuhealth.pathology">
             <field name="name">Moderate Wasting</field>
             <field name="code">E44.0</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat4-5" />
         </record>
         <record id="health_icd10.E441" model="gnuhealth.pathology">
             <field name="name">Normal Nutrition</field>
             <field name="code">E44.1</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat4-5" />
         </record>
         <record id="E442" model="gnuhealth.pathology">
             <field name="name">Severe Wasting</field>
             <field name="code">E44.2</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat4-5" />
         </record>
         <record id="E443" model="gnuhealth.pathology">
             <field name="name">Underweight</field>
             <field name="code">E44.3</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat4-5" />
         </record>
         <record id="E444" model="gnuhealth.pathology">
             <field name="name">Severly underweight</field>
             <field name="code">E44.4</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat4-5" />
         </record>
         <record id="E451" model="gnuhealth.pathology">
             <field name="name">Moderate Stunting</field>
             <field name="code">E45.1</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat4-5" />
         </record>
         <record id="E452" model="gnuhealth.pathology">
             <field name="name">Severe Stunting</field>
             <field name="code">E45.2</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat4-5" />
         </record>
         <record model="gnuhealth.pathology" id="Z393">
             <field name="name">Routine postpartum follow-up (baby)</field>
             <field name="code">Z39.3</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat21-3" />
         </record>
         <record id="Z395" model="gnuhealth.pathology">
             <field name="name">Exclusive breastfeeding of infant</field>
             <field name="code">Z39.5</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat21-3" />
         </record>
         <record id="Z396" model="gnuhealth.pathology">
             <field name="name">Partial breastfeeding of infant</field>
             <field name="code">Z39.6</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat21-3" />
         </record>
         <record id="Z397" model="gnuhealth.pathology">
             <field name="name">Not breastfeeding infant</field>
             <field name="code">Z39.7</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat21-3" />
         </record>
 
@@ -254,11 +301,13 @@
         <record id="U06" model="gnuhealth.pathology">
             <field name="name">Zika Virus Disease</field>
             <field name="code">U06</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat22" />
         </record>
         <record id="U069" model="gnuhealth.pathology">
             <field name="name">Zika Virus Disease, unspecified</field>
             <field name="code">U06.9</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat22" />
         </record>
         <!-- End Zika codes -->
@@ -266,41 +315,55 @@
         <record model="gnuhealth.pathology" id="health_icd10.R070">
             <field name="name">Pain in throat (sore throat)</field>
             <field name="code">R07.0</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-1"></field>
         </record>
-        <record model="gnuhealth.pathology" id="R362">
+        <record model="gnuhealth.pathology" id="R361">
             <field name="name">Haematospermia (blood in semen)</field>
-            <field name="code">R36.2</field>
+            <field name="code">R36.1</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-5" />
+        </record>
+        <record model="gnuhealth.pathology" id="R581">
+            <field name="name">Ecchymoses</field>
+            <field name="code">R58.1</field>
+            <field name="active" eval="True" />
+            <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
         <record model="gnuhealth.pathology" id="R684">
             <field name="name">Blood in stools (melaena)</field>
             <field name="code">R68.4</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
         <record model="gnuhealth.pathology" id="R685">
             <field name="name">Purulent conjunctivitis</field>
             <field name="code">R68.5</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
         <record model="gnuhealth.pathology" id="R686">
             <field name="name">Non-purulent conjunctivitis</field>
             <field name="code">R68.6</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
         <record model="gnuhealth.pathology" id="R687">
             <field name="name">Conjunctival hyperaemia</field>
             <field name="code">R68.7</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
         <record model="gnuhealth.pathology" id="R511">
             <field name="name">Retro-orbital pain</field>
             <field name="code">R51.1</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-8" />
         </record>
         <record model="gnuhealth.pathology" id="health_icd10.R876">
             <field name="name">Abnormal Pap Smear</field>
             <field name="code">R87.6</field>
+            <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-11" />
         </record>
     </data>
