@@ -52,6 +52,7 @@ ALTERNATIVE_ID_TYPES = [
     ('pathID ', 'PATH ID'),
     ('gojhcard', 'GOJ Health Card'),
     ('votersid', 'GOJ Voter\'s ID'),
+    ('nhfcard', 'NHF Card'),
     ('birthreg', 'Birth Registration ID'),
     ('ninnum', 'NIN #'),
     ('passport', 'Passport'),
