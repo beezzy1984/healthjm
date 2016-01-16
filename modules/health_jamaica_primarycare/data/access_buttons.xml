@@ -10,13 +10,9 @@
          -->
 
          <!-- Some people can click Start Encounter -->
-        <record model="ir.model.button-res.group" id="btngrp-start_encounter-records_techs">
+        <record model="ir.model.button-res.group" id="btngrp-start_encounter-records_staff">
             <field name="button" ref="health_jamaica.appt-start_encounter_button" />
-            <field name="group" ref="group_records_technicians" />
-        </record>
-        <record model="ir.model.button-res.group" id="btngrp-start_encounter-records_admins">
-            <field name="button" ref="health_jamaica.appt-start_encounter_button" />
-            <field name="group" ref="group_records_admins" />
+            <field name="group" ref="group_records_staff" />
         </record>
         <record model="ir.model.button-res.group" id="btngrp-start_encounter-nurses">
             <field name="button" ref="health_jamaica.appt-start_encounter_button" />
