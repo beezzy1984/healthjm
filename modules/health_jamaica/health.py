@@ -316,7 +316,7 @@ class HealthInstitution(ModelSQL, ModelView):
         # Todo: Update cls.write to erase this cache when this institution
         # is written to. Or else, may have wrong value in _company_facility_map
                 return institution_id
-        return -1
+        return None
 
 
 class HealthInstitutionSpecialties(ModelSQL, ModelView):
@@ -594,7 +594,7 @@ class OperationalSector(ModelSQL, ModelView):
             if not values.get('code'):
                 values['code'] = cls.generate_code(values['subdivision'],
                                                    values['name'])
-        return super(OperationalSector, cls).crate(vlist)
+        return super(OperationalSector, cls).create(vlist)
 
 
 class HealthInstitutionOperationalSector(ModelSQL, ModelView):

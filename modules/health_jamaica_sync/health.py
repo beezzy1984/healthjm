@@ -1,6 +1,6 @@
 import os
 from tryton_synchronisation import SyncMixin, SyncUUIDMixin, SyncMode
-from trytond.model import ModelSQL
+from trytond.model import ModelSQL, fields
 from trytond.pool import PoolMeta
 __all__ = [
     'OperationalArea', 'OperationalSector',
@@ -103,10 +103,19 @@ class Pathology(SyncMixin):
     sync_mode = SyncMode.none
 
 
-class DiseaseMembers(SyncUUIDMixin):
+class DiseaseMembers(SyncMixin):
     __name__ = 'gnuhealth.disease_group.members'
     __metaclass__ = PoolMeta
     sync_mode = SyncMode.update
+    code = fields.Function(fields.Char('Code'), 'get_code')
+    unique_id_column = 'code'
+
+    @classmethod
+    def get_code(cls, instances, name):
+        def coder(instance):
+            return (instance.id,
+                    '%s-%s' % (instance.name.code, instance.disease_group.code))
+        return dict(map(coder, instances))
 
 
 class ProcedureCode(SyncMixin):
