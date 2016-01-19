@@ -103,19 +103,34 @@ class Pathology(SyncMixin):
     sync_mode = SyncMode.none
 
 
+CODE_SPLITTER='-.-'
 class DiseaseMembers(SyncMixin):
     __name__ = 'gnuhealth.disease_group.members'
     __metaclass__ = PoolMeta
     sync_mode = SyncMode.update
-    code = fields.Function(fields.Char('Code'), 'get_code')
+    code = fields.Function(fields.Char('Code'), 'get_code',
+                           searcher='search_code')
     unique_id_column = 'code'
 
     @classmethod
     def get_code(cls, instances, name):
         def coder(instance):
             return (instance.id,
-                    '%s-%s' % (instance.name.code, instance.disease_group.code))
+                    '%s%s%s' % (instance.name.code, CODE_SPLITTER,
+                                instance.disease_group.code))
         return dict(map(coder, instances))
+
+    @classmethod
+    def search_code(cls, field_name, clause):
+        fld, operator, operand = clause
+        if CODE_SPLITTER in operand:
+            operand = filter(None, operand.split(CODE_SPLITTER))
+            return ['AND', ('name.code', operator, operand[0]),
+                    ('disease_group.code', operator, operand[1])]
+        else:
+            return ['AND', ('name.code', operator, operand),
+                    ('disease_group.code', operator, operand)]
+
 
 
 class ProcedureCode(SyncMixin):

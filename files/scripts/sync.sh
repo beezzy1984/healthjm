@@ -151,6 +151,9 @@ cycle_all(){
 # ====================================================================
 # cleanup function that shuts down flower and celery worker
 cleanup(){
+    FLOWER_PID="${LOGDIR}/flower.pid"
+    WORKER_PID="${LOGDIR}/worker.pid"
+    
     if [ -n "$(ps h -p `cat ${FLOWER_PID}`)" ]; then
         # flower is indeed running, according to pidfile
         echo -n "shutting down celery-flower monitor .."
