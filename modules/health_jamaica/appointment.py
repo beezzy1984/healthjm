@@ -177,8 +177,11 @@ class Appointment(ModelSQL, ModelView):
                 cls.raise_user_warning(warning_code, u''.join(warning_msg))
 
     @classmethod
-    def write(cls, appointments, values):
+    def write(cls, appointments, values):  # , *args):
         'create an AppointmentStateChange when the state changes'
+        # todo: handle the other (appts, values) pairs in *args
+        # not handled by GNU Health so handling it here would cause
+        # an error when we call the super below
         newstate = values.get('state', False)
         to_make = []
         if newstate:
