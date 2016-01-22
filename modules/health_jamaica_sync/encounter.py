@@ -47,6 +47,10 @@ class PatientEncounter(SyncUUIDMixin):
     __metaclass__ = PoolMeta
     sync_mode = SyncMode.full
 
+    @classmethod
+    def get_unsync_domain(cls):
+        return [('state', '!=', 'in_progress')]
+
 
 class EncounterClinical(SyncUUIDMixin):
     __name__ = 'gnuhealth.encounter.clinical'

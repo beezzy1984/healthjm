@@ -81,6 +81,10 @@ class Appointment(SyncUUIDMixin):
     __name__ = 'gnuhealth.appointment'
     __metaclass__ = PoolMeta
 
+    @classmethod
+    def get_unsync_domain(cls):
+        return ['AND', ('state', '!=', 'processing'), ('state', '!=', 'free')]
+
 
 class PathologyCategory(SyncMixin):
     __name__ = 'gnuhealth.pathology.category'
