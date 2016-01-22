@@ -38,7 +38,7 @@ class RemoteParty(ModelView, ModelStorage):
                                                     'invisible':Bool(Eval('sex') == 'm')})
     du_code = UUID('DU_uuid')
     du_address = fields.Text('Address', states=RO)
-    marked_for_import = fields.Boolean('Import party')
+    marked_for_import = fields.Boolean('Import party', states={'readonly': True})
 
     
     @classmethod
@@ -90,7 +90,7 @@ class RemoteParty(ModelView, ModelStorage):
                                     fields_names=['name', 'alt_ids', 'upi',
                                                   'is_patient', #'is_healthprof', 'is_institution',
                                                   'sex', 'father_name', 'mother_maiden_name',
-                                                  'dob','party_warning_ack', 'maiden_name',
+                                                  'dob','unidentified', 'maiden_name',
                                                   'marital_status', 'du.uuid',
                                                   'du.full_address','ref',
                                                   'alias','create_date', 'id',
@@ -203,13 +203,13 @@ class RemotePartyImport(Wizard):
         ids, datas = RemoteParty.get_to_import()
         num_names,names = len(ids), []
         if num_names:
-            names = ['%s (%s)'%(x['name'], x['upi']) for x in datas.values()]
+            names = [u'%s (%s)'%(x['name'], x['upi']) for x in datas.values()]
             names.sort()
         else:
             names = ['No patient records have been selected for import']
 
         return {
-            'parties': '\n'.join(names),
+            'parties': u'\n'.join(names),
             'num_selected': num_names
         }
 
@@ -221,7 +221,7 @@ class RemotePartyImport(Wizard):
         patient_model = pool.get('gnuhealth.patient')
 
         party_codes, du_codes, patient_codes = [],[], []
-        for c in datas:
+        for c in datas.values():
             if c.get('code'):
                 party_codes.append(c['code'])
             if c.get('ref', False) and c.get('is_patient', False):
@@ -240,15 +240,16 @@ class RemotePartyImport(Wizard):
         return 'import_related'
 
     def transition_import_related(self):
-        # search for a pull the evaluations and appointments too
+        # search for a pull the encounters and appointments too
         pool = Pool()
         Patient = pool.get('gnuhealth.patient')
         Appointment = pool.get('gnuhealth.appointment')
-        Evaluation = pool.get('gnuhealth.patient.evaluation')
+        # Evaluation = pool.get('gnuhealth.patient.evaluation')
+        Encounter = pool.get('gnuhealth.encounter')
 
         base_domain = [('patient.%s'%Patient.unique_id_column, 'in',
                         self._patient_codes)]
-        appointment_domain = [('state', 'in', ['free', 'done'])]
+        appointment_domain = [('state', 'in', ['confirmed', 'done'])]
         appointments = Appointment.search_master(base_domain+appointment_domain,
                                                  0, RELATED_LIMIT,
                                                  [('appointment_date', 'DESC')],
@@ -260,23 +261,23 @@ class RemotePartyImport(Wizard):
         if appointment_codes:
             Appointment.pull_master_record(appointment_codes)
 
-        evaluation_domain = [('state', 'in', ['done', 'signed'])]
-        evaluations = Evaluation.search_master(base_domain+evaluation_domain,
+        encounter_domain = [('state', '=', 'signed')]
+        encounters = Encounter.search_master(base_domain+encounter_domain,
                                                0, RELATED_LIMIT,
-                                               [('evaluation_start', 'DESC')],
+                                               [('start_time', 'DESC')],
                                                fields_names=[
                                                     'id', 
-                                                    Evaluation.unique_id_column,
-                                                    'evaluation_start', 'state'
+                                                    Encounter.unique_id_column,
+                                                    'start_time', 'state'
                                                ])
-        evaluation_codes = [x[Evaluation.unique_id_column]
-                            for x in evaluations]
-        if evaluation_codes:
-            Evaluation.pull_master_record(evaluation_codes)
+        encounter_codes = [x[Encounter.unique_id_column]
+                            for x in encounters]
+        if encounter_codes:
+            Encounter.pull_master_record(encounter_codes)
 
-        # and then fetch the One2Many fields on evaluation
+        # and then fetch the One2Many fields on encounter
         # I.E. secondary_conditions, signs_symptoms, ddx
-        evaluation_related_models = []
+        encounter_related_models = []
 
         return 'done'
 

@@ -27,13 +27,8 @@ PURGE_AT_STARTUP=false
 minit(){
     source "$conffile"
     source "$VIRTUAL_ENV/bin/activate"
-     WORKDIR="$(pwd)"
-    # calculate the directory path by changing into the folder and using pwd
-    cd $MYDIR
-
-    MYDIR="$(pwd)"
-    cd $WORKDIR
-# -- last cd command to go back to the folder we started in
+    # get the absolute path for MYDIR
+    MYDIR="$(readlink -f '$MYDIR')"
 
     export PYTHONPATH=$SYNC_ENV
 

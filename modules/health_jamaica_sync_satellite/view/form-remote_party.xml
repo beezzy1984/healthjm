@@ -34,7 +34,10 @@
 	</group>
 	<newline />
 	<group col="10" id="remote_party_button_space">
-		<separator colspan="8" id="remote_party_button_push_separator" />
-		<button string="Import Party" name="fetch_remote_party" colspan="2" />
+		<separator colspan="6" id="remote_party_button_push_separator" />
+		<label name="marked_for_import" />
+		<field name="marked_for_import" />
+		<button string="Mark for import" name="mark_for_import" />
+		<button string="Do not import" name="unmark_import" />
 	</group>
 </form>
