@@ -469,8 +469,9 @@ class Pathology(ModelSQL, ModelView):
         # else:
         #     return [replace_clause_column(clause, 'name')]
 
-    def get_rec_name(self, name):
-        return '%s [%s]' % (self.name, self.code)
+    @classmethod
+    def get_rec_name(cls, records, name):
+        return dict([(s.id, '%s [%s]' % (s.name, s.code)) for s in records])
 
     @staticmethod
     def default_active():
