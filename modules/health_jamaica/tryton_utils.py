@@ -140,9 +140,9 @@ def get_age_in_years(dob, ref_date=None):
 
 def get_epi_week(d=None):
     '''
-    Returns a tuple containing two date objects and an integer. They
-    represent (sunday, saturday, weeknum) for the epidemiological week
-    in which the date passed in <d> belongs.
+    Returns a tuple containing 2 date objects and a 2 integers. They
+    represent (sunday, saturday, year, weeknum) for the epidemiological
+    week in which the date passed in <d> belongs.
     '''
     if d is None:
         d = date.today()

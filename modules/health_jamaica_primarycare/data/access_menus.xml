@@ -48,6 +48,10 @@
         </record>
 
         <!--  And The People Menu -->
+        <record model="ir.ui.menu-res.group" id="menu-grp_healthadmin_people">
+            <field name="menu" ref="health.menu_people" />
+            <field name="group" ref="health.group_health_admin" />
+        </record>
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_people">
             <field name="menu" ref="health.menu_people" />
             <field name="group" ref="group_nurses" />
