@@ -51,7 +51,7 @@ start_celery(){
     WORKER_PID="${LOGDIR}/worker.pid"
     WORKER_OPTS="--workdir=$LOGDIR -l INFO -E"
     WORKER_OPTS="$WORKER_OPTS --pidfile=${WORKER_PID} -n $SYNC_PARTNER"
-    if [ $PURGE_AT_STARTUP ]; then
+    if $PURGE_AT_STARTUP ; then
         WORKER_OPTS="$WORKER_OPTS --purge"
     fi
 
