@@ -2,11 +2,9 @@
 
 import time
 from trytond.cache import LRUDict
-from trytond.const import OPERATORS
 from trytond.rpc import RPC
 from trytond.model import ModelView, ModelStorage, fields
-from trytond.wizard import (Wizard, StateView, Button, StateTransition,
-                            StateAction)
+from trytond.wizard import (Wizard, StateView, Button, StateTransition)
 from trytond.pool import Pool
 from trytond.pyson import Eval, Bool, Not
 
@@ -15,10 +13,11 @@ from tryton_synchronisation import UUID
 
 __all__ = ('RemoteParty', 'RemotePartyImportStart', 'RemotePartyImportDone',
            'RemotePartyImport')
-RO = {'readonly':True}
+RO = {'readonly': True}
 RELATED_LIMIT = 100
 RECORD_CACHE_SIZE = 500
 # the maximum number of related record types we'll fetch in the foreground
+
 
 class RemoteParty(ModelView, ModelStorage):
     'Party'
@@ -32,15 +31,16 @@ class RemoteParty(ModelView, ModelStorage):
                                       'Marital status', states=RO)
     alias = fields.Char('Pet Name/Alias', states=RO)
     code = fields.Char('Code', states=RO)
-    sex = fields.Selection([(None,'')] + SEX_OPTIONS, 'Sex', states=RO)
+    sex = fields.Selection([(None, '')] + SEX_OPTIONS, 'Sex', states=RO)
     dob = fields.Date('DoB', help='Date of Birth', states=RO)
-    maiden_name = fields.Char('Maiden Name', states={'readonly':True,
-                                                    'invisible':Bool(Eval('sex') == 'm')})
+    maiden_name = fields.Char('Maiden Name',
+                              states={'readonly': True,
+                                      'invisible': Eval('sex', '') == 'm'})
     du_code = UUID('DU_uuid')
     du_address = fields.Text('Address', states=RO)
-    marked_for_import = fields.Boolean('Import party', states={'readonly': True})
+    marked_for_import = fields.Boolean('To be imported',
+                                       states={'readonly': True})
 
-    
     @classmethod
     def __setup__(cls, *a, **k):
         super(RemoteParty, cls).__setup__(*a, **k)
@@ -48,20 +48,22 @@ class RemoteParty(ModelView, ModelStorage):
         if not hasattr(cls, '_xcache'):
             cls._xcache = LRUDict(RECORD_CACHE_SIZE)
         # _zcache stores the records to be import
-        if not hasattr(cls, '_zcache'): 
+        if not hasattr(cls, '_zcache'):
             cls._zcache = LRUDict(RECORD_CACHE_SIZE)
+        if not hasattr(cls, '_post_import_cache'):
+            cls._post_import_cache = LRUDict(RECORD_CACHE_SIZE)
         pool = Pool()
         cls._target_model = pool.get('party.party')
         cls._buttons.update({
-            'mark_for_import': {'invisible': Bool(Eval('marked_for_import'))},
-            'unmark_import': {'invisible': Not(Bool(Eval('marked_for_import')))}
+            'mark_for_import': {'readonly': Eval('marked_for_import', False)},
+            'unmark_import': {'readonly': ~Eval('marked_for_import', False)}
         })
 
     @classmethod
     def read(cls, ids, fields_names=None):
         ret = []
         for iid in ids:
-            data = cls._xcache.get(iid)          
+            data = cls._xcache.get(iid)
             if data:
                 # if fields_names is None:
                 ret.append(data)
@@ -72,53 +74,37 @@ class RemoteParty(ModelView, ModelStorage):
 
     @classmethod
     def search(cls, domain, offset=0, limit=None, order=None, count=False,
-            query=False):
+               query=False):
         Party = cls._target_model
-        cache = cls._xcache
-        keymap={'name':'rec_name', 'du.full_address':'du_address',
-                'du.uuid':'du_code'}
+        keymap = {'name': 'rec_name', 'du.full_address': 'du_address',
+                  'du.uuid': 'du_code'}
         extra_fields = {
-            'code_readonly':True,
-            '_timestamp':lambda x:time.mktime(x['create_date'].timetuple()),
-            'last_synchronisation':None,
-            'marked_for_import':False}
-        
+            'code_readonly': True,
+            '_timestamp': lambda x: time.mktime(x['create_date'].timetuple()),
+            'last_synchronisation': None,
+            'marked_for_import': False}
+
         if domain:
-            dplus = [('synchronised','=',False)]
-            result2 = Party.search_master(dplus + domain, offset, 
-                                          100 if limit>100 else limit, order,
-                                    fields_names=['name', 'alt_ids', 'upi',
-                                                  'is_patient', #'is_healthprof', 'is_institution',
-                                                  'sex', 'father_name', 'mother_maiden_name',
-                                                  'dob','unidentified', 'maiden_name',
-                                                  'marital_status', 'du.uuid',
-                                                  'du.full_address','ref',
-                                                  'alias','create_date', 'id',
-                                                  'activation_date', 'write_date'])
-                                    # fields_names=['code', 'create_date', 
-                                    # 'citizenship', 'alternative_identification', 
-                                    # 'sex', 'insurance_company_type', 
-                                    # 'internal_user', 'father_name', 
-                                    # 'activation_date', 'vat_number', 
-                                    # 'education', 'id', 'occupation', 
-                                    # 'create_uid', 'du', 'is_patient', 
-                                    # 'is_insurance_company', 'code_length', 
-                                    # 'residence', 'mother_maiden_name', 'vat_country', 
-                                    # 'firstname', 'maiden_name', 'middlename', 'lastname', 
-                                    # 'ethnic_group', 'last_synchronisation', 'active', 
-                                    # 'write_uid', 'lang', 'unidentified', 'name', 'dob',
-                                    #  'ref', 'marital_status', 'synchronised_instances', 
-                                    #  'is_healthprof', 'is_pharmacy', 'alias', 'suffix', 
-                                    #  'is_institution', 'write_date', 'is_person', 
-                                    #  'party_warning_ack'])
+            dplus = [('synchronised', '=', False), ('is_person', '=', True)]
+            already_imported = cls._post_import_cache.keys()
+            if already_imported:
+                dplus.append(('id', 'not in', already_imported))
+            result2 = Party.search_master(
+                dplus + domain, offset, 100 if limit > 100 else limit, order,
+                fields_names=['name', 'alt_ids', 'upi', 'is_patient',
+                              'sex', 'father_name', 'mother_maiden_name',
+                              'dob', 'unidentified', 'maiden_name',
+                              'marital_status', 'du.uuid', 'du.full_address',
+                              'ref', 'alias', 'create_date', 'id',
+                              'activation_date', 'write_date'])
             result2_return = []
 
             for data in result2:
                 result2_return.append(data['id'])
-                for k,v in keymap.iteritems():
+                for k, v in keymap.iteritems():
                     data[v] = data[k]
 
-                for k,v in extra_fields.iteritems():
+                for k, v in extra_fields.iteritems():
                     if callable(v):
                         data[k] = v(data)
                     else:
@@ -131,7 +117,7 @@ class RemoteParty(ModelView, ModelStorage):
     @classmethod
     def get_to_import(cls):
         '''returns the set of records to be imported'''
-        #Returns a tuple of (ids, records) where:
+        # Returns a tuple of (ids, records) where:
         #  ids is a list of ['id'] for the records sorted by name
         #  records is a list dictionary of {id:data}
         records = cls._zcache.items()
@@ -139,11 +125,24 @@ class RemoteParty(ModelView, ModelStorage):
         return (ids, dict(records))
 
     @classmethod
+    def mark_imported(cls, ids=None):
+        '''
+        clears the ids passed in from the set of records to be imported
+        and puts them in the _post_import_cache for filtering purposes
+        '''
+        import_cache = cls._zcache
+        post_cache = cls._post_import_cache
+        for z_id in ids:
+            if z_id in import_cache:
+                post_cache[z_id] = import_cache[z_id]
+                del import_cache[z_id]
+
+    @classmethod
     @ModelView.button
     def mark_for_import(cls, parties):
         read_cache = cls._xcache
         import_cache = cls._zcache
-        for party in parties :
+        for party in parties:
             cached_data = read_cache.get(party.id, False)
             if cached_data:
                 cached_data['marked_for_import'] = True
@@ -168,7 +167,7 @@ class RemotePartyImportStart(ModelView):
     'Party Import Start'
     __name__ = 'party.party.remote_import.start'
     parties = fields.Text('Parties to import', readonly=True)
-    num_selected = fields.Integer('There is something to import', readonly=True)
+    num_selected = fields.Integer('Number selected for import', readonly=True)
 
 
 class RemotePartyImportDone(ModelView):
@@ -185,14 +184,14 @@ class RemotePartyImport(Wizard):
         'health_jamaica_sync_satellite.remote_party_import_start', [
             Button('Cancel', 'end', 'tryton-cancel'),
             Button('Import', 'import_party', 'tryton-ok', default=True,
-                   states={'readonly':Not(Bool(Eval('num_selected')))})
+                   states={'readonly': Not(Bool(Eval('num_selected')))})
         ])
     import_party = StateTransition()
     import_related = StateTransition()
     done = StateView(
         'party.party.remote_import.done',
         'health_jamaica_sync_satellite.remote_party_import_done', [
-            Button('Done', 'end', 'tryton-ok', default=True)
+            Button('Done', 'finish', 'tryton-ok', default=True)
             # Button('View imported', 'show_party', tryton-ok)
         ])
     # show_party = StateAction()
@@ -201,9 +200,10 @@ class RemotePartyImport(Wizard):
     def default_start(fields):
         # return a dict with values for each field in the ModelView in start
         ids, datas = RemoteParty.get_to_import()
-        num_names,names = len(ids), []
+        num_names, names = len(ids), []
         if num_names:
-            names = [u'%s (%s)'%(x['name'], x['upi']) for x in datas.values()]
+            names = [u'%s (%s)' % (x['name'], x['upi'])
+                     for x in datas.values()]
             names.sort()
         else:
             names = ['No patient records have been selected for import']
@@ -219,11 +219,13 @@ class RemotePartyImport(Wizard):
         party_model = pool.get('party.party')
         du_model = pool.get('gnuhealth.du')
         patient_model = pool.get('gnuhealth.patient')
+        code_map = {}
 
-        party_codes, du_codes, patient_codes = [],[], []
-        for c in datas.values():
+        party_codes, du_codes, patient_codes = [], [], []
+        for d_id, c in datas.items():
             if c.get('code'):
                 party_codes.append(c['code'])
+                code_map[c['code']] = d_id
             if c.get('ref', False) and c.get('is_patient', False):
                 patient_codes.append(c['ref'])
             if c.get('du_code'):
@@ -232,9 +234,12 @@ class RemotePartyImport(Wizard):
         if du_codes:
             du_model.pull_master_record(du_codes)
         if party_codes:
-            party_model.pull_master_record(party_codes)
+            parties_made, n = party_model.pull_master_record(party_codes)
         if patient_codes:
             patient_model.pull_master_record(patient_codes)
+        ids_imported = [code_map[p] for p in parties_made]
+        if ids_imported:
+            RemoteParty.mark_imported(ids_imported)
         self._patient_codes = patient_codes
         self._party_codes = party_codes
         return 'import_related'
@@ -247,31 +252,26 @@ class RemotePartyImport(Wizard):
         # Evaluation = pool.get('gnuhealth.patient.evaluation')
         Encounter = pool.get('gnuhealth.encounter')
 
-        base_domain = [('patient.%s'%Patient.unique_id_column, 'in',
+        base_domain = [('patient.%s' % Patient.unique_id_column, 'in',
                         self._patient_codes)]
         appointment_domain = [('state', 'in', ['confirmed', 'done'])]
-        appointments = Appointment.search_master(base_domain+appointment_domain,
-                                                 0, RELATED_LIMIT,
-                                                 [('appointment_date', 'DESC')],
-                                                 fields_names=['id',
-                                                    'appointment_date',
-                                                    Appointment.unique_id_column])
+        appointments = Appointment.search_master(
+            base_domain+appointment_domain, 0, RELATED_LIMIT,
+            [('appointment_date', 'DESC')],
+            fields_names=['id', 'appointment_date',
+                          Appointment.unique_id_column])
         appointment_codes = [x[Appointment.unique_id_column]
                              for x in appointments]
         if appointment_codes:
             Appointment.pull_master_record(appointment_codes)
 
         encounter_domain = [('state', '=', 'signed')]
-        encounters = Encounter.search_master(base_domain+encounter_domain,
-                                               0, RELATED_LIMIT,
-                                               [('start_time', 'DESC')],
-                                               fields_names=[
-                                                    'id', 
-                                                    Encounter.unique_id_column,
-                                                    'start_time', 'state'
-                                               ])
-        encounter_codes = [x[Encounter.unique_id_column]
-                            for x in encounters]
+        encounters = Encounter.search_master(
+            base_domain+encounter_domain, 0, RELATED_LIMIT,
+            [('start_time', 'DESC')],
+            fields_names=['id', Encounter.unique_id_column,
+                          'start_time', 'state'])
+        encounter_codes = [x[Encounter.unique_id_column] for x in encounters]
         if encounter_codes:
             Encounter.pull_master_record(encounter_codes)
 
@@ -280,6 +280,3 @@ class RemotePartyImport(Wizard):
         encounter_related_models = []
 
         return 'done'
-
-
-
