@@ -124,6 +124,8 @@ class PatientData(ModelSQL, ModelView):
         # import pdb; pdb.set_trace()
         cls.dob.getter = 'get_person_field'
         cls.dob.searcher = 'search_person_field'
+        cls.sex.getter = 'get_person_field'
+        cls.sex.searcher = 'search_person_field'
         cls.dob.string = 'Date of Birth'
         cls.puid.string = 'UPI'
 

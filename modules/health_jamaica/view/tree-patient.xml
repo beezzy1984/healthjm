@@ -1,26 +1,16 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <data>
 	<xpath expr="/tree/field[@name=&quot;name&quot;]" position="replace">
-        <!-- <field name="lastname" tree_invisible="1" /> -->
 	</xpath>
-<!-- 	<xpath expr="/tree/field[@name=&quot;name&quot;]" position="replace_attributes">
-		<field name="name" expand="1" />
-	</xpath> -->
     <xpath expr="/tree/field[@name=&quot;puid&quot;]" position="before">
         <field name="firstname" expand="1" />
         <field name="middlename" />
         <field name="dob" />
-<!--         <field name="age" /> -->
+        <field name="sex" />
         <field name="mother_maiden_name" tree_invisible="1" />
         <field name="father_name"  tree_invisible="1" />
         <field name="medical_record_num" />
         <field name="unidentified" tree_invisible="1" />
         <field name="alt_ids" tree_invisible="1" />
     </xpath>
-</data><!-- 
-<tree string="patient">
-    <field name="lastname" expand="1"/>
-    <field name="firstname" expand="1"/>
-    <field name="dob" expand="1"/>
-    <field name="puid" expand="1"/>
-</tree> -->
+</data>
