@@ -1,22 +1,30 @@
 
 
 import time
-from trytond.cache import LRUDict
+import memcache
 from trytond.rpc import RPC
 from trytond.model import ModelView, ModelStorage, fields
 from trytond.wizard import (Wizard, StateView, Button, StateTransition)
 from trytond.pool import Pool
+from trytond.transaction import Transaction
 from trytond.pyson import Eval, Bool, Not
+from trytond.config import config
 
 from ..health_jamaica.party import (SEX_OPTIONS, MARITAL_STATUSES)
 from tryton_synchronisation import UUID
 
-__all__ = ('RemoteParty', 'RemotePartyImportStart', 'RemotePartyImportDone',
-           'RemotePartyImport')
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
+__all__ = ['RemoteParty', 'RemotePartyImportStart',
+           'RemotePartyImportDone', 'RemotePartyImport']
 RO = {'readonly': True}
 RELATED_LIMIT = 100
 RECORD_CACHE_SIZE = 500
 # the maximum number of related record types we'll fetch in the foreground
+CACHE_TIME = 1800
 
 
 class RemoteParty(ModelView, ModelStorage):
@@ -45,31 +53,63 @@ class RemoteParty(ModelView, ModelStorage):
     def __setup__(cls, *a, **k):
         super(RemoteParty, cls).__setup__(*a, **k)
         cls.__rpc__['fetch_remote_party'] = RPC(readonly=False)
-        if not hasattr(cls, '_xcache'):
-            cls._xcache = LRUDict(RECORD_CACHE_SIZE)
-        # _zcache stores the records to be import
-        if not hasattr(cls, '_zcache'):
-            cls._zcache = LRUDict(RECORD_CACHE_SIZE)
-        if not hasattr(cls, '_post_import_cache'):
-            cls._post_import_cache = LRUDict(RECORD_CACHE_SIZE)
+        # if not hasattr(cls, '_xcache'):
+        #     cls._xcache = LRUDict(RECORD_CACHE_SIZE)
+        # # _zcache stores the records to be import
+        # if not hasattr(cls, '_zcache'):
+        #     cls._zcache = LRUDict(RECORD_CACHE_SIZE)
+        # if not hasattr(cls, '_post_import_cache'):
+        #     cls._post_import_cache = LRUDict(RECORD_CACHE_SIZE)
         pool = Pool()
         cls._target_model = pool.get('party.party')
+        cache_server = config.get('synchronisation', 'cache_server')
+        cls._cache_client = memcache.Client([cache_server])
+        # cls._cache_model = pool.get('party.party.remote_cache')
+        cls._cache_field_names = ['searched', 'to_import', 'imported']
         cls._buttons.update({
             'mark_for_import': {'readonly': Eval('marked_for_import', False)},
             'unmark_import': {'readonly': ~Eval('marked_for_import', False)}
         })
 
     @classmethod
+    def _get_cache_key(cls):
+        # returns a cache key prefix for this user
+        tact = Transaction()
+        ckey = 'hjmsync_u%d:' % tact.user
+        return ckey
+
+    @classmethod
+    def _get_cache(cls):
+        '''returns a tuple of readcache, import_cache, imported from
+        cls._cache_model'''
+        def explode(s):
+            return pickle.loads(s) if s else s
+        cached = cls._cache_client.get_multi(cls._cache_field_names,
+                                             key_prefix=cls._get_cache_key())
+        result = tuple([explode(cached.get(k, {}))
+                       for k in cls._cache_field_names])
+        return result
+
+    @classmethod
+    def _set_cache(cls, *arg):  # searched, to_import, imported):
+        def implode(val):
+            return pickle.dumps(val) if val is not None else val
+        key_prefix = cls._get_cache_key()
+        values = dict(zip(cls._cache_field_names, [implode(x) for x in arg]))
+        not_written = cls._cache_client.set_multi(
+            values, time=CACHE_TIME, key_prefix=key_prefix)
+        if not_written:  # we'll try one more time
+            new_values = dict([(x, values[x]) for x in not_written])
+            cls._cache_client.set_multi(new_values, key_prefix=key_prefix)
+
+    @classmethod
     def read(cls, ids, fields_names=None):
         ret = []
+        s, i, p = cls._get_cache()
         for iid in ids:
-            data = cls._xcache.get(iid)
+            data = s.get(iid)
             if data:
-                # if fields_names is None:
                 ret.append(data)
-                # else:
-                #     ret.append(dict([(x,data.get(x)) for x in fields_names]))
-
         return ret
 
     @classmethod
@@ -83,10 +123,12 @@ class RemoteParty(ModelView, ModelStorage):
             '_timestamp': lambda x: time.mktime(x['create_date'].timetuple()),
             'last_synchronisation': None,
             'marked_for_import': False}
+        read_cache, i, post_import_cache = cls._get_cache()
+        read_cache = {}
 
         if domain:
             dplus = [('synchronised', '=', False), ('is_person', '=', True)]
-            already_imported = cls._post_import_cache.keys()
+            already_imported = post_import_cache.keys()
             if already_imported:
                 dplus.append(('id', 'not in', already_imported))
             result2 = Party.search_master(
@@ -100,7 +142,6 @@ class RemoteParty(ModelView, ModelStorage):
             result2_return = []
 
             for data in result2:
-                result2_return.append(data['id'])
                 for k, v in keymap.iteritems():
                     data[v] = data[k]
 
@@ -109,8 +150,10 @@ class RemoteParty(ModelView, ModelStorage):
                         data[k] = v(data)
                     else:
                         data[k] = v
+                result2_return.append(data['id'])
 
-                cls._xcache.setdefault(data['id'], {}).update(data)
+                read_cache.setdefault(data['id'], {}).update(data)
+            cls._set_cache(read_cache, i, post_import_cache)
             return result2_return
         return []
 
@@ -120,7 +163,8 @@ class RemoteParty(ModelView, ModelStorage):
         # Returns a tuple of (ids, records) where:
         #  ids is a list of ['id'] for the records sorted by name
         #  records is a list dictionary of {id:data}
-        records = cls._zcache.items()
+        s, i, p = cls._get_cache()
+        records = i.items()
         ids = [k[0] for k in records]
         return (ids, dict(records))
 
@@ -130,30 +174,29 @@ class RemoteParty(ModelView, ModelStorage):
         clears the ids passed in from the set of records to be imported
         and puts them in the _post_import_cache for filtering purposes
         '''
-        import_cache = cls._zcache
-        post_cache = cls._post_import_cache
+        search_cache, import_cache, post_cache = cls._get_cache()
         for z_id in ids:
             if z_id in import_cache:
                 post_cache[z_id] = import_cache[z_id]
                 del import_cache[z_id]
+        cls._set_cache(search_cache, import_cache, post_cache)
 
     @classmethod
     @ModelView.button
     def mark_for_import(cls, parties):
-        read_cache = cls._xcache
-        import_cache = cls._zcache
+        read_cache, import_cache, post_cache = cls._get_cache()
         for party in parties:
             cached_data = read_cache.get(party.id, False)
             if cached_data:
                 cached_data['marked_for_import'] = True
                 read_cache[party.id] = cached_data
                 import_cache[party.id] = cached_data.copy()
+        cls._set_cache(read_cache, import_cache, post_cache)
 
     @classmethod
     @ModelView.button
     def unmark_import(cls, parties):
-        read_cache = cls._xcache
-        import_cache = cls._zcache
+        read_cache, import_cache, post_cache = cls._get_cache()
         for party in parties:
             cached_data = read_cache.get(party.id)
             if cached_data:
@@ -161,6 +204,7 @@ class RemoteParty(ModelView, ModelStorage):
                 read_cache[party.id] = cached_data
                 if import_cache.get(party.id, False):
                     del import_cache[party.id]
+        cls._set_cache(read_cache, import_cache, post_cache)
 
 
 class RemotePartyImportStart(ModelView):
@@ -194,6 +238,7 @@ class RemotePartyImport(Wizard):
             Button('Done', 'finish', 'tryton-ok', default=True)
             # Button('View imported', 'show_party', tryton-ok)
         ])
+    finish = StateTransition()
     # show_party = StateAction()
 
     @staticmethod
@@ -256,7 +301,7 @@ class RemotePartyImport(Wizard):
                         self._patient_codes)]
         appointment_domain = [('state', 'in', ['confirmed', 'done'])]
         appointments = Appointment.search_master(
-            base_domain+appointment_domain, 0, RELATED_LIMIT,
+            base_domain + appointment_domain, 0, RELATED_LIMIT,
             [('appointment_date', 'DESC')],
             fields_names=['id', 'appointment_date',
                           Appointment.unique_id_column])
@@ -267,7 +312,7 @@ class RemotePartyImport(Wizard):
 
         encounter_domain = [('state', '=', 'signed')]
         encounters = Encounter.search_master(
-            base_domain+encounter_domain, 0, RELATED_LIMIT,
+            base_domain + encounter_domain, 0, RELATED_LIMIT,
             [('start_time', 'DESC')],
             fields_names=['id', Encounter.unique_id_column,
                           'start_time', 'state'])
@@ -277,6 +322,12 @@ class RemotePartyImport(Wizard):
 
         # and then fetch the One2Many fields on encounter
         # I.E. secondary_conditions, signs_symptoms, ddx
+
+        # 1. Get the list of enabled encounter components
+        # 2. run through the components using the encounter IDs
         encounter_related_models = []
 
         return 'done'
+
+    def transition_finish(self):
+        return 'end'

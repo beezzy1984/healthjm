@@ -4,6 +4,7 @@ from .health_professionals import (HealthProfessional,
                                    OpenAppointmentReportStart)
 from .appointment import Appointment
 
+
 def register():
     Pool.register(
         RemoteParty,

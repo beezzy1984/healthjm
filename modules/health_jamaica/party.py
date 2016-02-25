@@ -273,7 +273,7 @@ class PartyPatient(ModelSQL, ModelView):
             for altid in self.alternative_ids:
                 if (altid.alternative_id_type == 'medical_record' and
                         (altid.issuing_institution and
-                         altid.issuing_institution.id==here)):
+                         altid.issuing_institution.id == here)):
                     return altid.code
             return '--'
         else:
@@ -287,10 +287,10 @@ class PartyPatient(ModelSQL, ModelView):
                     a_type = id_type_map.get(altid.alternative_id_type,
                                              altid.alternative_id_type)
                     if (altid.alternative_id_type == 'medical_record' and
-                            altid.issuing_institution) :
+                            altid.issuing_institution):
                         a_type = '{} MRN'.format(
                             altid.issuing_institution.name.name)
-                    else:
+                    elif altid.alternative_id_type == 'medical_record':
                         a_type = 'Unknown MRN'
                     altids.append('{} {}'.format(a_type, altid.code))
             return '; '.join(altids)
