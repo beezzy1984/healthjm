@@ -37,7 +37,9 @@ for key in ('depends', 'extras_depend', 'xml'):
     if key in info:
         info[key] = info[key].strip().splitlines()
 
-myversion = '==%s' % info.get('version', '0.0.1')
+myversion = '.'.join(filter(None, info.get('version', '0.0.1').split('.'))[:2])
+myversion = '>=%s,<%s.%d' % (myversion, myversion[:myversion.index('.')],
+                             int(myversion[myversion.index('.')+1:])+1)
 
 requires = [
     'trytond' + tryton_version,
