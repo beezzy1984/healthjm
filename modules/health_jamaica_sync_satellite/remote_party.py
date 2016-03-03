@@ -62,7 +62,8 @@ class RemoteParty(ModelView, ModelStorage):
         #     cls._post_import_cache = LRUDict(RECORD_CACHE_SIZE)
         pool = Pool()
         cls._target_model = pool.get('party.party')
-        cache_server = config.get('synchronisation', 'cache_server')
+        cache_server = config.get('synchronisation', 'cache_server',
+                                  '127.0.0.1:11211')
         cls._cache_client = memcache.Client([cache_server])
         # cls._cache_model = pool.get('party.party.remote_cache')
         cls._cache_field_names = ['searched', 'to_import', 'imported']
