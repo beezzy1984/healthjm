@@ -40,7 +40,10 @@ class Jiss (ModelSQL, ModelView):
 
     name = fields.Many2One(
         'gnuhealth.patient.evaluation', 'Evaluation',
-        required=True, help='Related Patient Evaluation')
+        help='Related Patient Evaluation')
+    encounter = fields.Many2One(
+        'gnuhealth.patient.evaluation', 'Evaluation',
+        help='Related Clinical Encounter', select=True)
 
     injury_date = fields.Date('Injury Date',
                               help="Usually the same as the Evaluation")

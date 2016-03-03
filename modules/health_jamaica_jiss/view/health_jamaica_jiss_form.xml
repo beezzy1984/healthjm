@@ -6,8 +6,8 @@
         <label name="healthcenter"/>
         <field name="healthcenter"/>
         <newline/>
-        <label name="name"/>
-        <field name="name"/>
+        <label name="encounter"/>
+        <field name="encounter"/>
         <label name="injury_date"/>
         <field name="injury_date"/>
         <label name="registration_date"/>
