@@ -12,6 +12,8 @@ class Party(SyncMixin):
     __metaclass__ = PoolMeta
     unique_id_column = 'code'
     sync_mode = SyncMode.full
+    _extra_unsync_domain = ['OR', ('is_healthprof', '=', True),
+                            ('is_person', '=', False)]
 
     def get_wire_value(self):
         values = super(Party, self).get_wire_value()
@@ -25,9 +27,11 @@ class Party(SyncMixin):
             return super(Party, cls).get_to_synchronise(remote_sync_data)
         else:
             with Transaction().set_context(active_test=False) as t:
-                unsync_domain = ['AND', ('synchronised', '=', False),
-                                 ['OR', ('is_healthprof', '=', True),
-                                  ('is_person', '=', False)]]
+                if cls._extra_unsync_domain:
+                    unsync_domain = ['AND', ('synchronised', '=', False),
+                                     cls._extra_unsync_domain]
+                else:
+                    unsync_domain = [('synchronised', '=', False)]
                 unsynced = cls.search(unsync_domain)
 
             return [r.get_wire_value() for r in unsynced]
