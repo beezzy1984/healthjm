@@ -169,6 +169,15 @@ def get_epi_week(d=None):
 
     return (weekstart, weekend, dyear, dweek)
 
+def epiweek_str(d=None):
+    '''reliable display of epi-week as a string
+    '''
+    fmt = '%d/%02d'
+    if isinstance(d, (list, tuple)) and len(d) == 4:
+        return fmt % d[2:]
+    else:
+        return fmt % get_epi_week(d)[2:]
+
 
 def is_not_synchro():
     '''
