@@ -16,6 +16,44 @@
             <field name="name">health_jamaica_jiss_tree</field>
         </record>
 
+        <record model="ir.action.act_window" id="actwin_jiss_base">
+            <field name="name">JISS Registrations</field>
+            <field name="res_model">gnuhealth.jiss</field>
+        </record>
+        <record model="ir.action.act_window.view" id="actview_jiss_tree">
+            <field name="sequence" eval="10" />
+            <field name="view" ref="gnuhealth_jiss_tree" />
+            <field name="act_window" ref="actwin_jiss_base" />
+        </record>
+        <record model="ir.action.act_window.view" id="actview_jiss_form">
+            <field name="sequence" eval="20" />
+            <field name="view" ref="gnuhealth_jiss_form" />
+            <field name="act_window" ref="actwin_jiss_base" />
+        </record>
+        <menuitem icon="gnuhealth-disease" id="menu_jiss"
+            parent="health.gnuhealth_demographics_menu" sequence="7" action="actwin_jiss_base" />
+
+<!-- JISS Code sequence -->
+    <record id="seq_type_jiss" model="ir.sequence.type">
+            <field name="name">Injury Surveillance</field>
+            <field name="code">gnuhealth.jiss</field>
+        </record>
+        <record id="seq_jiss" model="ir.sequence">
+            <field name="name">Jamaica Injury Surveillance</field>
+            <field name="code">gnuhealth.jiss</field>
+            <field name="type">hexadecimal timestamp</field>
+            <field name="timestamp_rounding" eval="0.1" />
+            <!-- round to the nearest 1/10th of a second -->
+            <field name="timestamp_offset" eval="1325412421.0" />
+            <!-- offset = time at 2012-01-01 00:00:01 EST -->
+        </record>
+
+        <record model="ir.property" id="property_jiss_sequence">
+            <field name="field"
+                search="[('model.model', '=', 'gnuhealth.sequences'), ('name', '=', 'jiss_sequence')]"/>
+            <field name="value" eval="'ir.sequence,' + str(ref('seq_jiss'))"/>
+        </record>
+
 <!-- Shortcut to the JISS registration from the Evaluation -->
 
         <record model="ir.action.act_window" id="act_jiss_form1">
@@ -34,7 +72,12 @@
         <record model="ir.action.act_window" id="act_jiss_form0">
             <field name="name">JISS Registration</field>
             <field name="res_model">gnuhealth.jiss</field>
-            <field name="domain">[('encounter', '=', Eval('active_id'))]</field>
+            <!-- <field name="domain">[('encounter', '=', Eval('active_id'))]</field> -->
+        </record>
+        <record model="ir.action.act_window.view" id="actview_jiss_form0_1st">
+            <field name="sequence" eval="10" />
+            <field name="view" ref="gnuhealth_jiss_form" />
+            <field name="act_window" ref="act_jiss_form0" />
         </record>
         <record model="ir.action.keyword" id="act_open_jiss_keyword0">
             <field name="keyword">form_relate</field>

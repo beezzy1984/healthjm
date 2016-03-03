@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <tree string="Jamaica Injury Surveillance System Record">
-    <field name="name"/>
+    <field name="encounter"/>
     <field name="patient"/>
     <field name="code"/>
     <field name="location"/>

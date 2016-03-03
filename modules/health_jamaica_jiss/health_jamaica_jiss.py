@@ -26,12 +26,22 @@
 # The documentation of the module goes in the "doc" directory.
 
 from trytond.pyson import Eval, Not, Equal
-from trytond.model import ModelView, ModelSQL, fields
+from trytond.model import ModelView, ModelSQL, ModelSingleton, fields
+from trytond.pool import Pool
 from datetime import datetime
-from ..health_jamaica.party import (ThisInstitution)
+from ..health_jamaica.party import ThisInstitution
 
 
-__all__ = ['Jiss']
+__all__ = ['GnuHealthSequences', 'Jiss']
+
+
+class GnuHealthSequences(ModelSingleton, ModelSQL, ModelView):
+    'Standard Sequences for GNU Health'
+    __name__ = 'gnuhealth.sequences'
+
+    jiss_sequence = fields.Property(fields.Many2One(
+        'ir.sequence', 'JISS Sequence', required=True,
+        domain=[('code', '=', 'gnuhealth.jiss')]))
 
 
 class Jiss (ModelSQL, ModelView):
@@ -42,11 +52,11 @@ class Jiss (ModelSQL, ModelView):
         'gnuhealth.patient.evaluation', 'Evaluation',
         help='Related Patient Evaluation')
     encounter = fields.Many2One(
-        'gnuhealth.patient.evaluation', 'Evaluation',
-        help='Related Clinical Encounter', select=True)
+        'gnuhealth.encounter', 'Encounter',
+        help='Related Clinical Encounter', select=True, required=True)
 
     injury_date = fields.Date('Injury Date',
-                              help="Usually the same as the Evaluation")
+                              help="Usually same as or before the Encounter")
 
     registration_date = fields.Date('Registration Date')
 
@@ -239,16 +249,16 @@ class Jiss (ModelSQL, ModelView):
         ], 'Disposition', help="Place of occurrance",sort=False, required=True)
 
     def get_patient(self, name):
-        return self.name.patient.name.name
+        return self.encounter.patient.name.name
 
     def get_patient_sex(self, name):
-        return self.name.patient.sex_display
+        return self.encounter.patient.sex_display
 
     def get_patient_age(self, name):
-        return self.name.patient.age
+        return self.encounter.patient.age
 
     def get_patient_complaint(self, name):
-        return self.name.chief_complaint
+        return self.encounter.primary_complaint
 
     @classmethod
     def default_patient(cls):
@@ -257,9 +267,9 @@ class Jiss (ModelSQL, ModelView):
         return '(Save to see patient information)'
 
     def on_change_name(self):
-        k = {'patient':self.name.patient.name.name,
-                'patient_age':self.name.patient.age,
-                'patient_sex':self.name.patient.sex_display}
+        k = {'patient': self.encounter.patient.name.name,
+                'patient_age': self.encounter.patient.age,
+                'patient_sex': self.encounter.patient.sex_display}
         # print "{}\non_change_name has been called with \n{}\n{}",format(
         #             '*'*80, repr(k), '*'*80
         #     )
@@ -283,17 +293,22 @@ class Jiss (ModelSQL, ModelView):
     def search_patient(cls, name, clause):
         res = []
         value = clause[2]
-        res.append(('name.patient', clause[1], value))
+        res.append(('encounter.patient', clause[1], value))
         return res
 
     @classmethod
     def generate_injury_code(cls):
         icode = ['ISS']
-        now = datetime.now()
+        pool = Pool()
+        Sequence = pool.get('ir.sequence')
+        Config = pool.get('gnuhealth.sequences')
+        config = Config(1)
+        newcode = Sequence.get_id(config.jiss_sequence.id)
+        icode.append(newcode)
         here = ThisInstitution()
         if here:
+            here = pool.get('gnuhealth.institution')(here)
             icode.append(here.code)
-        icode.append(now.strftime('%s'))
         return '-'.join(icode)
 
     @classmethod

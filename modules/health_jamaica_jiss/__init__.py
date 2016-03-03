@@ -3,6 +3,7 @@
 #
 #    GNU Health: The Free Health and Hospital Information System
 #    Copyright (C) 2008-2013  Luis Falcon <falcon@gnu.org>
+#    Copyright (C) 2014-2016  Ministry of Health, Jamaica
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -26,4 +27,5 @@ from .health_jamaica_jiss import *
 def register():
     Pool.register(
         Jiss,
+        GnuHealthSequences,
         module='health_jamaica_jiss', type_='model')
