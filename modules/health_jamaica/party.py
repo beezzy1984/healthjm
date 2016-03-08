@@ -133,6 +133,13 @@ class PartyPatient(ModelSQL, ModelView):
     medical_record_num = fields.Function(
         fields.Char('Medical Record Num.'),
         'get_alt_ids', searcher='search_alt_ids')
+    suffix = fields.Selection([
+        (None, ''),
+        ('jr', 'Jr. - Junior'),
+        ('sr', 'Sr. - Senior'),
+        ('II', 'II - The Second'),
+        ('III', 'III - The Third'),
+        ], 'Suffix', states=_STATES, depends=_DEPENDS)
     marital_status_display = fields.Function(fields.Char('Marital Status'),
                                              'get_marital_status_display')
     relatives = fields.One2Many('party.relative', 'party', 'Relatives')
