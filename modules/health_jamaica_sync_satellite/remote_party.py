@@ -74,7 +74,7 @@ class RemoteParty(ModelView, ModelStorage):
 
     @classmethod
     def _get_cache_key(cls):
-        # returns a cache key prefix for this user
+        '''returns a cache key prefix for this user'''
         tact = Transaction()
         ckey = 'hjmsync_u%d:' % tact.user
         return ckey
@@ -82,7 +82,7 @@ class RemoteParty(ModelView, ModelStorage):
     @classmethod
     def _get_cache(cls):
         '''returns a tuple of readcache, import_cache, imported from
-        cls._cache_model'''
+        the cache server'''
         def explode(s):
             return pickle.loads(s) if s else s
         cached = cls._cache_client.get_multi(cls._cache_field_names,
@@ -283,7 +283,9 @@ class RemotePartyImport(Wizard):
             parties_made, n = party_model.pull_master_record(party_codes)
         if patient_codes:
             patient_model.pull_master_record(patient_codes)
-        ids_imported = [code_map[p] for p in parties_made]
+            ids_imported = [code_map[p] for p in parties_made]
+        else:
+            ids_imported = []
         if ids_imported:
             RemoteParty.mark_imported(ids_imported)
         self._patient_codes = patient_codes
@@ -297,6 +299,7 @@ class RemotePartyImport(Wizard):
         Appointment = pool.get('gnuhealth.appointment')
         # Evaluation = pool.get('gnuhealth.patient.evaluation')
         Encounter = pool.get('gnuhealth.encounter')
+        component_type_model = pool.get('gnuhealth.encounter.component_type')
 
         base_domain = [('patient.%s' % Patient.unique_id_column, 'in',
                         self._patient_codes)]
@@ -325,8 +328,19 @@ class RemotePartyImport(Wizard):
         # I.E. secondary_conditions, signs_symptoms, ddx
 
         # 1. Get the list of enabled encounter components
+        encounter_related_models = [x.model for x in
+                                    component_type_model.get_selection_list()]
         # 2. run through the components using the encounter IDs
-        encounter_related_models = []
+        for mymodel_name in encounter_related_models:
+            mymodel = pool.get(mymodel_name)
+            mydomain = [('encounter.%s' % Encounter.unique_id_column, 'in',
+                         encounter_codes)]
+            myfields = ['id', 'start_time', mymodel.unique_id_column]
+            myrecords = mymodel.search_master(mydomain, 0, RELATED_LIMIT,
+                                              fields_names=myfields)
+            if myrecords:
+                mymodel.pull_master_record([x[mymodel.unique_id_column]
+                                            for x in myrecords])
 
         return 'done'
 

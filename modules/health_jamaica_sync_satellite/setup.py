@@ -46,6 +46,7 @@ requires = [
     'tryton_synchronisation >0.2.0,<0.3.0',
     'python-memcached>=1.57',
     'trytond_health' + gnuhealth_version,
+    'trytond_health_encounter>=0.2.11',
     'trytond_health_jamaica' + myversion,
     'trytond_health_jamaica_sync' + myversion
 ]
