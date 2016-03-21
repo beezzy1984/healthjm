@@ -54,6 +54,14 @@ class OccupationalGroup(ModelSQL, ModelView):
     '''Occupational Group'''
     __name__ = 'gnuhealth.occupation'
 
+    _rec_name = 'name'
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return str(self.name)
+
     @classmethod
     def __register__(cls, module_name):
         super(OccupationalGroup, cls).__register__(module_name)
