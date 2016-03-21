@@ -3,15 +3,16 @@ from tryton_synchronisation import SyncUUIDMixin, SyncMixin, SyncMode
 from trytond.pool import PoolMeta
 
 
-class HistoryMixin(SyncUUIDMixin, ModelSQL):
+class HistoryMixin(SyncUUIDMixin):
     __metaclass__ = PoolMeta
     _history = True
     sync_mode = SyncMode.full
 
 
-class DiseaseNotification(SyncMixin, ModelSQL):
+class DiseaseNotification(SyncMixin):
     __name__ = 'gnuhealth.disease_notification'
     __metaclass__ = PoolMeta
+    _history = True
     sync_mode = SyncMode.full
     unique_id_field = 'name'
 
