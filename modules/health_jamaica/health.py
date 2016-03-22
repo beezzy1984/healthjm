@@ -64,8 +64,8 @@ class PatientData(ModelSQL, ModelView):
     medical_record_num = fields.Function(fields.Char('Medical Record Number'),
                                          'get_person_field',
                                          searcher='search_alt_ids')
-    du = fields.Function(fields.Char('Address'),
-                         'get_person_field', searcher='search_person_field')
+    du = fields.Function(fields.Many2One('party.address', 'Address'),
+                         'get_person_address')
     unidentified = fields.Function(
         fields.Boolean('Unidentified'),
         'get_unidentified',
@@ -88,6 +88,17 @@ class PatientData(ModelSQL, ModelView):
         return ' '.join(filter(None, [self.name.firstname,
                                       self.name.middlename,
                                       self.name.lastname]))
+
+    @classmethod
+    def get_person_address(cls, instances, name):
+        # return the 0th address or none for each instance.name
+        def zerothaddr(patient):
+            addresses = patient.name.addresses
+            if addresses:
+                return (patient.id, addresses[0].id)
+            else:
+                return (patient.id, None)
+        return dict(map(zerothaddr, instances))
 
     @classmethod
     def search_person_field(cls, field_name, clause):

@@ -46,6 +46,12 @@ class PostOffice(ModelSQL, ModelView):
                 'The Post Office code be unique.'),
         ]
 
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return str(self.name)
+
     @classmethod
     def __register__(cls, module_name):
         '''handles the rewiring of the Jamaica parishes to merge Kingston and
@@ -74,6 +80,12 @@ class DistrictCommunity(ModelSQL, ModelView):
     post_office = fields.Many2One('country.post_office', 'Post Office',
                                   required=True)
     parish = fields.Function(fields.Char('Parish'), 'get_parish')
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return str(self.name)
 
     @classmethod
     def __setup__(cls):
