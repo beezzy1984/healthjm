@@ -236,17 +236,17 @@ class Jiss (ModelSQL, ModelView):
         ], 'Place', help="Place of occurrance",sort=False,
             states={'required': Not(Equal(Eval('injury_type'), 'motor_vehicle'))})
 
-    disposition = fields.Selection([
-        (None, ''),
-        ('treated_sent', 'Treated and Sent Home'),
-        ('admitted', 'Admitted to Ward'),
-        ('observation', 'Admitted to Observation'),
-        ('died', 'Died'),
-        ('daa', 'Discharge Against Advise'),
-        ('transferred', 'Transferred'),
-        ('referred', 'Referred'),
-        ('doa', 'Dead on Arrival'),
-        ], 'Disposition', help="Place of occurrance",sort=False, required=True)
+    disposition = fields.Selection(
+        [(None, ''),
+         ('treated_sent', 'Treated and Sent Home'),
+         ('admitted', 'Admitted to Ward'),
+         ('observation', 'Admitted to Observation'),
+         ('died', 'Died'),
+         ('daa', 'Discharged Against Advice'),
+         ('transferred', 'Transferred'),
+         ('referred', 'Referred'),
+         ('doa', 'Dead on Arrival')],
+        'Disposition', help="Place of occurrance", sort=False, required=True)
 
     def get_patient(self, name):
         return self.encounter.patient.name.name
@@ -267,9 +267,10 @@ class Jiss (ModelSQL, ModelView):
         return '(Save to see patient information)'
 
     def on_change_name(self):
-        k = {'patient': self.encounter.patient.name.name,
-                'patient_age': self.encounter.patient.age,
-                'patient_sex': self.encounter.patient.sex_display}
+        k = {
+            'patient': self.encounter.patient.name.name,
+            'patient_age': self.encounter.patient.age,
+            'patient_sex': self.encounter.patient.sex_display}
         # print "{}\non_change_name has been called with \n{}\n{}",format(
         #             '*'*80, repr(k), '*'*80
         #     )
