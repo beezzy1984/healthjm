@@ -29,12 +29,13 @@ class ServiceUtilisationReport(Report):
 
         timezone = utils.get_timezone()
         start_date = utils.get_start_of_day(data['start_date'], timezone)
-        end_date = utils.get_start_of_next_day(data['end_date'], timezone)
+        end_date = utils.get_start_of_day(data['end_date'], timezone)
+        end_date_calc = utils.get_start_of_next_day(end_date, timezone)
 
         search_criteria = ['AND',
             ('state','=','done'),
             ('appointment_date','>=',start_date),
-            ('appointment_date','<',end_date)
+            ('appointment_date','<',end_date_calc)
         ]
 
         if ((end_date - start_date) > timedelta(1.05)):
@@ -108,7 +109,7 @@ class ServiceUtilisationReport(Report):
         service_counts = service_counts.items()
         service_counts.sort(key=lambda x: x[0])
         localcontext.update(start_date=start_date,
-                            end_date=end_date-timedelta(0,0.2),
+                            end_date=end_date,
                             service_counts=service_counts,
                             total_line=total_line,
                             now_date=datetime.now(timezone),)
