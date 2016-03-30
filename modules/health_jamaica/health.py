@@ -30,6 +30,7 @@ from trytond.transaction import Transaction
 from .tryton_utils import (negate_clause, replace_clause_column, is_not_synchro,
                            get_timezone, make_selection_display, get_day_comp,
                            localtime)
+from .party import SEX_OPTIONS
 
 __all__ = ['PatientData', 'HealthInstitution', 'Insurance',
            'HealthInstitutionSpecialties', 'HealthProfessional',
@@ -135,8 +136,9 @@ class PatientData(ModelSQL, ModelView):
         # import pdb; pdb.set_trace()
         cls.dob.getter = 'get_person_field'
         cls.dob.searcher = 'search_person_field'
-        cls.sex.getter = 'get_person_field'
-        cls.sex.searcher = 'search_person_field'
+        cls.sex = fields.Function(fields.Selection(SEX_OPTIONS, 'Sex'),
+                                  'get_person_field',
+                                  searcher='search_person_field')
         cls.dob.string = 'Date of Birth'
         cls.puid.string = 'UPI'
 
