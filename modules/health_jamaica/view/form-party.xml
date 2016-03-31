@@ -33,11 +33,13 @@
     <xpath expr="/form//label[@name=&quot;du&quot;]" position="replace" />
     <xpath expr="/form//field[@name=&quot;marital_status&quot;]" position="replace" />
     <xpath expr="/form//label[@name=&quot;marital_status&quot;]" position="replace" />
+    <xpath expr="/form//field[@name=&quot;mother&quot;]" position="replace" />
+    <xpath expr="/form//label[@name=&quot;mother&quot;]" position="replace" />
+    <xpath expr="/form//field[@name=&quot;father&quot;]" position="replace" />
+    <xpath expr="/form//label[@name=&quot;father&quot;]" position="replace" />
     <xpath expr="/form//field[@name=&quot;sex&quot;]" position="after">
         <label name="marital_status"/>
         <field name="marital_status"/>
-        <label name="du"/>
-        <field name="du"/>
     </xpath>
 
     <!-- Insurance gets its own tab -->
@@ -65,8 +67,8 @@
         <field name="firstname"/>
         <label name="middlename"/>
         <field name="middlename"/>
-<!--                 <label name="suffix"/>
-        <field name="suffix"/> -->
+        <label name="suffix"/>
+        <field name="suffix"/>
         <label name="alias"/>
         <field name="alias"/>
         <label name="maiden_name" />
@@ -79,6 +81,10 @@
         <newline /><separator colspan="4" id="sep1290" /><newline />
     </xpath>
 
+    <xpath expr="/form//field[@name=&quot;ethnic_group&quot;]" position="replace_attributes">
+        <field name="ethnic_group" widget="selection" />
+    </xpath>
+
     <!-- Rename the General tab to Contact -->
     <xpath expr="/form/notebook/page[@id=&quot;general&quot;]" position="replace_attributes">
         <page string="Contact" id="general" />
@@ -86,7 +92,7 @@
 
     <!-- Insert a tab for Relatives -->
     <xpath expr="/form/notebook/page[@id=&quot;general&quot;]" position="after">
-        <page string="Relatives/NOK" id="nok_relatives">
+        <page string="Relatives/NOK" id="nok_relatives" states="{'invisible': Not(Eval('is_person', False))}">
             <field name="relatives" xexpand="1" colspan="4" mode="tree,form"
                view_ids="health_jamaica.healthjm_tree-party_relative,health_jamaica.healthjm_form-party_relative" />
             <newline />
@@ -113,6 +119,15 @@
         <field name="upi" />
         <label name="active"/>
         <field name="active" xexpand="0" width="25"/>
+    </xpath>
+
+    <xpath expr="/form//group[@id=&quot;lang&quot;]" position="replace_attributes">
+        <group col="4" colspan="4" id="lang" />
+    </xpath>
+
+    <xpath expr="/form//group[@id=&quot;lang&quot;]/field" position="after">
+        <label name="du"/>
+        <field name="du"/>
     </xpath>
 
 </data>

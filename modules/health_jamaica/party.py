@@ -182,6 +182,8 @@ class PartyPatient(ModelSQL, ModelView):
             'invisible': Not(Bool(Eval('is_healthprof'))),
             'required': False,
         }
+        cls.alternative_ids.states = {
+            'invisible': Not(Eval('is_person', False))}
 
         # field label modifications
         cls.ref.string = "UPI"
