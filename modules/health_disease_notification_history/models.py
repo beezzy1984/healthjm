@@ -1,4 +1,4 @@
-from trytond.model import ModelSQL
+
 from tryton_synchronisation import SyncUUIDMixin, SyncMixin, SyncMode
 from trytond.pool import PoolMeta
 
@@ -14,11 +14,19 @@ class DiseaseNotification(SyncMixin):
     __metaclass__ = PoolMeta
     _history = True
     sync_mode = SyncMode.full
-    unique_id_field = 'name'
+    unique_id_column = 'name'
 
 
 class RiskFactorCondition(HistoryMixin):
     __name__ = 'gnuhealth.disease_notification.risk_disease'
+
+
+class LabResultType(SyncMixin):
+    __name__ = 'gnuhealth.disease_notification.labresulttype'
+    __metaclass__ = PoolMeta
+    _history = True
+    sync_mode = SyncMode.update
+    unique_id_column = 'code'
 
 
 class NotifiedSpecimen(HistoryMixin):
