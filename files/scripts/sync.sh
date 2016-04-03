@@ -9,7 +9,7 @@
 debugging=false
 celeryfg=false
 celerycallact=""
-celeryact="start"
+celeryact="worker"
 conffile="~/.tryton/syncrc"
 
 log() {
