@@ -1,0 +1,37 @@
+# Crontab entries to run synchro in health centre
+
+SYNC_CALL="/opt/healthjm/bin/sync.sh -u"
+
+# minute (m), hour (h), day of month (dom), month (mon), day-of-week (dow)
+# m	h		dom	mon	dow	command
+5,35	7-11,13-18	*	 *	 1-5	$SYNC_CALL push_all
+10,40	7-11,13-18	*	 *	 1-5	$SYNC_CALL pull_all
+
+# Sync New called 2 times daily
+5		6	*	*	1-5	$SYNC_CALL new
+15		12	*	*	1-5	$SYNC_CALL new
+5		20	*	*	7	$SYNC_CALL new
+
+
+
+# ==============================================================================
+
+
+# Crontab entries to run synchro in hospital
+
+SYNC_CALL="/opt/healthjm/current/bin/sync.sh -u"
+
+# minute (m), hour (h), day of month (dom), month (mon), day-of-week (dow)
+# min	hr		dom	mon	dow	command
+12,36	0-5,7-12	*	*	*	$SYNC_CALL pull_all
+20,44	14-20,22-23	*	*	*	$SYNC_CALL push_all
+12,36	14-20,22-23	*	*	*	$SYNC_CALL pull_all
+
+
+
+# Sync New called 3 times daily
+15	6		*	*	*	$SYNC_CALL new
+15	13		*	*	*	$SYNC_CALL new
+15	21		*	*	*	$SYNC_CALL new
+
+
