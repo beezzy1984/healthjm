@@ -22,6 +22,7 @@
 
 from trytond.pool import Pool
 from .health_jamaica_jiss import *
+from .encounter import JissFromEncounter
 
 
 def register():
@@ -29,3 +30,7 @@ def register():
         Jiss,
         GnuHealthSequences,
         module='health_jamaica_jiss', type_='model')
+
+    Pool.register(
+        JissFromEncounter,
+        module='health_jamaica_jiss', type_='wizard')

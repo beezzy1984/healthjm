@@ -264,9 +264,9 @@ class Jiss (ModelSQL, ModelView):
     def default_patient(cls):
         # print("{}\nContext = {}\n{}".format('%'*80,repr(Transaction().context),
         #                                      '%'*80))
-        return '(Save to see patient information)'
+        return '<Save to see patient information>'
 
-    def on_change_name(self):
+    def on_change_encounter(self):
         k = {
             'patient': self.encounter.patient.name.name,
             'patient_age': self.encounter.patient.age,
