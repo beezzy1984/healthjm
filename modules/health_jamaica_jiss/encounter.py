@@ -1,29 +1,9 @@
-# from trytond.model import ModelView, fields
-from trytond.wizard import (Wizard, StateAction)
+
+from trytond.wizard import StateAction
 from trytond.transaction import Transaction
 from trytond.pool import Pool
 from trytond.pyson import PYSONEncoder
-
-
-class OneEncounterWizard(Wizard):
-
-    def __init__(self, sessionid):
-        super(OneEncounterWizard, self).__init__(sessionid)
-        tact = Transaction()
-        active_id = tact.context.get('active_id')
-        try:
-            encounter = Pool().get(
-                'gnuhealth.encounter').browse([active_id])[0]
-        except:
-            self.raise_user_error('no_record_selected')
-        self._enctr_data = {'active_id': active_id, 'obj': encounter}
-
-    @classmethod
-    def __setup__(cls):
-        super(OneEncounterWizard, cls).__setup__()
-        cls._error_messages.update({
-            'no_record_selected': 'You need to select an Encounter',
-        })
+from trytond.modules.health_encounter.wizard import OneEncounterWizard
 
 
 class JissFromEncounter(OneEncounterWizard):
@@ -67,9 +47,5 @@ class JissFromEncounter(OneEncounterWizard):
             action['pyson_context'] = PYSONEncoder().encode({
                 'encounter': enctr_id
             })
-
-        print('Launching JISS registration with action, rd = \n%s\n%s\n%s' % (
-              repr(action), repr(rd), '*'*77
-              ))
 
         return action, rd
