@@ -13,29 +13,13 @@ class JissFromEncounter(OneEncounterWizard):
     start_state = 'goto_jiss'
     goto_jiss = StateAction('health_jamaica_jiss.actwin_jiss_formfirst')
 
-    # @classmethod
-    # def __setup__(cls):
-    #     super(JissFromEncounter, cls).__setup__()
-    #     cls._error_messages.update({
-    #         'appointment_no_institution':
-    #         'This appointment does not specify an institution.\n'
-    #         'An Encounter cannot be created.',
-    #     })
-
     def do_goto_jiss(self, action):
 
-        pool = Pool()
-        enctr_id = Transaction().context.get('active_id')
-
-        try:
-            encounter = pool.get(
-                'gnuhealth.encounter').browse([enctr_id])[0]
-        except:
-            self.raise_user_error('no_record_selected')
+        enctr_id, _ = self._get_active_encounter()
 
         # Does the jiss entry already exist?
-        jiss_entry = pool.get('gnuhealth.jiss').search([
-            ('encounter', '=', encounter.id)])
+        jiss_entry = Pool().get('gnuhealth.jiss').search([
+            ('encounter', '=', enctr_id)])
         if jiss_entry:
             rd = {'active_id': jiss_entry[0].id}
             action['res_id'] = rd['active_id']
