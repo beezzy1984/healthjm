@@ -243,9 +243,11 @@ class PartyPatient(ModelSQL, ModelView):
 
     @fields.depends('lastname', 'firstname', 'middlename')
     def on_change_with_name(self, *arg, **kwarg):
-        namelist = [self.lastname]
+        namelist = []
+        if self.lastname:
+            namelist.append(''.join([self.lastname, ',']))
         if self.firstname:
-            namelist = [''.join((self.lastname, ',')), self.firstname]
+            namelist.append(self.firstname)
         if self.middlename:
             namelist.append(self.middlename)
         return ' '.join(namelist)
