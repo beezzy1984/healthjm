@@ -156,18 +156,21 @@ def get_epi_week(d=None):
 
     weekend = weekstart + timedelta(6)
     jan1 = date(weekend.year, 1, 1)
-    jan1_wkday = jan1.isoweekday() % 7  # modulo with 7 since we want Sunday=0
+    jan1_wkday = jan1.isoweekday() % 7
+    # modulo with 7 since we want Sunday=0
 
     dyear = weekend.year
     dweek = int(weekend.strftime('%U'))
     if jan1_wkday > 0:  # year doesn't start on a Sunday. Life is hard
-        if jan1_wkday < 4:
+        if jan1_wkday < 4:  # starts before thursday
             dweek += 1
         elif dweek == 0:
-            dweek = 53
+            last_epi_week = get_epi_week(weekstart - timedelta(3))
+            dweek = last_epi_week[-1] + 1
             dyear = weekstart.year
 
     return (weekstart, weekend, dyear, dweek)
+
 
 def epiweek_str(d=None):
     '''reliable display of epi-week as a string
