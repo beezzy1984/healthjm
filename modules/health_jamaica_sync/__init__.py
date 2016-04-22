@@ -14,7 +14,7 @@ def register():
 
         # .party
         Party, PartyAddress, AlternativePersonID, DomiciliaryUnit,
-        PatientData, PatientDiseaseInfo,
+        PatientData, PatientDiseaseInfo, PartyRelative, ContactMechanism,
 
         # .health
         OperationalArea, OperationalSector,

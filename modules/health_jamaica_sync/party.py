@@ -4,7 +4,8 @@ from trytond.transaction import Transaction
 from tryton_synchronisation import SyncMixin, SyncUUIDMixin, SyncMode
 
 __all__ = ['Party', 'PartyAddress', 'AlternativePersonID', 'DomiciliaryUnit',
-           'PatientData', 'PatientDiseaseInfo']
+           'PatientData', 'PatientDiseaseInfo', 'PartyRelative',
+           'ContactMechanism']
 
 
 class Party(SyncMixin):
@@ -65,4 +66,11 @@ class PatientDiseaseInfo(SyncUUIDMixin):
     __metaclass__ = PoolMeta
 
 
+class PartyRelative(SyncUUIDMixin):
+    __name__ = 'party.relative'
+    __metaclass__ = PoolMeta
 
+
+class ContactMechanism(SyncUUIDMixin):
+    __name__ = 'party.contact_mechanism'
+    __metaclass__ = PoolMeta
