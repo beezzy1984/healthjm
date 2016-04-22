@@ -25,7 +25,20 @@
             <field name="act_window" ref="action_gnuhealth_patient_rounding_view"/>
         </record>
         
-		<menuitem action="action_gnuhealth_patient_rounding_view"
+        <!-- Create a modified view for hospitalisation  -->
+        <record model="ir.ui.view" id="healthjm_inpatient_reg">
+             <field name="model">gnuhealth.inpatient.registration</field>
+             <field name="type">form</field>
+             <field name="name">form-inpatient_registration</field>
+        </record>
+        <!-- Link the updated form to the original -->
+        <record model="ir.action.act_window.view" id="health_inpatient.act_inpatient_registration_form_view">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="healthjm_inpatient_reg"/>
+            <field name="act_window" ref="health_inpatient.gnuhealth_action_inpatient_registration"/>
+        </record>
+
+        <menuitem action="action_gnuhealth_patient_rounding_view"
             id="menu_gnuhealth_patient_rounding_list" icon="gnuhealth-list"
             name="Ward Rounds" parent="health_nursing.gnuhealth_nursing_menu"
             sequence="2"/>

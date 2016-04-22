@@ -114,6 +114,14 @@
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
+<!--         <record model="ir.model.field.access" id="field-grp_chw_encounter_complaint">
+            <field name="group" ref="group_community_hw" />
+            <field name="field" search="[('name','=','primary_complaint'),('model.model','=','gnuhealth.encounter')]" />
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record> -->
         <record model="ir.model.field.access" id="field-grp_chw_encounter_short_summary">
             <field name="group" ref="group_community_hw" />
             <field name="field" search="[('name','=','short_summary'),('model.model','=','gnuhealth.encounter')]" />

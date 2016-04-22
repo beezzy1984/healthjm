@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<form string="Inpatient Registration Information">
+    <notebook>
+        <page string="Administrative data" id="page_admin_data">
+            <group colspan="4" id="group_admin_data_holder1">
+                <group colspan="4" id="group_admin_data" col="12">
+                    <label name="patient"/>
+                    <field name="patient" colspan="4" />
+                    <label id="lbl_upi_mrn" string="UPI/MRN" />
+                    <field name="puid" />
+                    <field name="medical_record_num" />
+                    <label name="sex_display" />
+                    <field name="sex_display" />
+                    <label name="age" />
+                    <field name="age" />
+                </group>
+                <newline />
+                <group colspan="4" id="group_admin_bed_reg" col="8">
+                    <label name="name" />
+                    <field name="name" />
+                    <label name="hospitalization_date"/>
+                    <field name="hospitalization_date"/>
+                    <label name="expected_discharge"/>
+                    <field name="expected_discharge"/>
+                </group>
+                <newline/>
+                <group colspan="4" col="8" id="group_admin_data_holder2">
+                    <label name="bed"/>
+                    <field name="bed"/>
+                    <label name="attending_physician"/>
+                    <field name="attending_physician"/>
+                    <label name="operating_physician"/>
+                    <field name="operating_physician"/>
+                </group>
+                <group colspan="4" id="group_admin_data_holder3">
+                    <label name="admission_type"/>
+                    <field name="admission_type"/>
+                    <label name="admission_reason"/>
+                    <field name="admission_reason"/>
+                    <newline/>
+                    <separator name="info" colspan="4"/>
+                    <field name="info" colspan="4"/>
+                </group>
+            </group>
+            <newline/>
+            <field name="bed_transfers"/>
+            <newline/>
+            <group colspan="4" id="group_registration_holder1">
+                <group colspan="1" col="2" id="group_registration_holder2">
+                    <field name="state" readonly="1"/>
+                    <button name="confirmed" string="Confirm" help="Confirm Registration / Make the reservation" icon="icon-ok"/>
+                </group>
+                <group colspan="3" col="6" id="group_registration_holder3">
+                    <button name="cancel" help="Cancel Registration" string="Cancel" icon="icon-cancel" confirm="Cancel the in-patient registration process ?"/>
+                    <button name="admission" help="Admit patient to ward/bed" string="Admit Patient" icon="icon-ok" confirm="Admit the patient to the facility and assign the selected bed"/>
+                    <button name="discharge" help="Discharge Patient" string="Discharge" icon="icon-home" confirm="You are about to SIGN the discharge for this patient from the facility. No further changes can be made "/>
+                    <label name="discharged_by" />
+                    <field name="discharged_by"/>
+                    <field name="discharge_date" />
+                </group>
+            </group>
+        </page>
+        <page string="Nutrition" id="page_inpatient_nutrition">
+            <label name="diet_belief"/>
+            <field name="diet_belief"/>
+            <label name="diet_vegetarian"/>
+            <field name="diet_vegetarian"/>
+            <newline/>
+            <field colspan="4" name="therapeutic_diets"/>
+            <newline/>
+            <separator colspan="4" id="separator_nutrition_notes" string="Other nutrition notes / directions"/>
+            <newline/>
+            <field colspan="4" name="nutrition_notes"/>
+        </page>
+        <page string="Medication Plan" id="page_inpatient_medication">
+            <field name="medications"/>
+        </page>
+        <page string="Care Plan" id="page_care_plan">
+            <label name="nursing_plan"/>
+            <field name="nursing_plan"/>
+            <newline/>
+            <label name="discharge_plan"/>
+            <field name="discharge_plan"/>
+        </page>
+    </notebook>
+</form>

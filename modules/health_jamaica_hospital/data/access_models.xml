@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tryton>
+    <data>
+        <record model="ir.model.access" id="model-grp_records_inpatient">
+            <field name="model" search="[('model','=', 'gnuhealth.inpatient.registration')]"/>
+            <field name="group" ref="health_jamaica_primarycare.group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_doctors_inpatient">
+            <field name="model" search="[('model','=', 'gnuhealth.inpatient.registration')]"/>
+            <field name="group" ref="health_jamaica_primarycare.group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_nurses_inpatient">
+            <field name="model" search="[('model','=', 'gnuhealth.inpatient.registration')]"/>
+            <field name="group" ref="health_jamaica_primarycare.group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+
+        <!-- Everyone can read beds -->
+        <record model="ir.model.access" id="model-grp_records_bed">
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.bed')]"/>
+            <field name="group" ref="health_jamaica_primarycare.group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_doctors_bed">
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.bed')]"/>
+            <field name="group" ref="health_jamaica_primarycare.group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <record model="ir.model.access" id="model-grp_nurses_bed">
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.bed')]"/>
+            <field name="group" ref="health_jamaica_primarycare.group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        
+        <!-- only records-admin and managing nurse can modify/edit beds -->
+        <record model="ir.model.access" id="model-grp_records_admins_bed">
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.bed')]"/>
+            <field name="group" ref="health_jamaica_primarycare.group_records_admins"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_managing_doctors_bed">
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.bed')]"/>
+            <field name="group" ref="health_jamaica_primarycare.group_managing_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.access" id="model-grp_managing_nurses_bed">
+            <field name="model" search="[('model','=', 'gnuhealth.hospital.bed')]"/>
+            <field name="group" ref="health_jamaica_primarycare.group_managing_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+    </data>
+</tryton>
