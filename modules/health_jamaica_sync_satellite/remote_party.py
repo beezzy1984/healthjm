@@ -64,6 +64,7 @@ class RemoteParty(ModelView, ModelStorage):
         cls._target_model = pool.get('party.party')
         cache_server = config.get('synchronisation', 'cache_server',
                                   '127.0.0.1:11211')
+        cls._sync_id_local = config.get('synchronisation', 'id', '511')
         cls._cache_client = memcache.Client([cache_server])
         # cls._cache_model = pool.get('party.party.remote_cache')
         cls._cache_field_names = ['searched', 'to_import', 'imported']
@@ -76,7 +77,7 @@ class RemoteParty(ModelView, ModelStorage):
     def _get_cache_key(cls):
         '''returns a cache key prefix for this user'''
         tact = Transaction()
-        ckey = 'hjmsync_u%d:' % tact.user
+        ckey = 'hjmsync_u%ds%d:' % (tact.user, int(cls._sync_id_local))
         return ckey
 
     @classmethod
@@ -232,7 +233,8 @@ class RemotePartyImport(Wizard):
                    states={'readonly': Not(Bool(Eval('num_selected')))})
         ])
     import_party = StateTransition()
-    import_related = StateTransition()
+    import_party_related = StateTransition()
+    import_patient_related = StateTransition()
     done = StateView(
         'party.party.remote_import.done',
         'health_jamaica_sync_satellite.remote_party_import_done', [
@@ -290,16 +292,42 @@ class RemotePartyImport(Wizard):
             RemoteParty.mark_imported(ids_imported)
         self._patient_codes = patient_codes
         self._party_codes = party_codes
-        return 'import_related'
+        return 'import_party_related'
 
-    def transition_import_related(self):
+    def transition_import_party_related(self):
+        pool = Pool()
+        party_model = pool.get('party.party')
+        base_domain = [('party.%s' % party_model.unique_id_column, 'in',
+                        self._party_codes)]
+        models = ['party.address', 'party.relative', 'party.contact_mechanism']
+        for model_name in models:
+            model = pool.get(model_name)
+            records = model.search_master(
+                base_domain, 0, RELATED_LIMIT, [('id', 'DESC')],
+                fields_names=['id', model.unique_id_column])
+            if records:
+                model_codes = [x[model.unique_id_column] for x in records]
+                model.pull_master_record(model_codes)
+        return 'import_patient_related'
+
+    def transition_import_patient_related(self):
         # search for a pull the encounters and appointments too
         pool = Pool()
         Patient = pool.get('gnuhealth.patient')
+        PatientDisease = pool.get('gnuhealth.patient.disease')
         Appointment = pool.get('gnuhealth.appointment')
         # Evaluation = pool.get('gnuhealth.patient.evaluation')
         Encounter = pool.get('gnuhealth.encounter')
         component_type_model = pool.get('gnuhealth.encounter.component_type')
+
+        disease_domain = [('name.%s' % Patient.unique_id_column, 'in',
+                           self._patient_codes)]
+        diseases = PatientDisease.search_master(
+            disease_domain, 0, RELATED_LIMIT,
+            fields_names=['id', PatientDisease.unique_id_column])
+        if diseases:
+            PatientDisease.pull_master_record(
+                [x[PatientDisease.unique_id_column] for x in diseases])
 
         base_domain = [('patient.%s' % Patient.unique_id_column, 'in',
                         self._patient_codes)]
@@ -320,6 +348,8 @@ class RemotePartyImport(Wizard):
             [('start_time', 'DESC')],
             fields_names=['id', Encounter.unique_id_column,
                           'start_time', 'state'])
+        print('%s\nsearching Encounters.. got :\n %s\n%s' % ('*'*77, repr(encounters), '*'*77))
+        # import pdb; pdb.set_trace()
         encounter_codes = [x[Encounter.unique_id_column] for x in encounters]
         if encounter_codes:
             Encounter.pull_master_record(encounter_codes)
@@ -338,6 +368,7 @@ class RemotePartyImport(Wizard):
             myfields = ['id', 'start_time', mymodel.unique_id_column]
             myrecords = mymodel.search_master(mydomain, 0, RELATED_LIMIT,
                                               fields_names=myfields)
+            print('searching %s got :\n %s' % (repr(mymodel), repr(encounters)))
             if myrecords:
                 mymodel.pull_master_record([x[mymodel.unique_id_column]
                                             for x in myrecords])

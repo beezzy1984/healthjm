@@ -49,7 +49,7 @@ class PatientEncounter(SyncUUIDMixin):
 
     @classmethod
     def get_unsync_domain(cls):
-        return [('state', '!=', 'in_progress')]
+        return [('state', 'in', ['signed', 'invalid'])]
 
 
 class EncounterClinical(SyncUUIDMixin):
