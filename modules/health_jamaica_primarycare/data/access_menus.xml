@@ -160,6 +160,20 @@
             <field name="group" ref="group_records_admins" />
         </record>
 
+        <record model="ir.ui.menu-res.group" id="menu-grp_srnurse_encounters">
+            <field name="menu" ref="health_encounter.health_menu_encounter_main" />
+            <field name="group" ref="group_senior_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_srdoctor_encounters">
+            <field name="menu" ref="health_encounter.health_menu_encounter_main" />
+            <field name="group" ref="group_sr_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_recordstech_encounters">
+            <field name="menu" ref="health_encounter.health_menu_encounter_main" />
+            <field name="group" ref="group_records_technicians" />
+        </record>
+
+
         <!-- And institutions -->
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_institutions">
             <field name="menu" ref="health.gnuhealth_menu_institution" />
