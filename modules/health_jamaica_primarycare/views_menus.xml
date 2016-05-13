@@ -4,5 +4,12 @@
         <menuitem action="health.action_gnuhealth_institution"
             id="health.gnuhealth_menu_institution" icon="gnuhealth-health-center"
             parent="health.gnuhealth_menu" sequence="21"/>
+
+        <!-- Modify Patient Encounters view to only show signed encounters -->
+        <record model="ir.action.act_window" id="health_encounter.health_actwin_encounter">
+            <field name="name">Patient Encounters</field>
+            <field name="res_model">gnuhealth.encounter</field>
+            <field name="domain">[('state','=','signed')]</field>
+        </record>
     </data>
 </tryton>
