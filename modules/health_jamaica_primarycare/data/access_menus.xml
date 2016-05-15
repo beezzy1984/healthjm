@@ -175,6 +175,10 @@
 
 
         <!-- And institutions -->
+        <record model="ir.ui.menu-res.group" id="menu-grp_healthadmin_institutions">
+            <field name="menu" ref="health.gnuhealth_menu_institution" />
+            <field name="group" ref="health.group_health_admin" />
+        </record>
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_institutions">
             <field name="menu" ref="health.gnuhealth_menu_institution" />
             <field name="group" ref="group_nurses" />
@@ -195,6 +199,10 @@
             <field name="menu" ref="health.gnuhealth_menu_institution" />
             <field name="group" ref="group_community_hw" />
         </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_healthadmin_institutions_os">
+            <field name="menu" ref="health.gnuhealth_institution_operationalsector" />
+            <field name="group" ref="health.group_health_admin" />
+        </record>
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_institutions_os">
             <field name="menu" ref="health.gnuhealth_institution_operationalsector" />
             <field name="group" ref="group_nurses" />
@@ -214,6 +222,10 @@
         <record model="ir.ui.menu-res.group" id="menu-grp_chw_institutions_os">
             <field name="menu" ref="health.gnuhealth_institution_operationalsector" />
             <field name="group" ref="group_community_hw" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_healthadmin_institutions_specialties">
+            <field name="menu" ref="health.gnuhealth_institution_specialties" />
+            <field name="group" ref="health.group_health_admin" />
         </record>
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_institutions_specialties">
             <field name="menu" ref="health.gnuhealth_institution_specialties" />
