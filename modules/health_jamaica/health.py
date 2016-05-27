@@ -26,6 +26,7 @@ from dateutil.relativedelta import relativedelta
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pyson import Eval, And, In, Bool
 from trytond.pool import Pool
+from trytond import backend
 from trytond.transaction import Transaction
 from .tryton_utils import (negate_clause, replace_clause_column, is_not_synchro,
                            get_timezone, make_selection_display, get_day_comp,
@@ -536,10 +537,10 @@ class PatientEvaluation(ModelSQL, ModelView):
     def __register__(cls, module_name):
         super(PatientEvaluation, cls).__register__(module_name)
         cursor = Transaction().cursor
+        TableHandler = backend.get('TableHandler')
+        table = TableHandler(cursor, cls, module_name)
         # Make the endtime column not required at the DB level
-        cursor.execute(
-            '''ALTER TABLE gnuhealth_patient_evaluation
-               ALTER COLUMN evaluation_endtime DROP NOT NULL;''')
+        table.not_null_action('evaluation_endtime')
 
     @fields.depends('patient', 'evaluation_start', 'institution')
     def on_change_with_first_visit_this_year(self, *arg, **kwarg):
