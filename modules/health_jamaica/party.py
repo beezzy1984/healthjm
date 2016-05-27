@@ -24,15 +24,19 @@ import random
 import uuid
 import six
 from datetime import date
+from sql import Column
+from sql.functions import Age, ToChar
+from sql.operators import NotEqual, In as sqlIn
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.pyson import Eval, Not, Bool, Equal, Or, In, Less
+from .tryton_utils import (is_not_synchro, make_selection_display,
+                           replace_clause_column)
+
 
 ThisInstitution = lambda: Pool().get('gnuhealth.institution').get_institution()
 
-from .tryton_utils import (is_not_synchro, make_selection_display,
-                           replace_clause_column)
 
 _DEPENDS = ['is_person']
 SEX_OPTIONS = [('m', 'Male'), ('f', 'Female'), ('u', 'Unknown')]
@@ -156,6 +160,7 @@ class PartyPatient(ModelSQL, ModelView):
 
     birthplace = fields.Function(fields.Char('Place of Birth'),
                                  'get_rec_name')
+    current_age = fields.Function(fields.Char('Age'), 'get_current_age')
 
     @classmethod
     def __setup__(cls):
@@ -365,6 +370,25 @@ class PartyPatient(ModelSQL, ModelView):
                                           (uuid.uuid4(), suffix)])
             values.setdefault('addresses', None)
         return super(PartyPatient, cls).create(vlist)
+
+    @classmethod
+    def get_current_age(cls, instances, name):
+        c = Transaction().cursor
+        tbl = cls.__table__()
+        qry = "\n".join(["SELECT a.id as id, "
+                         "regexp_replace(AGE(a.dob)::varchar, "
+                         "' ([ymd])[ayonthears ]+', '\\1 ', 'g')  as showage",
+                         "from " + tbl._Table__name + " as a",
+                         "where a.id in (%s)"])
+        qry_parm = map(int, instances)
+
+        print('%s\n%s\n' % ('*'*77, qry))
+        c.execute(qry, qry_parm)
+        # import pdb; pdb.set_trace()
+        outx = c.fetchall()
+        outd = dict([x for x in outx])
+        print('\n%s\n%s' % (repr(outd), '*'*77))
+        return outd
 
 
 class AlternativePersonID (ModelSQL, ModelView):
