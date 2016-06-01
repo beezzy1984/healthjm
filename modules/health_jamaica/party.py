@@ -378,7 +378,7 @@ class PartyPatient(ModelSQL, ModelView):
         qry = "\n".join(["SELECT a.id as id, "
                          "regexp_replace(AGE(a.dob)::varchar, "
                          "' ([ymd])[ayonthears ]+', '\\1 ', 'g')  as showage",
-                         "from " + tbl._Table__name + " as a",
+                         "from " + str(tbl) + " as a",
                          "where a.id in (%s)"])
         qry_parm = map(int, instances)
 
@@ -389,6 +389,20 @@ class PartyPatient(ModelSQL, ModelView):
         outd = dict([x for x in outx])
         print('\n%s\n%s' % (repr(outd), '*'*77))
         return outd
+
+    @classmethod
+    def get_ref_age(cls, instance_refs):
+        '''
+        Uses the age function in the database to calculate the age at 
+        the date specified.
+        :param: instance_refs - a list of tuples with (id, ref_date)
+        '''
+        qry = "\n".join(["SELECT a.id as id, "
+                         "regexp_replace(AGE(%s, a.dob)::varchar, "
+                         "' ([ymd])[ayonthears ]+', '\\1 ', 'g')  as showage",
+                         "from " + tbl._Table__name + " as a",
+                         "where a.id in (%s)"])
+        qry_parm = map(int, instances)
 
 
 class AlternativePersonID (ModelSQL, ModelView):

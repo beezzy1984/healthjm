@@ -58,7 +58,7 @@
         <label name="unidentified" />
         <field name="unidentified" />
         <field name="alternative_identification" invisible="1" />
-        <label name="current_age" /><field name="current_age" />
+        <!-- <label name="current_age" /><field name="current_age" /> -->
 <!--                 <label name="party_warning_ack" />
         <field name="party_warning_ack" /> -->
         <newline />

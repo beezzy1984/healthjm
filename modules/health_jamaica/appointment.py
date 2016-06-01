@@ -108,6 +108,16 @@ class Appointment(ModelSQL, ModelView):
                       ('appointment_date', '>=', comp[1])]
         return domain
 
+    def get_rec_name(self, name):
+        if self.name:
+            out = ['[{}]'.format(self.name)]
+        elif self.state == 'free':
+            out = ['[Unassigned]']
+        else:
+            out = ['[Invalid]']
+        out.append(self.appointment_date.strftime('on %F at %R'))
+        return ' '.join(out)
+
     @classmethod
     def search_rec_name(cls, name, clause):
         "Allow the default search to be by name, upi or appointment ID"
