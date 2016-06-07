@@ -138,6 +138,20 @@ def get_age_in_years(dob, ref_date=None):
     return full_age.years
 
 
+# def make_age_query(dob_field, date_ref_field):
+#     '''
+#     Uses the age function in the database to calculate the age at 
+#     the date specified.
+#     :param: instance_refs - a list of tuples with (id, ref_date)
+#     '''
+    
+#     qry = "\n".join(["SELECT a.id as id, "
+#                      "regexp_replace(AGE(%s, a.dob)::varchar, "
+#                      "' ([ymd])[ayonthears ]+', '\\1 ', 'g')  as showage",
+#                      "from " + tbl._Table__name + " as a",
+#                      "where a.id in (%s)"])
+#     qry_parm = map(int, instances)
+
 def get_epi_week(d=None):
     '''
     Returns a tuple containing 2 date objects and a 2 integers. They
