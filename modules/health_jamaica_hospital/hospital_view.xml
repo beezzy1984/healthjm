@@ -38,9 +38,38 @@
             <field name="act_window" ref="health_inpatient.gnuhealth_action_inpatient_registration"/>
         </record>
 
+        <record model="ir.action.wizard" id="hospital_bed_management">
+            <field name="name">Bed Management</field>
+            <field name="wiz_name">health_jamaica_hospital.manage_beds</field>
+        </record>
+
+        <record model="ir.ui.view" id="bed_management_view">
+             <field name="model">health_jamaica_hospital.manage_beds.start</field>
+             <field name="type">form</field>
+             <field name="name">form-bed_management_start</field>
+        </record>
+
+        <record model="ir.action.wizard" id="create_hospital_bed">
+            <field name="name">Bed Creator</field>
+            <field name="wiz_name">health_jamaica_hospital.create_beds</field>
+        </record>
+
+        <record model="ir.ui.view" id="create_bed_view">
+             <field name="model">health_jamaica_hospital.create_beds.start</field>
+             <field name="type">form</field>
+             <field name="name">form-create_bed_start</field>
+        </record>
+
         <menuitem action="action_gnuhealth_patient_rounding_view"
             id="menu_gnuhealth_patient_rounding_list" icon="gnuhealth-list"
             name="Ward Rounds" parent="health_nursing.gnuhealth_nursing_menu"
             sequence="2"/>
+
+        <menuitem action="hospital_bed_management" id="bedman" name="Bed Management"
+            parent="health.gnuhealth_menu" sequence="9" />
+
+        <menuitem action="create_hospital_bed" id="bedcreate" name="Bed Creator"
+            parent="health.gnuhealth_menu" sequence="5" />
+            
 	</data>
 </tryton>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form string="Bed Management - Move a bed">
+	<label name="bed" />
+	<field name="bed" colspan="3"/>
+	<newline />
+	<label name="source_location" />
+	<field name="source_location" />
+	<label name="target_location" />
+	<field name="target_location" />
+</form>

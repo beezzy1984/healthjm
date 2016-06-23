@@ -59,6 +59,7 @@
                     <field name="discharge_date" />
                 </group>
             </group>
+
         </page>
         <page string="Nutrition" id="page_inpatient_nutrition">
             <label name="diet_belief"/>

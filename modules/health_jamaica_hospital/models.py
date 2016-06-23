@@ -6,13 +6,14 @@ from trytond.pool import Pool
 from trytond.transaction import Transaction
 from ..health_jamaica.tryton_utils import (replace_clause_column, get_timezone)
 
-
 __all__ = ['HospitalBed', 'InpatientRegistration', 'PatientRounding']
 
 
 class HospitalBed(ModelSQL, ModelView):
     'Hospital Bed'
     __name__ = 'gnuhealth.hospital.bed'
+
+    movable = fields.Boolean('movable')
 
     def get_rec_name(self, name):
         if self.name:

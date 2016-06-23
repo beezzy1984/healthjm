@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form string="Bed Management - Create Multiple Beds">
+	<label name="source_location" />
+	<field name="source_location" />
+	<label name="bed_type" />
+	<field name="bed_type" />
+	<label name="telephone" />
+	<field name="telephone" />
+	<label name="number_of_beds" />
+	<field name="number_of_beds" />
+	<label name="bed_transferable" />
+	<field name="bed_transferable" />
+</form>
