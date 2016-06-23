@@ -52,14 +52,14 @@ class BedCreatorView(ModelView):
                                       required=True)
     number_of_beds = fields.Integer('Amout of beds', required=True)
     bed_transferable = fields.Boolean('Bed is movable')
-    bed_type = fields.Selection([
-        ('Gatch Bed', 'Gatch Bed'), ('Electric', 'Electric'),
-        ('Stretcher', 'Stretcher'), ('Low Bed', 'Low Bed'),
-        ('Low Air Loss', 'Low Air Loss'),
-        ('Circo Electric', 'Circo Electric'), ('Clinitron', 'Clinitron')],
-        'Bed Type', required=True)
+    bed_type = fields.Selection('get_bed_types', 'Bed Type', required=True)
 
     telephone = fields.Char('Telephone Number')
+
+    @staticmethod
+    def get_bed_types():
+        HospitalBed = Pool().get('gnuhealth.hospital.bed')
+        return HospitalBed.bed_type.selection  
 
 
 class BedCreator(Wizard):
