@@ -13,6 +13,6 @@ def register():
         module='health_jamaica_hospital', type_='model')
 
     Pool.register(
-        BedManager, 
+        BedManager,
         BedCreator,
         module='health_jamaica_hospital', type_='wizard')
