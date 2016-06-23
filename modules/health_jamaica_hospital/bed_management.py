@@ -94,7 +94,7 @@ class BedCreator(Wizard):
                     institution=int(self.start.source_location.institution),
                     state='free',
                     telephone_number=self.start.telephone,
-                    rec_name="%s-%02d" % (str(start.source_location.name), i),
+                    rec_name="%s-%02d" % (start.source_location.name, i),
                     movable=start.bed_transferable
                 )
                 self.beds.append(bed)
