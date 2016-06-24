@@ -21,6 +21,10 @@ class BedManagerView(ModelView):
     @fields.depends('bed')
     def on_change_with_source_location(self):
         """return a new value for source location"""
+        if self.bed == None:
+            self.raise_user_error("Cannot choose ward \n"
+                                  "This is because no bed has been chosen\n")
+
         return int(self.bed.ward)
 
 
@@ -51,10 +55,7 @@ class BedCreatorView(ModelView):
     'Create Multiple Hospital Beds'
     __name__ = 'health_jamaica_hospital.create_beds.start'
 
-    ward = fields.Many2One('gnuhealth.hospital.ward', 'Ward',
-                                      states={
-                                        'required': ~Eval('bed_transferable', False)
-                                      })
+    ward = fields.Many2One('gnuhealth.hospital.ward', 'Ward', required=True)
     number_of_beds = fields.Integer('Amount of beds', required=True)
     bed_transferable = fields.Boolean('Bed is movable')
     bed_type = fields.Selection('get_bed_types', 'Bed Type', required=True)
@@ -66,6 +67,11 @@ class BedCreatorView(ModelView):
         """Returns the list of bed types from the hospital bed model"""
         hospital_bed = Pool().get('gnuhealth.hospital.bed')
         return hospital_bed.bed_type.selection  
+
+    @fields.depends('bed_transferable')
+    def on_change_with_source_location(self):
+        """return a new value for source location"""
+        return int(self.bed.ward)
 
 
 class BedCreator(Wizard):
@@ -153,7 +159,6 @@ class BedCreator(Wizard):
 
             temp_lis.append(template_dict)
             return template.create(temp_lis)
-
 
         def get_prod(bed_number):
             """Creates a bed product from the product template
