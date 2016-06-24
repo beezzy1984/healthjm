@@ -6,10 +6,14 @@
 	<field name="ward_code" />
 	<label name="bed_type" />
 	<field name="bed_type" />
-	<label name="telephone" />
-	<field name="telephone" />
-	<label name="number_of_beds" />
-	<field name="number_of_beds" />
-	<label name="bed_transferable" />
-	<field name="bed_transferable" />
+	<label name="product_template" />
+	<field name="product_template" />
+	<group colspan="4" col="6">
+		<label name="telephone" />
+		<field name="telephone" />
+		<label name="number_of_beds" />
+		<field name="number_of_beds" />
+		<label name="bed_transferable" />
+		<field name="bed_transferable" />
+	</group>
 </form>
