@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form string="Bed Management - Create Multiple Beds">
-	<label name="source_location" />
-	<field name="source_location" />
+	<label name="ward" />
+	<field name="ward" />
+	<label name="ward_code" />
+	<field name="ward_code" />
 	<label name="bed_type" />
 	<field name="bed_type" />
 	<label name="telephone" />
