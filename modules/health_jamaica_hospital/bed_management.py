@@ -61,6 +61,8 @@ class BedCreatorView(ModelView):
     bed_type = fields.Selection('get_bed_types', 'Bed Type', required=True)
     telephone = fields.Char('Telephone Number')
     ward_code = fields.Char('Ward Code', required=True)
+    product_template = fields.Selection('get_template_list', 'Product Template',
+                                        required=True)
 
     @staticmethod
     def get_bed_types():
@@ -73,7 +75,15 @@ class BedCreatorView(ModelView):
         """return a new value for source location"""
         return int(self.bed.ward)
 
+    @staticmethod
+    def get_template_list():
+        """return list of product template"""
+        prod_template = Pool().get('product.template')
+        templates = prod_template.search_read(
+            [('type', '=', 'service'), ('name', 'ilike', '%bed%')],
+            fields_names=['name', 'id'])
 
+        return [(x['id'], x['name']) for x in templates]
 class BedCreator(Wizard):
 
     'Create Multiple Hospital Beds'
@@ -169,7 +179,7 @@ class BedCreator(Wizard):
 
             Product = Pool().get('product.product')
             template_dict = dict(
-                template=temp_lis[0].id,
+                template=start.product_template,
                 code="%s - %d" %(self.start.ward_code, bed_number),
                 is_bed=True,
                 active=True
