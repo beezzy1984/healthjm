@@ -126,7 +126,7 @@ class BedCreator(Wizard):
             Product = Pool().get('product.product')
             template_dict = dict(
                 template=start.product_template,
-                code="%s - %d" %(self.start.ward_code, bed_number),
+                code="%s - %d" %(self.start.ward.wardcode, bed_number),
                 is_bed=True,
                 active=True
             )
