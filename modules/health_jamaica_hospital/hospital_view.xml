@@ -59,17 +59,25 @@
              <field name="type">form</field>
              <field name="name">form-create_bed_start</field>
         </record>
-
+        <!--Extending hospital ward fields-->
+        <record model="ir.ui.view" id="healthjm_ward">
+            <field name="model">gnuhealth.hospital.ward</field>
+            <field name="inherit" ref="health.gnuhealth_hospital_ward_view"/>
+            <field name="priority" eval="20" />
+            <field name="type">form</field>
+            <field name="name">form-hospital-ward</field>
+        </record>
+        <!--Menu item for patient rounding-->
         <menuitem action="action_gnuhealth_patient_rounding_view"
             id="menu_gnuhealth_patient_rounding_list" icon="gnuhealth-list"
             name="Ward Rounds" parent="health_nursing.gnuhealth_nursing_menu"
             sequence="2"/>
 
+        <!--Menu item for bed management wizard-->
         <menuitem action="hospital_bed_management" id="bedman" name="Bed Management"
             parent="health.gnuhealth_menu" sequence="9" />
-
+        <!--Menu item for bed creator wizard-->
         <menuitem action="create_hospital_bed" id="bedcreate" name="Bed Creator"
             parent="health.gnuhealth_menu" sequence="5" />
-            
 	</data>
 </tryton>
