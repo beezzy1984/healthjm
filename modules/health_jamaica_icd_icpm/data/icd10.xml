@@ -360,5 +360,31 @@
             <field name="active" eval="True" />
             <field name="category" ref="health_icd10.icdcat18-11" />
         </record>
+        <!--Codes added 2016-29-06-->
+        <record model="gnuhealth.pathology" id="Z481">
+            <field name="name">Change or removal of nonsurgical wound dressing</field>
+            <field name="code">Z48.1</field>
+            <field name="active" eval="True" />
+            <field name="category" ref="health_icd10.icdcat21-4" />
+        </record>
+        <record model="gnuhealth.pathology" id="Z482">
+            <field name="name">Removal of Sutures</field>
+            <field name="code">Z48.2</field>
+            <field name="active" eval="True" />
+            <field name="category" ref="health_icd10.icdcat21-4" />
+        </record>
+        <record model="gnuhealth.pathology" id="Z483">
+            <field name="name">Encounter for change or removal of drains</field>
+            <field name="code">Z48.3</field>
+            <field name="active" eval="True" />
+            <field name="category" ref="health_icd10.icdcat21-4" />
+        </record>
+        <record model="gnuhealth.pathology" id="Z293">
+            <field name="name">Rheumatic Fever Prophylaxis</field>
+            <field name="code">Z29.3</field>
+            <field name="active" eval="True" />
+            <field name="category" ref="health_icd10.icdcat21-2" />
+        </record>
+        <!--End codes added 2016-29-06-->
     </data>
 </tryton>
