@@ -6,7 +6,7 @@ from trytond.pool import Pool
 from trytond.transaction import Transaction
 from ..health_jamaica.tryton_utils import (replace_clause_column, get_timezone)
 
-__all__ = ['HospitalBed', 'InpatientRegistration', 'PatientRounding']
+__all__ = ['HospitalBed', 'InpatientRegistration', 'PatientRounding', 'HospitalWard']
 
 
 class HospitalBed(ModelSQL, ModelView):
@@ -27,6 +27,13 @@ class HospitalBed(ModelSQL, ModelView):
                 replace_clause_column(clause, 'name.code')]
 
 
+class HospitalWard(ModelSQL, ModelView):
+    'Hospital Ward'
+    __name__ = 'gnuhealth.hospital.ward'
+
+    wardcode = fields.Char('Ward Code', required=True)
+
+
 class InpatientRegistration(ModelSQL, ModelView):
     'Patient admission History'
     __name__ = 'gnuhealth.inpatient.registration'
@@ -34,11 +41,14 @@ class InpatientRegistration(ModelSQL, ModelView):
     expected_discharge = fields.Date('Expected Discharge Date')
     puid = fields.Function(fields.Char('UPI', size=12), 'get_patient_field')
     medical_record_num = fields.Function(fields.Char('Medical Record Number',
-                                         size=10),
+                                                     size=10),
                                          'get_patient_field')
     sex_display = fields.Function(fields.Char('Sex', size=12),
                                   'get_patient_field')
     age = fields.Function(fields.Char('Age', size=12), 'get_patient_field')
+
+    speciality = fields.Many2One('gnuhealth.specialty', 'Specialty',
+                                 help='Medical Specialty / Sector')
 
     @classmethod
     def __setup__(cls):
