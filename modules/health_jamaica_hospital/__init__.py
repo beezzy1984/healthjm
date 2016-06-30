@@ -10,6 +10,7 @@ def register():
         PatientRounding,
         BedManagerView,
         BedCreatorView,
+        HospitalWard,
         module='health_jamaica_hospital', type_='model')
 
     Pool.register(
