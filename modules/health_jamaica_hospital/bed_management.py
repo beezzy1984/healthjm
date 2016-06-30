@@ -105,77 +105,23 @@ class BedCreator(Wizard):
         num_bed = start.number_of_beds
         bed_total = self.BedModel.search_count([('ward', '=',
                                                 start.ward)]) + num_bed
-        bed_on_ward = self.BedModel.search_count(
+        self.bed_on_ward = self.BedModel.search_count(
                                             [('ward', '=',self.start.ward.id)])
         if start.ward and bed_total > start.ward.number_of_beds:
-            beds_left = self.start.ward.number_of_beds - bed_on_ward
+            beds_left = self.start.ward.number_of_beds - self.bed_on_ward
             
             self.raise_user_error("This ward's maximum capacity is %d beds\n"
                                   "There are currently %d beds on this ward\n"
                                   "You can only create %d more beds for this ward." % 
-                                  (self.start.ward.number_of_beds, bed_on_ward,
+                                  (self.start.ward.number_of_beds, self.bed_on_ward,
                                    beds_left))
-
-        def get_prod_temp():
-            """Returns an available bed template. If none is available
-               it creates one"""
-            template = Pool().get('product.template')
-
-            if template.search(['name', '=', 'Bed']):
-                return template.search(['name', '=', 'Bed'])
-
-            def get_uom():
-                """Checks for unit of measurement dollar, if it is not found 
-                then the object is created and returned to the calling 
-                function in a list"""
-                uom = Pool().get('product.uom')
-
-                if uom.search(['name', '=', 'Dollar']):
-                    return uom.search(['name', '=', 'Dollar'])
-
-                uom_category = Pool().get('product.uom.category')
-                cat_list = [{'name':'Money'}]
-                cat_list = uom_category.create(cat_list)
-                assert(len(cat_list) > 0)
-
-                uom_lis = []
-                uom_dict = dict(
-                    name="Jamaican Dollars",
-                    symbol='JMD',
-                    category=cat_list[0].id,
-                    rate=1.00,
-                    factor=1.00,
-                    rounding=0.01,
-                    digits=2,
-                    active=True
-                )
-
-                uom_lis.append(uom_dict)
-                return uom.create(uom_lis)
-
-            temp_lis = []
-            uom_lis = []
-            uom_lis = get_uom()
-            template_dict = dict(
-                name="Bed",
-                type="assets",
-                consumable=False,
-                list_price=0.00,
-                cost_price=0.00,
-                cost_price_method='fixed',
-                active=True,
-                default_uom=uom_lis[0].id
-            )
-
-            temp_lis.append(template_dict)
-            return template.create(temp_lis)
 
         def get_prod(bed_number):
             """Creates a bed product from the product template
                returned by get_prod_temp function"""
-            temp_lis = get_prod_temp()
+            #temp_lis = get_prod_temp()
             prod = []
-            assert(len(temp_lis) > 0)
+            #assert(len(temp_lis) > 0)
 
             Product = Pool().get('product.product')
             template_dict = dict(
@@ -192,8 +138,9 @@ class BedCreator(Wizard):
             """Creates beds based on the argument num_bed and on 
                the product returned from get_prod()"""
             beds = []
+            self.bed_on_ward = self.bed_on_ward + 1
             for i in range(num_bed):
-                prod_lis = get_prod(i)
+                prod_lis = get_prod(self.bed_on_ward + i)
                 bed_dic = dict(
                     name=prod_lis[0].id,
                     ward=self.start.ward,
@@ -205,7 +152,6 @@ class BedCreator(Wizard):
                 )
                 beds.append(bed_dic)
             self.BedModel.create(beds)
-
         create_beds(num_bed)
 
         return 'end'
