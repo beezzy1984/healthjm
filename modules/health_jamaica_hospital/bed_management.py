@@ -60,9 +60,18 @@ class BedCreatorView(ModelView):
     bed_transferable = fields.Boolean('Bed is movable')
     bed_type = fields.Selection('get_bed_types', 'Bed Type', required=True)
     telephone = fields.Char('Telephone Number')
-    ward_code = fields.Char('Ward Code', required=True)
+    ward_code = fields.Char('Ward Code')
     product_template = fields.Selection('get_template_list', 'Product Template',
                                         required=True)
+
+    @fields.depends('ward')
+    def on_change_with_ward_code(self):
+        """return a new value for source location"""
+
+        if self.ward == None:
+            return " "
+
+        return self.ward.wardcode
 
     @staticmethod
     def get_bed_types():
