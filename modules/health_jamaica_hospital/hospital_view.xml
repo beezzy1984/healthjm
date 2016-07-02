@@ -84,9 +84,9 @@
 
         <!--Menu item for bed management wizard-->
         <menuitem action="hospital_bed_management" id="bedman" name="Bed Management"
-            parent="health.gnuhealth_menu" sequence="9" />
+            sequence="9" parent="health.gnuhealth_conf_institution_bed_add"/>
         <!--Menu item for bed creator wizard-->
         <menuitem action="create_hospital_bed" id="bedcreate" name="Bed Creator"
-            parent="health.gnuhealth_menu" sequence="5" />
+            sequence="5" parent="health.gnuhealth_conf_institution_bed_add"/>
     </data>
 </tryton>
