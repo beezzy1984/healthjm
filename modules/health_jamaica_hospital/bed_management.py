@@ -60,7 +60,8 @@ class BedCreatorView(ModelView):
     bed_transferable = fields.Boolean('Bed is movable')
     bed_type = fields.Selection('get_bed_types', 'Bed Type', required=True)
     telephone = fields.Char('Telephone Number')
-    ward_code = fields.Char('Ward Code')
+    ward_code = fields.Char('Ward Code', states={'invisible':~Eval('ward') or 
+                            Eval('ward.wardcode')})
     product_template = fields.Selection('get_template_list', 'Product Template',
                                         required=True)
 
