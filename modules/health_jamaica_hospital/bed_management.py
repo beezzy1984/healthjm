@@ -21,11 +21,10 @@ class BedManagerView(ModelView):
     @fields.depends('bed')
     def on_change_with_source_location(self):
         """return a new value for source location"""
-        if self.bed == None:
-            self.raise_user_error("Cannot choose ward \n"
-                                  "This is because no bed has been chosen\n")
+        if self.bed is None:
+            return None
 
-        return int(self.bed.ward)
+        return self.bed.ward.id
 
 
 class BedManager(Wizard):
@@ -69,8 +68,8 @@ class BedCreatorView(ModelView):
     def on_change_with_ward_code(self):
         """return a new value for source location"""
 
-        if self.ward == None:
-            return " "
+        if self.ward is None:
+            return None
 
         return self.ward.wardcode
 
