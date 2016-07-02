@@ -6,7 +6,8 @@ from trytond.pool import Pool
 from trytond.transaction import Transaction
 from ..health_jamaica.tryton_utils import (replace_clause_column, get_timezone)
 
-__all__ = ['HospitalBed', 'InpatientRegistration', 'PatientRounding', 'HospitalWard']
+__all__ = ['HospitalBed', 'InpatientRegistration', 'PatientRounding', 'HospitalWard',
+           'PatientAppointments', 'TriageQueue']
 
 
 class HospitalBed(ModelSQL, ModelView):
@@ -154,3 +155,29 @@ class PatientRounding(ModelSQL, ModelView):
     def __setup__(cls):
         super(PatientRounding, cls).__setup__()
         cls.name.string = "Inpatient"
+
+
+class PatientAppointments(ModelSQL, ModelView):
+    'Patient Appointments'
+    __name__ = 'gnuhealth.appointment'
+
+    visit_reason = fields.Many2One('gnuhealth.pathology', 'Reason for Visit',
+                                   help='Medical Specialty / Sector', 
+                                   domain=[('Code', 'ilike', 'Z%')],
+                                   required=True)
+
+
+class TriageQueue(ModelSQL, ModelView):
+    'Triage Queue'
+    __name__ = 'gnuhealth.patient.queue_entry'
+
+    visit_reason = fields.Function(fields.Char('Reason for Visit'), 
+                                   'get_visit_reason')
+
+    def get_visit_reason(self, name):
+        '''get reason fofr visit'''
+
+        if self.appointment.patient is None:
+            return None
+
+        return self.appointment.patient.visit_reason
