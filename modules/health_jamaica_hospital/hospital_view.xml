@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tryton>
-	<data>
+    <data>
         <record model="ir.action.act_window" id="health_nursing.action_gnuhealth_patient_rounding_view">
-        	<field name="active" eval="False" />
+            <field name="active" eval="False" />
         </record>
         <record model="ir.ui.menu" id="health_nursing.menu_gnuhealth_patient_rounding_list">
-        	<field name="active" eval="False" />
+            <field name="active" eval="False" />
         </record>
 
         <record model="ir.action.act_window" id="action_gnuhealth_patient_rounding_view">
@@ -37,7 +37,8 @@
             <field name="view" ref="healthjm_inpatient_reg"/>
             <field name="act_window" ref="health_inpatient.gnuhealth_action_inpatient_registration"/>
         </record>
-
+        <!--Creating hospital bed manage wizard. This wizard is used to 
+            transfer beds from one place/ward in the hospital to the next-->
         <record model="ir.action.wizard" id="hospital_bed_management">
             <field name="name">Bed Management</field>
             <field name="wiz_name">health_jamaica_hospital.manage_beds</field>
@@ -48,7 +49,8 @@
              <field name="type">form</field>
              <field name="name">form-bed_management_start</field>
         </record>
-
+        <!--Creating hospital bed creator wizard. This wizard is used to 
+            multiple beds on a hospital ward-->
         <record model="ir.action.wizard" id="create_hospital_bed">
             <field name="name">Bed Creator</field>
             <field name="wiz_name">health_jamaica_hospital.create_beds</field>
@@ -59,6 +61,13 @@
              <field name="type">form</field>
              <field name="name">form-create_bed_start</field>
         </record>
+
+        <!--This xml turns bed creator wizard into a configuration wizard-->
+         <record model="ir.module.module.config_wizard.item"
+            id="config_wizard_item_bed_creator">
+            <field name="action" ref="create_hospital_bed"/>
+        </record>
+
         <!--Extending hospital ward fields-->
         <record model="ir.ui.view" id="healthjm_ward">
             <field name="model">gnuhealth.hospital.ward</field>
@@ -79,5 +88,5 @@
         <!--Menu item for bed creator wizard-->
         <menuitem action="create_hospital_bed" id="bedcreate" name="Bed Creator"
             parent="health.gnuhealth_menu" sequence="5" />
-	</data>
+    </data>
 </tryton>
