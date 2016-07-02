@@ -61,7 +61,7 @@ class BedCreatorView(ModelView):
     bed_type = fields.Selection('get_bed_types', 'Bed Type', required=True)
     telephone = fields.Char('Telephone Number')
     ward_code = fields.Char('Ward Code', states={'invisible':~Eval('ward') or 
-                            Eval('ward.wardcode')})
+                                                             Eval('ward.wardcode')})
     product_template = fields.Selection('get_template_list', 'Product Template',
                                         required=True)
 
@@ -94,6 +94,8 @@ class BedCreatorView(ModelView):
             fields_names=['name', 'id'])
 
         return [(x['id'], x['name']) for x in templates]
+
+
 class BedCreator(Wizard):
 
     'Create Multiple Hospital Beds'
