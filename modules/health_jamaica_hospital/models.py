@@ -31,7 +31,7 @@ class HospitalWard(ModelSQL, ModelView):
     'Hospital Ward'
     __name__ = 'gnuhealth.hospital.ward'
 
-    wardcode = fields.Char('Ward Code', required=True)
+    wardcode = fields.Char('Ward Code')
 
 
 class InpatientRegistration(ModelSQL, ModelView):
