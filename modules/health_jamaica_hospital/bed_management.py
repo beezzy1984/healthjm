@@ -21,11 +21,10 @@ class BedManagerView(ModelView):
     @fields.depends('bed')
     def on_change_with_source_location(self):
         """return a new value for source location"""
-        if self.bed == None:
-            self.raise_user_error("Cannot choose ward \n"
-                                  "This is because no bed has been chosen\n")
+        if self.bed is None:
+            return None
 
-        return int(self.bed.ward)
+        return self.bed.ward.id
 
 
 class BedManager(Wizard):
@@ -60,9 +59,19 @@ class BedCreatorView(ModelView):
     bed_transferable = fields.Boolean('Bed is movable')
     bed_type = fields.Selection('get_bed_types', 'Bed Type', required=True)
     telephone = fields.Char('Telephone Number')
-    ward_code = fields.Char('Ward Code', required=True)
+    ward_code = fields.Char('Ward Code', states={'invisible':~Eval('ward') or 
+                                                             Eval('ward.wardcode')})
     product_template = fields.Selection('get_template_list', 'Product Template',
                                         required=True)
+
+    @fields.depends('ward')
+    def on_change_with_ward_code(self):
+        """return a new value for source location"""
+
+        if self.ward is None:
+            return None
+
+        return self.ward.wardcode
 
     @staticmethod
     def get_bed_types():
@@ -84,6 +93,8 @@ class BedCreatorView(ModelView):
             fields_names=['name', 'id'])
 
         return [(x['id'], x['name']) for x in templates]
+
+
 class BedCreator(Wizard):
 
     'Create Multiple Hospital Beds'
@@ -126,7 +137,7 @@ class BedCreator(Wizard):
             Product = Pool().get('product.product')
             template_dict = dict(
                 template=start.product_template,
-                code="%s - %d" %(self.start.ward_code, bed_number),
+                code="%s - %d" %(self.start.ward.wardcode, bed_number),
                 is_bed=True,
                 active=True
             )
