@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tryton>
+    <data>
+        <!-- inherit and update the gnuhealth.patient.prenatal.evaluation form and create wizard form view for encounter -->
+        <record model="ir.ui.view" id="form_prenatal_component">
+            <field name="model">gnuhealth.patient.prenatal.evaluation</field>
+            <field name="inherit" ref="health_encounter.health_view_form_encounter_component"/>
+            <field name="priority" eval="10" />
+            <field name="type">form</field>
+            <field name="name">form-prenatal_component</field>
+        </record>
+
+        <!-- Some additional data to turn it into a component -->
+        <record model="gnuhealth.encounter.component_type" id="component_obgyn_prenatal">
+            <field name="name">Antenatal</field>
+            <field name="code">Antenatal</field>
+            <field name="model">gnuhealth.patient.prenatal.evaluation</field>
+            <field name="view_form">health_jamaica_obgyn.form_prenatal_component</field>
+            <field name="ordering" eval="200" />
+            <field name="active" eval="True" />
+        </record>
+
+        <record model="ir.ui.view" id="form_prenatal_evaluation">
+            <field name="model">gnuhealth.patient.prenatal.evaluation</field>
+            <field name="inherit" ref="health_gyneco.gnuhealth_prenatal_evaluation_view"/>
+            <field name="priority" eval="20" />
+            <field name="type">form</field>
+            <field name="name">form-prenatal_evaluation</field>
+        </record>
+
+        <!-- improved view for pregnancy -->
+        <record model="ir.ui.view" id="form_pregnancy">
+            <field name="model">gnuhealth.patient.pregnancy</field>
+            <field name="inherit" ref="health_gyneco.gnuhealth_patient_pregnancy_view"/>
+            <field name="priority" eval="20" />
+            <field name="type">form</field>
+            <field name="name">form-pregnancy</field>
+        </record>
+
+    </data>
+</tryton>
