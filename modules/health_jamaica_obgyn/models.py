@@ -91,6 +91,7 @@ class PrenatalComponent(BaseComponent):
     @classmethod
     def __setup__(cls):
         super(PrenatalComponent, cls).__setup__()
+        cls.name.states.update(readonly=True)
         # in original prenatal_evaluation table
         # cls.start_time.name = 'evaluation_date'
         # cls.performed_by.name = 'healthprof'
@@ -117,11 +118,56 @@ class PrenatalComponent(BaseComponent):
 
     def get_report_info(self, name):
         lines = [(u'== Antenatal ==', )]
-
+        ohdp = [(self.overweight, 'Overweight'),
+                (self.hypertension, 'Hypertension'),
+                (self.diabetes, 'Diabetes'),
+                (self.preeclampsia, 'Preeclampsia')]
+        lines.append(filter(None, [t if b else False for b, t in ohdp]))
+        screen = [(self.screen_hb, 'Hb'),
+                  (self.screen_sickle, 'Sickle Cell SC/SS'),
+                  (self.screen_syphilis, 'Syphilis'), (self.screen_hiv, 'HIV')]
+        stub = []
+        for val, title in screen:
+            if not (val is None):
+                stub.append(('    %s :' % title, val))
+        if stub:
+            lines.append(('Screening', ))
+            lines.extend(stub[:])
+            stub = []
+        grs = [('Placenta', ['placenta_previa', 'invasive_placentation',
+                             'vasa_previa']),
+               ('Fetus', ['fundal_height', 'fetus_heart_rate', 'efw',
+                'fetal_bpd', 'fetal_hc', 'fetal_ac', 'fetal_fl'])]
+        model = Pool().get('gnuhealth.patient.prenatal.evaluation')
+        for tt, field_list in grs:
+            stub = []
+            for fld in field_list:
+                val = getattr(self, fld)
+                t = model._fields[fld].string
+                if val:
+                    stub.append(('    %s :' % t, str(val)))
+            if stub:
+                lines.append((tt,))
+                lines.extend(stub[:])
         return u'\n'.join([u' '.join(x) for x in lines])
 
     def make_critical_info(self):
-        return 'antenatel info dot dot dot'
+        line = []
+        hodp = [(self.overweight, 'o'), (self.hypertension, 'h'),
+                (self.diabetes, 'd'), (self.preeclampsia, 'p')]
+        # OHDP = Overweight, Hypertension, Diabetes, PreEclampsia
+        line.append(u''.join([y.upper() if x else y for x, y in hodp]))
+        screen = [(self.screen_hb, 'Hb'), (self.screen_sickle, 'SC/SS'),
+                  (self.screen_syphilis, 'Syph'), (self.screen_hiv, 'HIV')]
+        for fld, title in screen:
+            if fld not in ['sample', None]:
+                line.append(': '.join([title, fld]))
+        if self.tetanus:
+            line.append('Immunized: Y')
+        if self.fetus_heart_rate:
+            line.append('fHeart: %d' % self.fetus_heart_rate)
+
+        return '; '.join(line)
 
     @staticmethod
     def default_name():
