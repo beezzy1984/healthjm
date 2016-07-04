@@ -12,8 +12,6 @@ def register():
         BedManagerView,
         BedCreatorView,
         HospitalWard,
-        PatientAppointments,
-        TriageQueue,
         module='health_jamaica_hospital', type_='model')
 
     Pool.register(
