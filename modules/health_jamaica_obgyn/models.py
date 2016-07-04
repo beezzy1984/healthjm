@@ -28,6 +28,10 @@ class PatientPregnancy(ModelSQL, ModelView):
                                       'get_gestation_age')
     gestation_days = fields.Function(fields.Integer('Gestational days'),
                                      'get_gestation_age')
+    age = fields.Function(fields.Char('Age'), 'get_patient_field')
+    puid = fields.Function(fields.Char('UPI'), 'get_patient_field')
+    medical_record_num = fields.Function(fields.Char('Medical Record Number'),
+                                         'get_patient_field')
 
     def get_gestation_age(self, name):
         gestational_age = date.today() - self.lmp
@@ -43,6 +47,7 @@ class PatientPregnancy(ModelSQL, ModelView):
             no_pregnancy='Current pregnancy does not exist.\n'
                          'Create a new entry under the patient\'s\n'
                          'obstetric history.')
+        cls.prenatal_evaluations.states.update(readonly=True)
 
     def get_rec_name(self, name):
         tmpl = "Pregnancy #%(gravida)d. LMP %(lmp)s (%(gesw)d weeks) for " +\
@@ -76,6 +81,9 @@ class PatientPregnancy(ModelSQL, ModelView):
             # what if the current pregnancy doesn't exist?
             cls.raise_user_error('no_pregnancy')
         # Can we not return an unsaved object?
+
+    def get_patient_field(self, name):
+        return getattr(self.name, name)
 
 
 class PrenatalComponent(BaseComponent):
