@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+    <!-- Change the group name to Signs from "Mother Information" -->
+    <xpath expr="//group[@id=&quot;prenatal_evaluation_group_mother&quot;]" position="replace_attributes">
+        <group string="Signs" id="prenatal_evaluation_group_mother" colspan="4" col="8" />
+    </xpath>
+    <xpath expr="//group[@id=&quot;prenatal_evaluation_group_mother&quot;]" position="after">
+        <group string="Screening" id="prenatal_evaluation_screening" colspan="4" col="6">
+            <label name="screen_hb" />
+            <field name="screen_hb" colspan="2" />
+            <label name="screen_sickle" />
+            <field name="screen_sickle" />
+            <label name="screen_syphilis" />
+            <field name="screen_syphilis" />
+            <label name="screen_hiv" />
+            <field name="screen_hiv" />
+            <label name="tetanus" />
+            <field name="tetanus" />
+        </group>
+    </xpath>
+</data>
