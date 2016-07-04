@@ -375,34 +375,31 @@ class PartyPatient(ModelSQL, ModelView):
     def get_current_age(cls, instances, name):
         c = Transaction().cursor
         tbl = cls.__table__()
-        qry = "\n".join(["SELECT a.id as id, "
-                         "regexp_replace(AGE(a.dob)::varchar, "
-                         "' ([ymd])[ayonthears ]+', '\\1 ', 'g')  as showage",
-                         "from " + str(tbl) + " as a",
-                         "where a.id in (%s)"])
+        qry = "\n".join([
+            "SELECT a.id as id, "
+            "CASE WHEN a.dob is Null THEN '--'::varchar "
+            "ELSE regexp_replace(AGE(a.dob)::varchar, "
+            "' ([ymd])[ayonthears ]+', '\\1 ', 'g') END as showage",
+            "from " + str(tbl) + " as a", "where a.id in (%s)"])
         qry_parm = map(int, instances)
-
-        print('%s\n%s\n' % ('*'*77, qry))
         c.execute(qry, qry_parm)
-        # import pdb; pdb.set_trace()
         outx = c.fetchall()
         outd = dict([x for x in outx])
-        print('\n%s\n%s' % (repr(outd), '*'*77))
         return outd
 
-    @classmethod
-    def get_ref_age(cls, instance_refs):
-        '''
-        Uses the age function in the database to calculate the age at 
-        the date specified.
-        :param: instance_refs - a list of tuples with (id, ref_date)
-        '''
-        qry = "\n".join(["SELECT a.id as id, "
-                         "regexp_replace(AGE(%s, a.dob)::varchar, "
-                         "' ([ymd])[ayonthears ]+', '\\1 ', 'g')  as showage",
-                         "from " + tbl._Table__name + " as a",
-                         "where a.id in (%s)"])
-        qry_parm = map(int, instances)
+    # @classmethod
+    # def get_ref_age(cls, instance_refs):
+    #     '''
+    #     Uses the age function in the database to calculate the age at 
+    #     the date specified.
+    #     :param: instance_refs - a list of tuples with (id, ref_date)
+    #     '''
+    #     qry = "\n".join(["SELECT a.id as id, "
+    #                      "regexp_replace(AGE(%s, a.dob)::varchar, "
+    #                      "' ([ymd])[ayonthears ]+', '\\1 ', 'g')  as showage",
+    #                      "from " + tbl._Table__name + " as a",
+    #                      "where a.id in (%s)"])
+    #     qry_parm = map(int, instances)
 
 
 class AlternativePersonID (ModelSQL, ModelView):
