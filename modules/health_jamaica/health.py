@@ -149,8 +149,43 @@ class PatientData(ModelSQL, ModelView):
     # Get the patient age in the following format : 'YEARS MONTHS DAYS'
     # It will calculate the age of the patient while the patient is alive.
     # When the patient dies, it will show the age at time of death.
+    @classmethod
+    def patient_age(self, instances, name):
+        xagere = re.compile('(\d+)([ymd]) ?')
 
-    def patient_age(self, name):
+        def x_instance_map(func):
+            def real_map(i):
+                return (int(i), func(i))
+            return real_map
+
+        def x_get_current_age(i):
+            return i.name.current_age
+
+        def x_get_age_dict(i):
+            current_age = x_get_current_age()
+            agei = iter(filter(None, xagere.split(current_age)))
+            return dict([(y, int(x)) for x, y in zip(agei, agei)])
+
+        def x_age_in_range(rmin, rmax, default_age=25):
+            def real_comp(i):
+                aged = x_get_age_dict(i)
+                return (int(i), rmin <= aged.get('y', default_age) <= rmax)
+            return real_comp
+
+        def x_age_tuple(i):
+            a = x_get_age_dict(i)
+            return (a.get('y', 0), a.get('m', 0), a.get('d', 0))
+
+        if name == 'childbearing_age':
+            return dict(map(x_age_in_range(*MENARCH), instances))
+        elif name == 'raw_age':
+            return dict(map(x_instance_map(x_age_tuple), instances))
+        else:  # name == 'age'
+            k = map(x_instance_map(x_get_current_age), instances)
+            print(repr(k))
+            return dict(k)
+
+    def old_patient_age(self, name):
 
         def compute_age_from_dates(patient_dob, patient_deceased,
                                    patient_dod, patient_sex):
