@@ -8,7 +8,7 @@
 	<field name="bed_type" />
 	<label name="product_template" />
 	<field name="product_template" />
-	<group colspan="4" col="6">
+	<group id="group_bed_detail" colspan="4" col="6">
 		<label name="telephone" />
 		<field name="telephone" />
 		<label name="number_of_beds" />
