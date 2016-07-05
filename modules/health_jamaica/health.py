@@ -181,9 +181,7 @@ class PatientData(ModelSQL, ModelView):
         elif name == 'raw_age':
             return dict(map(x_instance_map(x_age_tuple), instances))
         else:  # name == 'age'
-            k = map(x_instance_map(x_get_current_age), instances)
-            print(repr(k))
-            return dict(k)
+            return dict(map(x_instance_map(x_get_current_age), instances))
 
     def old_patient_age(self, name):
 

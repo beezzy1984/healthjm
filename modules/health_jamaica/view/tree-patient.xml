@@ -6,6 +6,7 @@
         <field name="firstname" expand="1" />
         <field name="middlename" />
         <field name="dob" />
+        <field name="age" />
         <field name="sex" />
         <field name="mother_maiden_name" tree_invisible="1" />
         <field name="father_name"  tree_invisible="1" />
