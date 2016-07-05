@@ -37,9 +37,8 @@ class Appointment(ModelSQL, ModelView):
                                   'get_person_patient_field')
     age = fields.Function(fields.Char('Age'), 'get_person_patient_field')
     visit_reason = fields.Many2One('gnuhealth.pathology', 'Reason for Visit',
-                                   help='Medical Specialty / Sector', 
-                                   domain=[('Code', 'ilike', 'Z%')],
-                                   required=True)
+                                   help='Medical Specialty / Sector',
+                                   domain=[('code', 'ilike', 'Z%')])
 
     @staticmethod
     def default_state():

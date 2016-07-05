@@ -183,9 +183,10 @@
 		<record model="ir.ui.view" id="healthjm_form_appointment">
 			 <field name="model">gnuhealth.appointment</field>
 			 <field name="inherit" ref="health.gnuhealth_appointment_form"/>
-			 <!-- <field name="priority" eval="18" /> -->
+			 <!-- <field name="priority" eval="14" /> -->
 			 <field name="name">form-appointment</field>
 		</record>
+
 		<!-- Tree for Appointment State Changes -->
 		<record model="ir.ui.view" id="healthjm_tree-appointment_statechange">
 			<field name="model">gnuhealth.appointment.statechange</field>

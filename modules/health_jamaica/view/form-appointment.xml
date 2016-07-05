@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data>
-    <xpath expr="/form/group[@id=&quot;appointment_header&quot;]" position="replace">
+    <xpath expr="/form/group[@id=&quot;appointment_header&quot;]" position="before">
         <group colspan="4" col="8" string="Patient" id="appt_header_patient">
             <field name="patient" colspan="2" xexpand="1" />
             <label string="UPI/MRN" id="lbl_upimrn" />
@@ -10,7 +10,9 @@
             <field name="age" width="35"/>
         </group>
         <newline />
-        <group colspan="4" col="8" id="appointment_header_remix">
+    </xpath>
+    <xpath expr="/form/group[@id=&quot;appointment_header&quot;]" position="replace">
+        <group colspan="4" col="6" id="appointment_header">
             <label name="appointment_date"/>
             <field name="appointment_date"/>
             <label name="appointment_type"/>
@@ -18,8 +20,8 @@
 
             <label name="urgency"/>
             <field name="urgency"/>
-            <label name="visit_type"/>
-            <field name="visit_type"/>
+            <label name="visit_reason"/>
+            <field name="visit_reason"/>
         </group>
     </xpath>
 
