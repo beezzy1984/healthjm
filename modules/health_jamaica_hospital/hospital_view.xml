@@ -81,6 +81,11 @@
             id="menu_gnuhealth_patient_rounding_list" icon="gnuhealth-list"
             name="Ward Rounds" parent="health_nursing.gnuhealth_nursing_menu"
             sequence="2"/>
+        <!--Menu item for hospitalizations. recreated from health_inpatien_view.xml-->
+        <menuitem name="Hospitalizations" action="health_inpatient.gnuhealth_action_inpatient_registration"
+            parent="health.gnuhealth_menu"
+            id="health_inpatient.gnuhealth_inpatient_menu" sequence="20"
+            icon="icon-hospital-patient"/>
 
         <!--Menu item for bed management wizard-->
         <menuitem action="hospital_bed_management" id="bedman" name="Bed Management"
