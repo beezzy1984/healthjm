@@ -1,5 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tryton>
-    <data></data>
+    <data>
+    	<!--Added from ticket 114 on 2016/07/08 group nurses-->
+    	<record model="ir.ui.menu-res.group" id="menu-grp_nurses_access_ward_rounds">
+            <field name="menu" ref="health_jamaica_hospital.menu_gnuhealth_patient_rounding_list" />
+            <field name="group" ref="health_jamaica_primarycare.group_nurses"/>
+        </record>
+    	<record model="ir.ui.menu-res.group" id="menu-grp_nurses_access_hospitalizations">
+            <field name="menu" ref="health_inpatient.gnuhealth_inpatient_menu" />
+            <field name="group" ref="health_jamaica_primarycare.group_nurses"/>
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurses_access_new_born">
+            <field name="menu" ref="health_pediatrics.gnuhealth_conf_edit_newborn" />
+            <field name="group" ref="health_jamaica_primarycare.group_nurses" />
+        </record>
+    	<!--Added from ticket 114 on 2016/07/08 group doctors-->
+    	<record model="ir.ui.menu-res.group" id="menu-grp_doctors_access_ward_rounds">
+            <field name="menu" ref="health_jamaica_hospital.menu_gnuhealth_patient_rounding_list" />
+            <field name="group" ref="health_jamaica_primarycare.group_doctors"/>
+        </record>
+    	<record model="ir.ui.menu-res.group" id="menu-grp_doctors_access_hospitalizations">
+            <field name="menu" ref="health_inpatient.gnuhealth_inpatient_menu" />
+            <field name="group" ref="health_jamaica_primarycare.group_doctors"/>
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctors_access_new_born">
+            <field name="menu" ref="health_pediatrics.gnuhealth_conf_edit_newborn" />
+            <field name="group" ref="health_jamaica_primarycare.group_doctors" />
+        </record>
+    	<!--Added from ticket 114 on 2016/07/08 group medical records-->
+    	<record model="ir.ui.menu-res.group" id="menu-grp_medical_records_access_ward_rounds">
+            <field name="menu" ref="health_jamaica_hospital.menu_gnuhealth_patient_rounding_list" />
+            <field name="group" ref="health_jamaica_primarycare.group_records_staff"/>
+        </record>
+    	<record model="ir.ui.menu-res.group" id="menu-grp_medical_records_access_hospitalizations">
+            <field name="menu" ref="health_inpatient.gnuhealth_inpatient_menu" />
+            <field name="group" ref="health_jamaica_primarycare.group_records_staff"/>
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_medical_records_access_new_born">
+            <field name="menu" ref="health_pediatrics.gnuhealth_conf_edit_newborn" />
+            <field name="group" ref="health_jamaica_primarycare.group_records_staff" />
+        </record>
+    </data>
 </tryton>
 
