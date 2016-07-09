@@ -380,9 +380,9 @@ class PartyPatient(ModelSQL, ModelView):
             "CASE WHEN a.dob is Null THEN '--'::varchar "
             "ELSE regexp_replace(AGE(a.dob)::varchar, "
             "' ([ymd])[ayonthears ]+', '\\1 ', 'g') END as showage",
-            "from " + str(tbl) + " as a", "where a.id in (%s)"])
-        qry_parm = map(int, instances)
-        c.execute(qry, qry_parm)
+            "from " + str(tbl) + " as a", "where a.id in %s;"])
+        qry_parm = tuple(map(int, instances))
+        c.execute(qry, (qry_parm, ))
         outx = c.fetchall()
         outd = dict([x for x in outx])
         return outd
