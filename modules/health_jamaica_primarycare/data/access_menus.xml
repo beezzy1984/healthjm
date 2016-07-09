@@ -274,7 +274,6 @@
             <field name="menu" ref="health.gnuhealth_reporting_menu" />
             <field name="group" ref="group_records_technicians" />
         </record>
-
         <!-- Accounting and Financial Management Menus for Accounting Clerks -->
         <!--
         <record model="ir.ui.menu-res.group" id="menu-grp_accounts_currencies">
@@ -293,6 +292,116 @@
             <field name="menu" ref="currency.menu_currency" />
             <field name="group" ref="group_customer_service" />
         </record>
+
+        group names = id
+        medical records = group_records_technicians
+        doctors = group_doctors
+        nurses = group_nurses
+        admin staff = group_admin_staff
+        community health workers = group_community_hw
+        customer service = group_customer_service
+        senior nurses = group_senior_nurses
+        senior doctors = group_sr_doctors
     -->
+        <!--Added from ticket 113 on 2016/07/08 group medical records-->
+        <record model="ir.ui.menu-res.group" id="menu-grp_medical_records_access_triage_entries">
+            <field name="menu" ref="health_triage_queue.health_menu_patient_triage" />
+            <field name="group" ref="group_records_technicians" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_medical_records_access_patient_queue">
+            <field name="menu" ref="health_triage_queue.health_menu_patient_triage_queue" />
+            <field name="group" ref="group_records_technicians" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_medical_records_access_pediatrics">
+            <field name="menu" ref="health_pediatrics.gnuhealth_pediatrics" />
+            <field name="group" ref="group_records_technicians" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_medical_records_access_new_born">
+            <field name="menu" ref="health_pediatrics.gnuhealth_conf_edit_newborn" />
+            <field name="group" ref="group_records_technicians" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_medical_records_access_psc">
+            <field name="menu" ref="health_pediatrics.gnuhealth_conf_edit_psc" />
+            <field name="group" ref="group_records_technicians" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_medical_records_access_demographics-disease_notifications">
+            <field name="menu" ref="health_disease_notification.menu-actwin-notification" />
+            <field name="group" ref="group_records_technicians" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_medical_records_access_demographics-jiss">
+            <field name="menu" ref="health_jamaica_jiss.menu_jiss" />
+            <field name="group" ref="group_records_technicians" />
+        </record>
+        <!--Added from ticket 113 on 2016/07/08 group doctors-->
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctors_access_patient_queue">
+            <field name="menu" ref="health_triage_queue.health_menu_patient_triage_queue" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctors_access_pediatrics">
+            <field name="menu" ref="health_pediatrics.gnuhealth_pediatrics" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctors_access_new_born">
+            <field name="menu" ref="health_pediatrics.gnuhealth_conf_edit_newborn" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctors_access_psc">
+            <field name="menu" ref="health_pediatrics.gnuhealth_conf_edit_psc" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_doctors_access_demographics-disease_notifications">
+            <field name="menu" ref="health_disease_notification.menu-actwin-notification" />
+            <field name="group" ref="group_doctors" />
+        </record>
+        <!--Added from ticket 113 on 2016/07/08 group nurses-->
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurses_access_patient_queue">
+            <field name="menu" ref="health_triage_queue.health_menu_patient_triage_queue" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurses_access_triage_entries">
+            <field name="menu" ref="health_triage_queue.health_menu_patient_triage" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurses_access_pediatrics">
+            <field name="menu" ref="health_pediatrics.gnuhealth_pediatrics" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurses_access_new_born">
+            <field name="menu" ref="health_pediatrics.gnuhealth_conf_edit_newborn" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_nurses_access_psc">
+            <field name="menu" ref="health_pediatrics.gnuhealth_conf_edit_psc" />
+            <field name="group" ref="group_nurses" />
+        </record>
+        <!--Added from ticket 113 on 2016/07/08 group community health workers-->
+        <record model="ir.ui.menu-res.group" id="menu-grp_chw_access_patient_queue">
+            <field name="menu" ref="health_triage_queue.health_menu_patient_triage_queue" />
+            <field name="group" ref="group_community_hw" />
+        </record>
+        <!--Added from ticket 113 on 2016/07/08 group admin staff-->
+        <record model="ir.ui.menu-res.group" id="menu-grp_admin_staff_access_patient_queue">
+            <field name="menu" ref="health_triage_queue.health_menu_patient_triage_queue" />
+            <field name="group" ref="group_admin_staff" />
+        </record>
+        <!--Added from ticket 113 on 2016/07/08 group customer service-->
+        <record model="ir.ui.menu-res.group" id="menu-grp_customer_service_access_triage_entries">
+            <field name="menu" ref="health_triage_queue.health_menu_patient_triage" />
+            <field name="group" ref="group_customer_service" />
+        </record>
+        <!--Added from ticket 113 on 2016/07/08 group senior nurses-->
+        <record model="ir.ui.menu-res.group" id="menu-grp_senior_nurses_access_demographics-disease_notifications">
+            <field name="menu" ref="health_disease_notification.menu-actwin-notification" />
+            <field name="group" ref="group_senior_nurses" />
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu-grp_senior_nurses_access_demographics-jiss">
+            <field name="menu" ref="health_jamaica_jiss.menu_jiss" />
+            <field name="group" ref="group_senior_nurses" />
+        </record>
+        <!--Added from ticket 113 on 2016/07/08 group senior doctors-->
+        <record model="ir.ui.menu-res.group" id="menu-grp_sr_doctors_access_demographics-jiss">
+            <field name="menu" ref="health_jamaica_jiss.menu_jiss" />
+            <field name="group" ref="group_sr_doctors" />
+        </record>
     </data>
 </tryton>
