@@ -34,7 +34,7 @@ class Appointment(ModelSQL, ModelView):
     medical_record_num = fields.Function(
         fields.Char('Medical Record Number'), 'get_upi_mrn')
     sex_display = fields.Function(fields.Char('Sex'),
-                                  'get_person_patient_field')
+                                  getter='get_person_patient_field')
     age = fields.Function(fields.Char('Age'), 'get_person_patient_field')
     visit_reason = fields.Many2One('gnuhealth.pathology', 'Reason for Visit',
                                    help='Medical Specialty / Sector',
