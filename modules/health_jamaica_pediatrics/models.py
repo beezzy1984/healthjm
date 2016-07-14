@@ -11,22 +11,23 @@ class Newborn (ModelSQL, ModelView):
     bba = fields.Boolean('BBA',
                          help='Check this box if born on arrival to facility')
 
-    mother_upi = fields.Function(fields.Char("Mother's Upi"), getter="get_mother_upi")
-    patient_upi = fields.Function(fields.Char("Patients's Upi"), getter="get_upi")
+    mother_upi = fields.Function(fields.Char("Mother's UPI"), "get_mother_upi")
+    mother_mrn = fields.Function(fields.Char("Medical Record #"),
+                                 "get_mother_upi")
+    patient_upi = fields.Function(fields.Char("Patients's UPI"), "get_upi")
 
     def get_upi(self, name):
         '''get baby upi '''
-        if not self.patient.puid:
-            return None
-
-        return self.patient.puid 
+        return self.patient.puid
 
     def get_mother_upi(self, name):
         '''get mothers upi'''
-        if not self.mother.name.upi:
-            return None
-
-        return self.mother.name.upi
+        if self.mother:
+            if name == 'mother_upi':
+                return self.mother.puid
+            else:
+                return self.mother.medical_record_num
+        return ''
 
     @classmethod
     def __setup__(cls):
@@ -40,4 +41,3 @@ class Newborn (ModelSQL, ModelView):
 
         cls.newborn_sex = fields.Function(fields.Selection(SEX_OPTIONS, 'Sex'),
                                           'get_newborn_sex')
-      

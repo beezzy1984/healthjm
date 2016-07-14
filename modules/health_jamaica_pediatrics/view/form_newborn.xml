@@ -22,11 +22,13 @@
             <field name="sex" />
             <label name="patient_upi" />
             <field name="patient_upi" />
-            <group id="mother_header" string="Mother's details" colspan="8" col="4">
+            <group id="mother_header" string="Mother's details" colspan="8" col="8">
                 <label name="mother" />
-                <field name="mother" />
+                <field name="mother" colspan="3" />
                 <label name="mother_upi" />
                 <field name="mother_upi" />
+                <label name="mother_mrn" />
+                <field name="mother_mrn" />
             </group>
         </group>
     </xpath>
