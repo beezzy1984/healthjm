@@ -162,7 +162,7 @@ class PatientData(ModelSQL, ModelView):
             return i.name.current_age
 
         def x_get_age_dict(i):
-            current_age = x_get_current_age()
+            current_age = x_get_current_age(i)
             agei = iter(filter(None, xagere.split(current_age)))
             return dict([(y, int(x)) for x, y in zip(agei, agei)])
 
