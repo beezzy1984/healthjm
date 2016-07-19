@@ -125,7 +125,7 @@ class InpatientRegistration(ModelSQL, ModelView):
             if reg.bed.state != 'free':
                 cls.raise_user_error('bed_is_not_available')
             if (reg.expected_discharge and
-                    reg.expected_discharge.date() <
+                    reg.expected_discharge <
                     reg.hospitalization_date.date()):
                 cls.raise_user_error("The discharge date must later than "
                                      "admission")
