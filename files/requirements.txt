@@ -43,3 +43,5 @@ trytond_health_services<2.9
 trytond_health_pediatrics_growth_charts<2.9
 trytond_health_pediatrics_growth_charts_who<2.9
 trytond_health_imaging<2.9
+trytond_health_reporting<2.9
+trytond_health_calendar<2.9

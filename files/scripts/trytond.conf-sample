@@ -1,0 +1,33 @@
+[database]
+uri = postgresql://dbuser:dbuserpwd@localhost:5432/
+path = /path/to/store/images/and/attachments
+retry = 3
+language = en_US
+
+
+[jsonrpc]
+listen = *:8000
+# hostname = trytond-server
+data = /path/to/location/served/at/trytond/webroot
+
+[xmlrpc]
+listen = *:7000
+# hostname = trytond-server
+
+# The ssl section is commented when trytond is run behind nginx
+# in those cases, we configure nginx to handle SSL to the outside world
+#[ssl]
+#privatekey = /path/to/ssl-key.pem
+#certificate = /path/to/ssl-cert.pem
+
+
+[session]
+super_pwd = cRyPtEd-pAsSwOrD
+timeout = 1800
+
+
+[synchronisation]
+# synchronisation ID. Use a number between 480 and 500 for development
+id = 481
+uri = http://username:password@sync-master-server/sync-master-db
+
