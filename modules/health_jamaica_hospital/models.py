@@ -1,12 +1,14 @@
 
 from datetime import datetime
 from trytond.model import ModelSQL, ModelView, fields
-from trytond.pyson import Eval, Not, In
+from trytond.wizard import Wizard
+from trytond.pyson import Eval, Not, In, Eval, Bool, Equal, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from ..health_jamaica.tryton_utils import (replace_clause_column, get_timezone)
 
-__all__ = ['HospitalBed', 'InpatientRegistration', 'PatientRounding', 'HospitalWard']
+__all__ = ['HospitalBed', 'InpatientRegistration', 'PatientRounding', 
+           'HospitalWard', 'CreateBedTransfer']
 
 
 class HospitalBed(ModelSQL, ModelView):
@@ -53,13 +55,21 @@ class InpatientRegistration(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(InpatientRegistration, cls).__setup__()
-
+        # Make readonly for bed depends on a person being hospitalised or 
+        # discharged from the hospital
+        cls.bed.states = {'required': True,
+                          'readonly': Or(Equal(Eval('state'), 'hospitalized'),
+                                         Equal(Eval('state'), 'confirmed'),
+                                         Equal(Eval('state'), 'done'))
+                         }
+        # Changed depends to accommodate state
+        cls.bed.depends = ['name', 'state']
         # make discharge_date not required
         cls.discharge_date.required = False
         if not cls.discharge_date.states:
             cls.discharge_date.states = {}
         cls.discharge_date.states['invisible'] = Not(In(Eval('state'),
-                                                     ['done', 'hospitalized']))
+                                                        ['done', 'hospitalized']))
         # rename the set of states
         cls.state.selection = [
             ('free', 'Pending'),
@@ -68,7 +78,6 @@ class InpatientRegistration(ModelSQL, ModelView):
             ('hospitalized', 'Admitted'),
             ('done', 'Discharged/Done')
         ]
-
         # discharge_date is the real thing
         cls.discharge_date.string = 'Discharged'
 
@@ -84,12 +93,13 @@ class InpatientRegistration(ModelSQL, ModelView):
     @classmethod
     @ModelView.button
     def admission(cls, registrations):
+        """Hospitalization Date"""
         # redefined to fix a date bug
         registration_id = registrations[0]
         Bed = Pool().get('gnuhealth.hospital.bed')
         tz = get_timezone()
-        if (registration_id.hospitalization_date.date() >
-                                                    datetime.now(tz).date()):
+        if (registration_id.hospitalization_date.date() > 
+                datetime.now(tz).date()):
             cls.raise_user_error("The Admission date must be today or earlier")
         else:
             cls.write(registrations, {'state': 'hospitalized'})
@@ -98,7 +108,7 @@ class InpatientRegistration(ModelSQL, ModelView):
     @classmethod
     @ModelView.button
     def discharge(cls, registrations):
-
+        """Discharge patient and free up beds"""
         signing_hp = Pool().get(
             'gnuhealth.healthprofessional').get_health_professional()
         if not signing_hp:
@@ -119,6 +129,7 @@ class InpatientRegistration(ModelSQL, ModelView):
     @classmethod
     @ModelView.button
     def confirmed(cls, registrations):
+        """Confirms a patient to be admitted"""
         bed_model = Pool().get('gnuhealth.hospital.bed')
         beds = []
         for reg in registrations:
@@ -141,6 +152,7 @@ class InpatientRegistration(ModelSQL, ModelView):
             return self.name
 
     def get_patient_field(self, name):
+        """Get patient id"""
         if self.patient:
             return getattr(self.patient, name)
         return ''
@@ -154,3 +166,62 @@ class PatientRounding(ModelSQL, ModelView):
     def __setup__(cls):
         super(PatientRounding, cls).__setup__()
         cls.name.string = "Inpatient"
+
+
+class CreateBedTransfer(Wizard):
+    """docstring for BedTransfer"ModelSQL
+    def __init__(self, arg):
+        super(BedTransfer,ModelSQL).__init__()
+        self.arg = arg
+       """
+    __name__ = 'gnuhealth.bed.transfer.create'
+
+    #A editted copy of the function in gnuhealth.patient.rounding
+    def transition_create_bed_transfer(self):
+        """Making bed tranfer for patients that are not yet admitted 
+           equal to free"""
+        inpatient_registrations = Pool().get('gnuhealth.inpatient.registration')
+        bed = Pool().get('gnuhealth.hospital.bed')
+
+        registrations = inpatient_registrations.browse(Transaction().context.get(
+            'active_ids'))
+
+        # Don't allow mass changes. Work on a single record
+        if len(registrations) > 1:
+            self.raise_user_error('choose_one')
+
+        registration = registrations[0]
+        current_bed = registration.bed
+        destination_bed = self.start.newbed
+        reason = self.start.reason
+
+        # Check that the new bed is free
+        if destination_bed.state == 'free':
+            # Free the current bed
+            bed.write([current_bed], {'state': 'free'})
+            # Set as occupied the new bed
+
+            # Only change the state of the bed to occupied if the patient 
+            # was hospitalized
+            if registration.state == 'hospitalized':
+                bed.write([destination_bed], {'state': 'occupied'})
+            # Update the hospitalization record
+            hospitalization_info = {}
+
+            hospitalization_info['bed'] = destination_bed
+
+            # Update the hospitalization data
+            transfers = []
+            transfers.append(('create', [{'transfer_date' : datetime.now(),
+                                          'bed_from' : current_bed,
+                                          'bed_to' : destination_bed,
+                                          'reason': reason,}]))
+            hospitalization_info['bed_transfers'] = transfers
+
+            inpatient_registrations.write([registration], hospitalization_info)
+
+        else:
+            self.raise_user_error('bed_unavailable')
+
+        return 'end'
+        
