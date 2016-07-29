@@ -17,4 +17,5 @@ def register():
     Pool.register(
         BedManager,
         BedCreator,
+        CreateBedTransfer,
         module='health_jamaica_hospital', type_='wizard')

@@ -48,6 +48,9 @@ class PatientPregnancy(ModelSQL, ModelView):
                          'Create a new entry under the patient\'s\n'
                          'obstetric history.')
         cls.prenatal_evaluations.states.update(readonly=True)
+        cls.warning.string = "High Risk/Warning"
+        cls.warning.help = "Check this box if the pregnancy is not normal\n"+\
+                           "or can be considered high risk"
 
     def get_rec_name(self, name):
         tmpl = "Pregnancy #%(gravida)d. LMP %(lmp)s (%(gesw)d weeks) for " +\

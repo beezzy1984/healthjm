@@ -1,5 +1,5 @@
 
-from trytond.pool import PoolMeta
+from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 from tryton_synchronisation import SyncMixin, SyncUUIDMixin, SyncMode
 
@@ -13,8 +13,6 @@ class Party(SyncMixin):
     __metaclass__ = PoolMeta
     unique_id_column = 'code'
     sync_mode = SyncMode.full
-    _extra_unsync_domain = ['OR', ('is_healthprof', '=', True),
-                            ('is_person', '=', False)]
 
     def get_wire_value(self):
         values = super(Party, self).get_wire_value()
@@ -23,19 +21,20 @@ class Party(SyncMixin):
         return values
 
     @classmethod
-    def get_to_synchronise(cls, remote_sync_data=None):
-        if remote_sync_data:
-            return super(Party, cls).get_to_synchronise(remote_sync_data)
-        else:
-            with Transaction().set_context(active_test=False) as t:
-                if cls._extra_unsync_domain:
-                    unsync_domain = ['AND', ('synchronised', '=', False),
-                                     cls._extra_unsync_domain]
-                else:
-                    unsync_domain = [('synchronised', '=', False)]
-                unsynced = cls.search(unsync_domain)
-
-            return [r.get_wire_value() for r in unsynced]
+    def get_unsync_domain(cls):
+        context = Transaction().context
+        extra_domain = ['OR', ('is_healthprof', '=', True),
+                        ('is_person', '=', False)]
+        if 'extra_unsync_model' in context and 'extra_unsync_field' in context:
+            eu_model = context['extra_unsync_model']
+            eu_field = context['extra_unsync_field']
+            eu_domain = context.get('extra_unsync_domain',
+                                    [['synchronised', '=', False]])
+            extra_model = Pool().get(eu_model)
+            extra = extra_model.search_read(eu_domain, fields_names=[eu_field])
+            if extra:
+                extra_domain.append(('id', 'in', [x[eu_field] for x in extra]))
+        return extra_domain
 
 
 class PartyAddress(SyncUUIDMixin):
