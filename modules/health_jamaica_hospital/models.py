@@ -205,6 +205,15 @@ class CreateBedTransfer(Wizard):
             # was hospitalized
             if registration.state == 'hospitalized':
                 bed.write([destination_bed], {'state': 'occupied'})
+            # Change the state of the bed to reserved if the patient admission 
+            # has been confirmed but not admitted as yet
+            elif registration.state == 'confirmed':
+                bed.write([destination_bed], {'state': 'reserved'})
+            # Raise error if patient has been discharged, you should not be able
+            # to transfer an already discharged patient to a bed
+            elif registration.state == 'done':
+                self.raise_user_error('Cannot transfer a discharge patient to a bed')
+
             # Update the hospitalization record
             hospitalization_info = {}
 
