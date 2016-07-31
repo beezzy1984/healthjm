@@ -43,7 +43,7 @@ myversion = '>=%s,<%s.%d' % (myversion, myversion[:myversion.index('.')],
 
 requires = [
     'trytond' + tryton_version,
-    'tryton_synchronisation >0.2.0,<0.3.0'
+    'tryton_synchronisation >=0.3.0,<0.4.0'
 ]
 
 for dep in info['depends']:
