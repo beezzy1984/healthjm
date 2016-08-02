@@ -579,7 +579,7 @@
             <field name="perm_delete" eval="False" />
         </record>
         <!--Added from ticket 113 on 2016/07/08 Group records staff-->
-        <record model="ir.model.access" id="model-grp_records_staff_menu_access_preg">
+        <record model="ir.model.access" id="model-grp_records_staff_pregnancy">
             <field name="model" search="[('model','=', 'gnuhealth.patient.pregnancy')]"/>
             <field name="group" ref="group_records_staff"/>
             <field name="perm_read" eval="True" />
@@ -587,7 +587,7 @@
             <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="True" />
         </record>
-        <record model="ir.model.access" id="model-grp_records_staff_menu_access_eval">
+        <record model="ir.model.access" id="model-grp_records_staff_evaluation">
             <field name="model" search="[('model','=', 'gnuhealth.patient.prenatal.evaluation')]"/>
             <field name="group" ref="group_records_staff"/>
             <field name="perm_read" eval="True" />
@@ -595,7 +595,7 @@
             <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="True" />
         </record>
-        <record model="ir.model.access" id="model-grp_records_staff_menu_access_triage-entry">
+        <record model="ir.model.access" id="model-grp_records_staff_triage-entry">
             <field name="model" search="[('model','=', 'gnuhealth.triage.entry')]"/>
             <field name="group" ref="group_records_staff"/>
             <field name="perm_read" eval="True" />
@@ -603,7 +603,7 @@
             <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="True" />
         </record>
-        <record model="ir.model.access" id="model-grp_records_staff_menu_access_psc">
+        <record model="ir.model.access" id="model-grp_records_staff_psc">
             <field name="model" search="[('model','=', 'gnuhealth.patient.psc')]"/>
             <field name="group" ref="group_records_staff"/>
             <field name="perm_read" eval="True" />
@@ -612,7 +612,7 @@
             <field name="perm_delete" eval="True" />
         </record>
         <!--Added from ticket 113 on 2016/07/08 group doctors-->
-        <record model="ir.model.access" id="model-grp_doctors_menu_access_preg">
+        <record model="ir.model.access" id="model-grp_doctors_pregnancy">
             <field name="model" search="[('model','=', 'gnuhealth.patient.pregnancy')]"/>
             <field name="group" ref="group_doctors"/>
             <field name="perm_read" eval="True" />
@@ -620,7 +620,7 @@
             <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="False" />
         </record>
-        <record model="ir.model.access" id="model-grp_doctors_menu_access_eval">
+        <record model="ir.model.access" id="model-grp_doctors_evaluation">
             <field name="model" search="[('model','=', 'gnuhealth.patient.prenatal.evaluation')]"/>
             <field name="group" ref="group_doctors"/>
             <field name="perm_read" eval="True" />
@@ -628,7 +628,7 @@
             <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="False" />
         </record>
-        <record model="ir.model.access" id="model-grp_doctors_menu_access_triage-entry">
+        <record model="ir.model.access" id="model-grp_doctors_triage-entry">
             <field name="model" search="[('model','=', 'gnuhealth.triage.entry')]"/>
             <field name="group" ref="group_doctors"/>
             <field name="perm_read" eval="True" />
@@ -636,7 +636,7 @@
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
-        <record model="ir.model.access" id="model-grp_doctors_menu_access_psc">
+        <record model="ir.model.access" id="model-grp_doctors_psc">
             <field name="model" search="[('model','=', 'gnuhealth.patient.psc')]"/>
             <field name="group" ref="group_doctors"/>
             <field name="perm_read" eval="True" />
@@ -645,7 +645,7 @@
             <field name="perm_delete" eval="False" />
         </record>
         <!--Added from ticket 113 on 2016/07/08 group nurses-->
-        <record model="ir.model.access" id="model-grp_nurses_menu_access_preg">
+        <record model="ir.model.access" id="model-grp_nurses_pregnancy">
             <field name="model" search="[('model','=', 'gnuhealth.patient.pregnancy')]"/>
             <field name="group" ref="group_nurses"/>
             <field name="perm_read" eval="True" />
@@ -653,7 +653,7 @@
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
-        <record model="ir.model.access" id="model-grp_nurses_menu_access_eval">
+        <record model="ir.model.access" id="model-grp_nurses_evaluation">
             <field name="model" search="[('model','=', 'gnuhealth.patient.prenatal.evaluation')]"/>
             <field name="group" ref="group_nurses"/>
             <field name="perm_read" eval="True" />
@@ -661,7 +661,7 @@
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
-        <record model="ir.model.access" id="model-grp_nurses_menu_access_triage-entry">
+        <record model="ir.model.access" id="model-grp_nurses_triage-entry">
             <field name="model" search="[('model','=', 'gnuhealth.triage.entry')]"/>
             <field name="group" ref="group_nurses"/>
             <field name="perm_read" eval="True" />
@@ -669,7 +669,7 @@
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
-        <record model="ir.model.access" id="model-grp_nurses_menu_access_psc">
+        <record model="ir.model.access" id="model-grp_nurses_psc">
             <field name="model" search="[('model','=', 'gnuhealth.patient.psc')]"/>
             <field name="group" ref="group_nurses"/>
             <field name="perm_read" eval="True" />
@@ -678,7 +678,7 @@
             <field name="perm_delete" eval="False" />
         </record>
         <!--Added from ticket 113 on 2016/07/08 group senior nurses-->
-        <record model="ir.model.access" id="model-grp_senior_nurses_menu_access_preg">
+        <record model="ir.model.access" id="model-grp_senior_nurses_pregnancy">
             <field name="model" search="[('model','=', 'gnuhealth.patient.pregnancy')]"/>
             <field name="group" ref="group_senior_nurses"/>
             <field name="perm_read" eval="True" />
@@ -686,7 +686,7 @@
             <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="False" />
         </record>
-        <record model="ir.model.access" id="model-grp_senior_nurses_menu_access_eval">
+        <record model="ir.model.access" id="model-grp_senior_nurses_evaluation">
             <field name="model" search="[('model','=', 'gnuhealth.patient.prenatal.evaluation')]"/>
             <field name="group" ref="group_senior_nurses"/>
             <field name="perm_read" eval="True" />
@@ -695,7 +695,7 @@
             <field name="perm_delete" eval="False" />
         </record>
         <!--Added from ticket 113 on 2016/07/08 group community health worker-->
-        <record model="ir.model.access" id="model-grp_community_health_workers_menu_access_triage-entry">
+        <record model="ir.model.access" id="model-grp_community_health_workers_triage-entry">
             <field name="model" search="[('model','=', 'gnuhealth.triage.entry')]"/>
             <field name="group" ref="group_community_hw"/>
             <field name="perm_read" eval="True" />
@@ -704,12 +704,12 @@
             <field name="perm_delete" eval="False" />
         </record>
         <!--Added from ticket 113 on 2016/07/08 group cistomer service-->
-        <record model="ir.model.access" id="model-grp_customer_service_menu_access_triage-entry">
+        <record model="ir.model.access" id="model-grp_customer_service_triage-entry">
             <field name="model" search="[('model','=', 'gnuhealth.triage.entry')]"/>
             <field name="group" ref="group_customer_service"/>
             <field name="perm_read" eval="True" />
             <field name="perm_write" eval="True" />
-            <field name="perm_create" eval="False" />
+            <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="False" />
         </record>
     </data>
