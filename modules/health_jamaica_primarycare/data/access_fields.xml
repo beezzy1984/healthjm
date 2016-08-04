@@ -179,5 +179,25 @@
             <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="True" />
         </record>
+        <!-- Can do Details for the state hiding -->
+
+        <record model="ir.model.field.access" id="field-grp_medical_records_triage_details">
+            <field name="field" search="[('name','=','can_do_details'),('model.model','=', 'gnuhealth.triage.entry')]" />
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <record model="ir.model.field.access" id="field-grp_custserv_triage_details">
+            <field name="field" search="[('name','=','can_do_details'),('model.model','=', 'gnuhealth.triage.entry')]"/>
+            <field name="group" ref="group_customer_service"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+
+        
     </data>
 </tryton>
