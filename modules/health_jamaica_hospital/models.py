@@ -2,12 +2,12 @@
 from datetime import datetime
 from trytond.model import ModelSQL, ModelView, fields
 from trytond.wizard import Wizard
-from trytond.pyson import Eval, Not, In, Eval, Bool, Equal, Or
+from trytond.pyson import Eval, Not, In, Equal, Or
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from ..health_jamaica.tryton_utils import (replace_clause_column, get_timezone)
 
-__all__ = ['HospitalBed', 'InpatientRegistration', 'PatientRounding', 
+__all__ = ['HospitalBed', 'InpatientRegistration', 'PatientRounding',
            'HospitalWard', 'CreateBedTransfer']
 
 
@@ -55,21 +55,20 @@ class InpatientRegistration(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(InpatientRegistration, cls).__setup__()
-        # Make readonly for bed depends on a person being hospitalised or 
+        # Make readonly for bed depends on a person being hospitalised or
         # discharged from the hospital
         cls.bed.states = {'required': True,
                           'readonly': Or(Equal(Eval('state'), 'hospitalized'),
                                          Equal(Eval('state'), 'confirmed'),
-                                         Equal(Eval('state'), 'done'))
-                         }
+                                         Equal(Eval('state'), 'done'))}
         # Changed depends to accommodate state
         cls.bed.depends = ['name', 'state']
         # make discharge_date not required
         cls.discharge_date.required = False
         if not cls.discharge_date.states:
             cls.discharge_date.states = {}
-        cls.discharge_date.states['invisible'] = Not(In(Eval('state'),
-                                                        ['done', 'hospitalized']))
+        cls.discharge_date.states['invisible'] = Not(
+            In(Eval('state'), ['done', 'hospitalized']))
         # rename the set of states
         cls.state.selection = [
             ('free', 'Pending'),
@@ -98,7 +97,7 @@ class InpatientRegistration(ModelSQL, ModelView):
         registration_id = registrations[0]
         Bed = Pool().get('gnuhealth.hospital.bed')
         tz = get_timezone()
-        if (registration_id.hospitalization_date.date() > 
+        if (registration_id.hospitalization_date.date() >
                 datetime.now(tz).date()):
             cls.raise_user_error("The Admission date must be today or earlier")
         else:
@@ -176,15 +175,16 @@ class CreateBedTransfer(Wizard):
        """
     __name__ = 'gnuhealth.bed.transfer.create'
 
-    #A editted copy of the function in gnuhealth.patient.rounding
+    # An edited copy of the function in gnuhealth.patient.rounding
     def transition_create_bed_transfer(self):
-        """Making bed tranfer for patients that are not yet admitted 
+        """Making bed tranfer for patients that are not yet admitted
            equal to free"""
-        inpatient_registrations = Pool().get('gnuhealth.inpatient.registration')
+        inpatient_registrations = Pool().get(
+            'gnuhealth.inpatient.registration')
         bed = Pool().get('gnuhealth.hospital.bed')
 
-        registrations = inpatient_registrations.browse(Transaction().context.get(
-            'active_ids'))
+        registrations = inpatient_registrations.browse(
+            Transaction().context.get('active_ids'))
 
         # Don't allow mass changes. Work on a single record
         if len(registrations) > 1:
@@ -201,18 +201,19 @@ class CreateBedTransfer(Wizard):
             bed.write([current_bed], {'state': 'free'})
             # Set as occupied the new bed
 
-            # Only change the state of the bed to occupied if the patient 
+            # Only change the state of the bed to occupied if the patient
             # was hospitalized
             if registration.state == 'hospitalized':
                 bed.write([destination_bed], {'state': 'occupied'})
-            # Change the state of the bed to reserved if the patient admission 
+            # Change the state of the bed to reserved if the patient admission
             # has been confirmed but not admitted as yet
             elif registration.state == 'confirmed':
                 bed.write([destination_bed], {'state': 'reserved'})
-            # Raise error if patient has been discharged, you should not be able
-            # to transfer an already discharged patient to a bed
+            # Raise error if patient has been discharged, you should not be
+            # able to transfer an already discharged patient to a bed
             elif registration.state == 'done':
-                self.raise_user_error('Cannot transfer a discharge patient to a bed')
+                self.raise_user_error(
+                    'Cannot transfer a discharge patient to a bed')
 
             # Update the hospitalization record
             hospitalization_info = {}
@@ -221,10 +222,10 @@ class CreateBedTransfer(Wizard):
 
             # Update the hospitalization data
             transfers = []
-            transfers.append(('create', [{'transfer_date' : datetime.now(),
-                                          'bed_from' : current_bed,
-                                          'bed_to' : destination_bed,
-                                          'reason': reason,}]))
+            transfers.append(('create', [{'transfer_date': datetime.now(),
+                                          'bed_from': current_bed,
+                                          'bed_to': destination_bed,
+                                          'reason': reason}]))
             hospitalization_info['bed_transfers'] = transfers
 
             inpatient_registrations.write([registration], hospitalization_info)
@@ -233,4 +234,3 @@ class CreateBedTransfer(Wizard):
             self.raise_user_error('bed_unavailable')
 
         return 'end'
-        
