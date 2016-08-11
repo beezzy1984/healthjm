@@ -197,7 +197,39 @@
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
-
+        <!--Used to give doctors and nurses access to some fields in ambulatory
+            component, the idea is that if doctors and nurses has create 
+            permission then the field can_do_details will have a true value
+            and by reversing the truth value when applying it to the visibility
+            state on some field it will show up otherwise can_do_details will
+            be false and reversing it when applying it to visibiltiy state
+            on certain fields will make it not show. 
+            Example: 
+                if can_do_details = True
+                Then Not can_do_details = False
+                therefore invisible = Not can_do_details
+                will not enable invisiblility of certain field
+                elif can_do_details = False
+                Then Not can_do_details = True
+                therefore invisible = Not can_do_details
+                will enable invisiblility of certain field
+            -->
+        <record model="ir.model.field.access" id="field-grp_nurse_component_ambulatory">
+            <field name="field" search="[('name','=','can_do_details'),('model.model','=', 'gnuhealth.encounter.ambulatory')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
         
+        <record model="ir.model.field.access" id="field-grp_doctors_component_ambulatory">
+            <field name="field" search="[('name','=','can_do_details'),('model.model','=', 'gnuhealth.encounter.ambulatory')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
     </data>
 </tryton>
