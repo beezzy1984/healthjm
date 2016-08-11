@@ -557,9 +557,9 @@
         <record model="ir.model.access" id="model-grp_chw_encounter_ambu">
             <field name="model" search="[('model','=', 'gnuhealth.encounter.ambulatory')]"/>
             <field name="group" ref="group_community_hw"/>
-            <field name="perm_read" eval="False" />
-            <field name="perm_write" eval="False" />
-            <field name="perm_create" eval="False" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
             <field name="perm_delete" eval="False" />
         </record>
         <record model="ir.model.access" id="model-grp_chw_encounter_mental">
