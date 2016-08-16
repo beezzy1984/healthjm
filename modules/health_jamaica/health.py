@@ -306,6 +306,20 @@ class HealthInstitution(ModelSQL, ModelView):
             'set_main_specialty',
             'search_main_specialty')
 
+        cls.institution_type = fields.Selection((
+            ('doctor_office', 'Doctor office'),
+            ('primary_care', 'Primary Care Center'),
+            ('clinic', 'Clinic'),
+            ('hospital', 'General Hospital'),
+            ('specialized', 'Specialized Hospital'),
+            ('nursing_home', 'Nursing Home'),
+            ('hospice', 'Hospice'),
+            ('rural', 'Rural facility'),
+            ('admindept', 'Administrative Department'),
+            ('sclinic', 'Specialist Clinic'),
+            ('lab', 'Laboratory'),
+            ), 'Type', required=True, sort=False)
+
     def get_main_specialty(self, name):
         mss = [x for x in self.specialties if x.is_main_specialty]
         if mss:
