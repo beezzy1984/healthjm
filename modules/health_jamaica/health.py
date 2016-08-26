@@ -666,6 +666,8 @@ class HealthInstitutionOperationalSector(ModelSQL, ModelView):
     __name__ = 'gnuhealth.institution.operationalsector'
     sync_code = fields.Char('sync code', states={'readonly': True})
 
+    # ToDo: Implement a __register__ that removes the uuid field 
+
     @classmethod
     def generate_code(cls, institution, sector):
         return '-'.join([institution.code, sector.code])
