@@ -231,3 +231,37 @@ def get_model_field_perm(model_name, field_name, perm='write',
     permdict = user_access.get(field_name, {perm: d})
     user_has_perm = bool(permdict[perm])
     return user_has_perm
+
+def get_elapsed_time(timefrom, to_time):
+    '''This function accepts a datetime.datetime object 
+       and calculates the amount of time elapsed and 
+       returns a string  in the format years months day 
+       hours seconds example 1d 2h 10m 5s'''
+
+    if not isinstance(timefrom, datetime) or \
+    not isinstance(to_time, datetime):
+        return ""
+
+    timeamount = to_time - timefrom
+    months = (timeamount.days / 7) / 4
+    weeks = (timeamount.days / 7) % 4
+    days = timeamount.days % 7
+    hours = ((timeamount.seconds / 60) / 60) % 24
+    minutes = (timeamount.seconds / 60) % 60
+    seconds = timeamount.seconds % 60
+    def build_time_str(int_time=0, type_name=""):
+        '''This function takes a an int called int_time
+           and a string called type_name
+           which is the amount of integer time for 
+           the time quantifier called type_name'''
+        time_quantifiers = {'month':'M', 'week':'w', 'day': 'd', 'hour': 'hr', 
+                            'minute': 'm', 'second': 's'}
+        if not isinstance(int_time, int) or type_name not in time_quantifiers\
+        or not isinstance(type_name, str) or int_time < 1:
+            return ''
+
+        return '%i %s ' % (int_time, time_quantifiers[type_name])
+
+    return build_time_str(months, 'month') + build_time_str(weeks, 'week') +\
+    build_time_str(days, 'day') + build_time_str(hours, 'hour') + \
+    build_time_str(minutes, 'minute') + build_time_str(seconds, 'second')[:-1]
