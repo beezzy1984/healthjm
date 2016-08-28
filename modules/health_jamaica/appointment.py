@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from trytond.pool import Pool
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pyson import Eval, Equal, In, Not, And, Bool
-from .tryton_utils import is_not_synchro, get_timezone, get_day_comp
+from .tryton_utils import is_not_synchro, get_timezone, get_day_comp, localtime
 
 APPOINTMENT_STATES = [
     (None, ''),
@@ -118,7 +118,7 @@ class Appointment(ModelSQL, ModelView):
             out = ['[Unassigned]']
         else:
             out = ['[Invalid]']
-        out.append(self.appointment_date.strftime('on %F at %R'))
+        out.append(localtime(self.appointment_date).strftime('on %F at %R'))
         return ' '.join(out)
 
     @classmethod
