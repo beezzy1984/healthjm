@@ -435,7 +435,7 @@
             <field name="perm_read" eval="True" />
             <field name="perm_write" eval="True" />
             <field name="perm_create" eval="True" />
-            <field name="perm_delete" eval="True" />
+            <field name="perm_delete" eval="False" />
         </record>
         <record model="ir.model.access" id="model-grp_chw_appointment">
             <field name="model" search="[('model','=', 'gnuhealth.appointment')]"/>
