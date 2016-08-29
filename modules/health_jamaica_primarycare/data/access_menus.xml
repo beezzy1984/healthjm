@@ -109,10 +109,6 @@
             <field name="menu" ref="health.gnuhealth_patients_menu" />
             <field name="group" ref="group_records_staff" />
         </record>
-        <record model="ir.ui.menu-res.group" id="menu-grp_custserv_patient">
-            <field name="menu" ref="health.gnuhealth_patients_menu" />
-            <field name="group" ref="group_customer_service" />
-        </record>
         <record model="ir.ui.menu-res.group" id="menu-grp_chw_patient">
             <field name="menu" ref="health.gnuhealth_patients_menu" />
             <field name="group" ref="group_community_hw" />

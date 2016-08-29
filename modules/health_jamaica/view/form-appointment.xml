@@ -20,13 +20,16 @@
 
             <label name="urgency"/>
             <field name="urgency"/>
-            <label name="visit_reason"/>
-            <field name="visit_reason"/>
+            <label name="visit_reason" states="{'invisible': Not(Eval('can_do_details', False))}"/>
+            <field name="visit_reason" states="{'invisible': Not(Eval('can_do_details', False))}"/>
         </group>
     </xpath>
 
     <xpath expr="/form/separator[@id=&quot;sepatator_appointment_notes&quot;]" position="replace_attributes">
-        <separator string="Notes" id="sepatator_appointment_notes"/>
+        <separator string="Notes" id="sepatator_appointment_notes" states="{'invisible': Not(Eval('can_do_details', False))}"/>
+    </xpath>
+    <xpath expr="/form/field[@name=&quot;comments&quot;]" position="replace">
+        <field name="comments" colspan="4" states="{'invisible': Not(Eval('can_do_details', False))}"/>
     </xpath>
     <xpath expr="/form/field[@name=&quot;comments&quot;]" position="after">
         <field name="state_changes" colspan="2" />

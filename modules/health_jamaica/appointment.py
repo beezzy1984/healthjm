@@ -38,7 +38,15 @@ class Appointment(ModelSQL, ModelView):
     age = fields.Function(fields.Char('Age'), 'get_person_patient_field')
     visit_reason = fields.Many2One('gnuhealth.pathology', 'Reason for Visit',
                                    help='Medical Specialty / Sector',
-                                   domain=[('code', 'ilike', 'Z%')])
+                                   domain=[('code', 'ilike', 'Z%')],
+                                   states={
+                                       'invisible': ~Eval('can_do_details', False)
+                                   })
+    comments = fields.Text('Comments', states={
+        'invisible': ~Eval('can_do_details', False)})
+
+    can_do_details = fields.Function(fields.Boolean('Can do appointment details'),
+                                     'get_do_details_perm')
 
     @staticmethod
     def default_state():
@@ -78,6 +86,13 @@ class Appointment(ModelSQL, ModelView):
     # @fields.depends('patient')
     # def on_change_patient(self):
     #     return {}
+
+    @classmethod
+    def get_do_details_perm(cls, instances, name):
+        user_has_perm = get_model_field_perm(cls.__name__, name, 'delete',
+                                             default_deny=True)
+        outval = dict([(x.id, user_has_perm) for x in instances])
+        return outval
 
     @classmethod
     def get_is_today(cls, instances, name):
