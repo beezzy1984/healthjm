@@ -267,4 +267,5 @@ def get_elapsed_time(timefrom, to_time):
         return '%02d%s' % (int_time, time_quantifiers[type_name])
 
     return build_time_str(timeamount.days, 'day') + build_time_str(hours, 'hour') + \
-    build_time_str(minutes, 'minute') + build_time_str(seconds, 'second')[:-1]
+    build_time_str(minutes, 'minute')[:-1]
+    # + build_time_str(seconds, 'second')[:-1]
