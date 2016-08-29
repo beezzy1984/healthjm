@@ -243,9 +243,9 @@ def get_elapsed_time(timefrom, to_time):
         return ""
 
     timeamount = to_time - timefrom
-    months = (timeamount.days / 7) / 4
-    weeks = (timeamount.days / 7) % 4
-    days = timeamount.days % 7
+    #months = (timeamount.days / 7) / 4
+    #weeks = (timeamount.days / 7) % 4
+    #days = timeamount.days % 7
     hours = ((timeamount.seconds / 60) / 60) % 24
     minutes = (timeamount.seconds / 60) % 60
     seconds = timeamount.seconds % 60
@@ -254,14 +254,15 @@ def get_elapsed_time(timefrom, to_time):
            and a string called type_name
            which is the amount of integer time for 
            the time quantifier called type_name'''
-        time_quantifiers = {'month':'M', 'week':'w', 'day': 'd', 'hour': 'hr', 
-                            'minute': 'm', 'second': 's'}
+        time_quantifiers = {'month':'M', 'week':'w', 'day': 'd', 'hour': ':', 
+                            'minute': ':', 'second': ':'}
         if not isinstance(int_time, int) or type_name not in time_quantifiers\
-        or not isinstance(type_name, str) or int_time < 1:
-            return ''
+        or not isinstance(type_name, str):
+            return '00:'
+        if type_name == 'day':
+            return '%d%s ' % (int_time, time_quantifiers[type_name])
 
-        return '%i %s ' % (int_time, time_quantifiers[type_name])
+        return '%02d%s' % (int_time, time_quantifiers[type_name])
 
-    return build_time_str(months, 'month') + build_time_str(weeks, 'week') +\
-    build_time_str(days, 'day') + build_time_str(hours, 'hour') + \
+    return build_time_str(timeamount.days, 'day') + build_time_str(hours, 'hour') + \
     build_time_str(minutes, 'minute') + build_time_str(seconds, 'second')[:-1]
