@@ -259,8 +259,10 @@ def get_elapsed_time(timefrom, to_time):
         if not isinstance(int_time, int) or type_name not in time_quantifiers\
         or not isinstance(type_name, str):
             return '00:'
-        if type_name == 'day':
+        if type_name == 'day' and int_time > 0:
             return '%d%s ' % (int_time, time_quantifiers[type_name])
+        elif type_name == 'day' and int_time < 1:
+            return ''
 
         return '%02d%s' % (int_time, time_quantifiers[type_name])
 
