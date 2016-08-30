@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from trytond.pool import Pool
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pyson import Eval, Equal, In, Not, And, Bool
-from .tryton_utils import is_not_synchro, get_timezone, get_day_comp, localtime
+from .tryton_utils import is_not_synchro, get_timezone, get_day_comp, localtime, get_model_field_perm
 
 APPOINTMENT_STATES = [
     (None, ''),
@@ -42,9 +42,6 @@ class Appointment(ModelSQL, ModelView):
                                    states={
                                        'invisible': ~Eval('can_do_details', False)
                                    })
-    comments = fields.Text('Comments', states={
-        'invisible': ~Eval('can_do_details', False)})
-
     can_do_details = fields.Function(fields.Boolean('Can do appointment details'),
                                      'get_do_details_perm')
 
@@ -64,11 +61,13 @@ class Appointment(ModelSQL, ModelView):
         cls.state.selection = APPOINTMENT_STATES
         cls._buttons.update({
             'start_encounter': {'readonly': Not(And(Equal(Eval('state'),
-                                                'arrived'), Bool(Eval('name')))),
+                                                          'arrived'), 
+                                                    Bool(Eval('name')))),
                                 'invisible': In(Eval('state'),
-                                                ['processing', 'done'])},
+                                                ['processing', 'done']),
+                               },
             'goto_encounter': {'invisible': Not(In(Eval('state'),
-                                               ['processing', 'done']))},
+                                                   ['processing', 'done']))},
             'client_arrived': {'readonly': Not(And(Equal(Eval('state'),
                                                'confirmed'), Bool(Eval('name'))))}
         })
@@ -77,6 +76,7 @@ class Appointment(ModelSQL, ModelView):
         cls.institution.states = ro_states
         cls.state.states = ro_states
         cls.appointment_date.states = ro_states
+        cls.comments.states.update({'invisible': ~Eval('can_do_details', False)})
 
     @staticmethod
     def default_healthprof():
@@ -87,11 +87,19 @@ class Appointment(ModelSQL, ModelView):
     # def on_change_patient(self):
     #     return {}
 
+    @staticmethod
+    def default_can_do_details():
+        user_has_perm = get_model_field_perm('gnuhealth.triage.entry',
+                                             'can_do_details', 'delete',
+                                             default_deny=False)
+        return user_has_perm
+
     @classmethod
     def get_do_details_perm(cls, instances, name):
         user_has_perm = get_model_field_perm(cls.__name__, name, 'delete',
-                                             default_deny=True)
+                                             default_deny=False)
         outval = dict([(x.id, user_has_perm) for x in instances])
+        print outval
         return outval
 
     @classmethod

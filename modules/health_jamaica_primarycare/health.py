@@ -1,6 +1,7 @@
 
 
 from trytond.model import ModelView, ModelSQL, fields
+from trytond.pyson import Eval
 from ..health_jamaica.tryton_utils import update_states
 
 class Appointment(ModelSQL, ModelView):
@@ -11,7 +12,6 @@ class Appointment(ModelSQL, ModelView):
         super(Appointment, cls).__setup__()
         cls.speciality.states = update_states(cls.speciality,
                                               {'required':True})
-
 
 class SignsAndSymptoms(ModelSQL, ModelView):
     'Evaluation Signs and Symptoms'

@@ -434,7 +434,7 @@
             <field name="group" ref="group_customer_service"/>
             <field name="perm_read" eval="True" />
             <field name="perm_write" eval="True" />
-            <field name="perm_create" eval="True" />
+            <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
         <record model="ir.model.access" id="model-grp_chw_appointment">

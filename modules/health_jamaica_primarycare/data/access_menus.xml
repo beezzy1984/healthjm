@@ -113,8 +113,6 @@
             <field name="menu" ref="health.gnuhealth_patients_menu" />
             <field name="group" ref="group_community_hw" />
         </record>
-
-
         <!-- And access to the appointments menu -->
         <record model="ir.ui.menu-res.group" id="menu-grp_nurse_appointment">
             <field name="menu" ref="health.gnuhealth_appointment_menu" />
