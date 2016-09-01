@@ -169,7 +169,8 @@ class PatientData(ModelSQL, ModelView):
         def x_age_in_range(rmin, rmax, default_age=25):
             def real_comp(i):
                 aged = x_get_age_dict(i)
-                return (int(i), rmin <= aged.get('y', default_age) <= rmax)
+                return (int(i), i.name.sex == 'f' and
+                        rmin <= aged.get('y', default_age) <= rmax)
             return real_comp
 
         def x_age_tuple(i):
