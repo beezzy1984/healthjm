@@ -99,7 +99,6 @@ class Appointment(ModelSQL, ModelView):
         user_has_perm = get_model_field_perm(cls.__name__, name, 'delete',
                                              default_deny=False)
         outval = dict([(x.id, user_has_perm) for x in instances])
-        print outval
         return outval
 
     @classmethod
