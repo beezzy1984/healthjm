@@ -18,16 +18,22 @@ server {
         server_name  master.devpool;
 
         ssl  on;
+        ssl_session_timeout     10m;
+        keepalive_timeout       90;
+        client_max_body_size 100M;
+
         ssl_certificate /path/to/cert.pem;
         ssl_certificate_key /path/to/key.pem;
-
-        client_max_body_size 100M;
+        ssl_dhparm /path/to/dhparm.pem;
+        include /etc/nginx/snippets/ssl-ciphers.conf;
 
         # access_log /var/log/nginx/moh-jsonrpc.log;
 
         location / {
-                proxy_pass http://tryton_jsonrpc;
                 proxy_set_header Host $http_host;
+                proxy_read_timeout 300;
+                proxy_redirect off;
+                proxy_pass http://tryton_jsonrpc;
         }
 }
 

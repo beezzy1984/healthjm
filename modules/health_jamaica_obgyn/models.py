@@ -160,6 +160,9 @@ class PrenatalComponent(BaseComponent):
             if stub:
                 lines.append((tt,))
                 lines.extend(stub[:])
+        if self.notes:
+            lines.append(('Notes:', ))
+            lines.append((self.notes, ))
         return u'\n'.join([u' '.join(x) for x in lines])
 
     def make_critical_info(self):
