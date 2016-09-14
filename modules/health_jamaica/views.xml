@@ -213,5 +213,21 @@
             <field name="model">party.party,-2</field>
             <field name="action" ref="party.wizard_check_vies"/>
         </record>
+        <!--Extending the functionality of speciality for health professional -->
+        <record model="ir.ui.view" id="hp_specialty_view">
+            <field name="model">gnuhealth.hp_specialty</field>
+            <field name="inherit" ref="health.gnuhealth_hp_specialty_view"/>
+            <field name="priority" eval="2" />
+            <field name="type">form</field>
+            <field name="name">form-hp_specialty</field>
+        </record>
+        <!--Extending the functionality of speciality for health institution -->
+        <record model="ir.ui.view" id="institution_specialty_view">
+            <field name="model">gnuhealth.institution.specialties</field>
+            <field name="inherit" ref="health.gnuhealth_institution_specialties_form"/>
+            <field name="priority" eval="2" />
+            <field name="type">form</field>
+            <field name="name">form-institution_specialty</field>
+        </record>
 	</data>
 </tryton>
