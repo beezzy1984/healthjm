@@ -469,6 +469,11 @@ class HealthProfessionalSpecialties(ModelSQL, ModelView):
                                      'UNIQUE(name, specialty)',
                                      'Duplicate specialty assignment'))
 
+    @classmethod
+    def search_rec_name(cls, name, clause):
+        return ['OR', replace_clause_column(clause, 'specialty'),
+                replace_clause_column(clause, 'specialty')]
+
 
 class ProcedureCode(ModelSQL, ModelView):
     'Medical Procedures'
