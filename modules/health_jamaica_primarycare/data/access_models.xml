@@ -711,13 +711,67 @@
             <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
-        <!--Added from ticket 113 on 2016/07/08 group cistomer service-->
+        <!--Added from ticket 113 on 2016/07/08 group customer service-->
         <record model="ir.model.access" id="model-grp_customer_service_triage-entry">
             <field name="model" search="[('model','=', 'gnuhealth.triage.entry')]"/>
             <field name="group" ref="group_customer_service"/>
             <field name="perm_read" eval="True" />
             <field name="perm_write" eval="True" />
             <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <!--Added from ticket 203 on 2016/09/19 medical records-->
+        <record model="ir.model.access" id="model-grp_medical_records_insurance">
+            <field name="model" search="[('model','=', 'gnuhealth.insurance')]"/>
+            <field name="group" ref="group_records_staff"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <!--Added from ticket 203 on 2016/09/19 group customer service-->
+        <record model="ir.model.access" id="model-grp_customer_service_insurance">
+            <field name="model" search="[('model','=', 'gnuhealth.insurance')]"/>
+            <field name="group" ref="group_customer_service"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <!--Added from ticket 203 on 2016/09/19 group accounting clerk-->
+        <record model="ir.model.access" id="model-grp_accounting_clerk_insurance">
+            <field name="model" search="[('model','=', 'gnuhealth.insurance')]"/>
+            <field name="group" ref="group_accounts_clerks"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_delete" eval="True" />
+        </record>
+        <!--Added from ticket 203 on 2016/09/19 group doctors-->
+        <record model="ir.model.access" id="model-grp_doctor_insurance">
+            <field name="model" search="[('model','=', 'gnuhealth.insurance')]"/>
+            <field name="group" ref="group_doctors"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <!--Added from ticket 203 on 2016/09/19 group nurse-->
+        <record model="ir.model.access" id="model-grp_nurse_insurance">
+            <field name="model" search="[('model','=', 'gnuhealth.insurance')]"/>
+            <field name="group" ref="group_nurses"/>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_delete" eval="False" />
+        </record>
+        <!--Added from ticket 203 on 2016/09/19 group Community health worker-->
+        <record model="ir.model.access" id="model-grp_community_hw_insurance">
+            <field name="model" search="[('model','=', 'gnuhealth.insurance')]"/>
+            <field name="group" ref="group_community_hw"/>
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
             <field name="perm_delete" eval="False" />
         </record>
     </data>
