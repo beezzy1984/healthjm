@@ -397,6 +397,11 @@ class HealthInstitutionSpecialties(ModelSQL, ModelView):
     def default_is_main_specialty():
         return False
 
+    @classmethod
+    def search_rec_name(cls, name, clause):
+        return ['OR', replace_clause_column(clause, 'specialty.name'),
+                replace_clause_column(clause, 'specialty.code')]
+
 
 class HealthProfessional(ModelSQL, ModelView):
     'Health Professional'
@@ -471,8 +476,8 @@ class HealthProfessionalSpecialties(ModelSQL, ModelView):
 
     @classmethod
     def search_rec_name(cls, name, clause):
-        return ['OR', replace_clause_column(clause, 'specialty'),
-                replace_clause_column(clause, 'specialty')]
+        return ['OR', replace_clause_column(clause, 'specialty.name'),
+                replace_clause_column(clause, 'specialty.code')]
 
 
 class ProcedureCode(ModelSQL, ModelView):
