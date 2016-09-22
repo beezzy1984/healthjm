@@ -46,6 +46,8 @@ requires = [
     'trytond_health_inpatient' + gnuhealth_version,  # ?? Do we need this here
     'trytond_health_reporting' + gnuhealth_version,
     'trytond_health_jamaica' + myversion,
+    'trytond_health_triage_queue>=0.4.5,<0.5',
+    'trytond_health_disease_notification_history>=0.2,<0.4'
 ]
 
 setup(
