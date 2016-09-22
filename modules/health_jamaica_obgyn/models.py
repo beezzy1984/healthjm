@@ -125,7 +125,10 @@ class PrenatalComponent(BaseComponent):
 
     @fields.depends('performed_by')
     def on_change_with_healthprof(self):
-        return self.performed_by.id
+        if self.performed_by:
+            return self.performed_by.id
+        else:
+            return None
 
     def get_report_info(self, name):
         lines = [(u'== Antenatal ==', )]
