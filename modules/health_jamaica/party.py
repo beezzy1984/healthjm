@@ -551,6 +551,7 @@ class PartyRelative(ModelSQL, ModelView):
     relative_country = fields.Many2One('country.country', 'Country',
                                        states=NOTPARTY_STATES)
     relative_state = fields.Many2One('country.subdivision', 'Parish/Province',
+                                     domain=[('country', '=', Eval('relative_country'))],
                                      states=NOTPARTY_STATES)
     relative_address = fields.Text('Address details', states=NOTPARTY_STATES)
     relative_phone = fields.Char('Phone/Mobile number(s)',
@@ -560,6 +561,13 @@ class PartyRelative(ModelSQL, ModelView):
     @staticmethod
     def default_is_party():
         return False
+
+    @staticmethod
+    def default_relative_country():
+        country = Pool().get('country.country')
+        jm, = country.search([('code', '=', 'JM')])
+        return jm.id
+
 
     def get_relative_val(self, field_name):
         if field_name in ['phone_number', 'party_phone_number',
