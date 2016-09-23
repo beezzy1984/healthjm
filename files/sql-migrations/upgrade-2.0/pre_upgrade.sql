@@ -100,6 +100,12 @@ insert into "ir_module_module"(create_date, create_uid, name, state)
 insert into "ir_module_module"(create_date, create_uid, name, state)
     values(now(), 0, 'health_pediatrics_growth_charts_who', 'installed');
 
+insert into "ir_module_module"(create_date, create_uid, name, state)
+    values(now(), 0, 'health_disease_notification', 'installed');
+
+insert into "ir_module_module"(create_date, create_uid, name, state)
+    values(now(), 0, 'health_triage_queue', 'installed');
+
 
 -- clear out health professional specialties with specialty=Null
 delete from gnuhealth_hp_specialty where specialty is null;
@@ -124,6 +130,17 @@ UPDATE "gnuhealth_vaccination"
 ALTER table "gnuhealth_vaccination"
     ALTER uuid SET not null,
     ADD CONSTRAINT "gnuhealth_vaccination_uuid_unique" 
+        UNIQUE(uuid);
+
+-- -----------------------
+ALTER table "party_contact_mechanism" ADD uuid uuid;
+
+UPDATE "party_contact_mechanism"
+    SET uuid = uuid_in(md5(random()::text || now()::text)::cstring);
+
+ALTER table "party_contact_mechanism"
+    ALTER uuid SET not null,
+    ADD CONSTRAINT "party_contact_mechanism_uuid_unique" 
         UNIQUE(uuid);
 
 -- -----------------------
