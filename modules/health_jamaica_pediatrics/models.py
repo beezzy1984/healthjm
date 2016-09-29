@@ -62,7 +62,23 @@ class Newborn (ModelSQL, ModelView):
             values['name'] = party_obj.ref
             newvlist.append(values)
             party_to_write.extend([[party_obj], {'dob': dob}])
-        # print('%s\nCreating newborn as %s\n%s\n%s' % ('*'*65, repr(newvlist), repr(vlist), '~'*65))
         return_val = super(Newborn, cls).create(newvlist)
         party_model.write(*party_to_write)
         return return_val
+
+    @classmethod
+    def write(cls, newborns, values, *args):
+        arglist = iter((newborns, values) + args)
+        party_model = Pool().get('party.party')
+        party_update = []
+        for newborn_l, vals in zip(arglist, arglist):
+            for newborn in newborn_l:
+                if vals.get('birth_date'):
+                    party = newborn.patient.name
+                    party_update.extend(
+                            [[party],
+                            {'dob': datetime.date(vals['birth_date'])}])
+        retval = super(Newborn, cls).write(newborns, values)
+        if party_update:
+            party_model.write(*party_update)
+        return retval
