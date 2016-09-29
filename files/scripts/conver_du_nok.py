@@ -14,57 +14,59 @@ def get_pconfig():
 
 CONFIG = get_pconfig()
 
-def get_domunits():
+def get_parties_with_domunits():
     """This function gets all dom units available in the database"""
-    domunit = Model.get('gnuhealth.du')
+    party = Model.get('party.party')
     #print dir(domunit)
-    dom = domunit.find([('active', '=', 'True')])
-    return dom
+    party_with_du = party.find([('du', '!=', None)])
+    return party_with_du
+
+def getdu(party):
+    """Returns party du if party is not None and party has du"""
+    if party and hasattr(party, 'du'):
+        return party.du
 
 def change_dom_to_party_address():
     """
        Changing dom units to party address on the party the dom unit
        belongs to
     """
-    domunits = get_domunits()
-    if domunits:
+    parties_with_du = get_parties_with_domunits()
+    if parties_with_du:
+        parties_with_du = sorted(parties_with_du, key=getdu)
         failed = 0
         suceeded = 0
-        party = Model.get('party.party')
-        country_model = Model.get('country.country')
-        dist = Model.get('country.district_community')
-        sub = Model.get('country.subdivision')
-        post = Model.get('country.subdivision')
-        for domunit in domunits:
+        for party in parties_with_du:
             address_model = Model.get('party.address')
             addr = Model.get('party.address')
             address = address_model()
-            (party_du, ) = party.find([('du', '=', domunit.id)])
-            (country, ) = country_model.find([('id', '=', domunit.address_country.id)])
-            (district, ) = dist.find([('id', '=', domunit.address_district_community.id)])
-            (subdivision, ) = sub.find([('id', '=', domunit.address_subdivision.id)])
-            (post_off, ) = post.find([('id', '=', domunit.address_post_office.id)])
-            if party_du:
-                address.party = party_du
+            dom_unit = party.du
+            if dom_unit:
+                address.party = party
                 address.active = True
-                address.address_street_num = domunit.address_street_num
-                address.district_community = district
-                address.desc = domunit.desc
-                address.country = country
-                address.post_office = post_off
-                address.street = domunit.address_street
-                address.streetbis = domunit.address_street_bis
-                address.subdivision = subdivision
-                domunit.active = False
-                addr_old = addr.find([('party', '=', party_du.id)])
+                address.address_street_num = dom_unit.address_street_num
+                if dom_unit.address_district_community:
+                    address.district_community = dom_unit.address_district_community
+                if dom_unit.desc:
+                    address.desc = dom_unit.desc
+                if dom_unit.address_country:
+                    address.country = dom_unit.address_country
+                if dom_unit.address_post_office:
+                    address.post_office = dom_unit.address_post_office
+                if dom_unit.address_street:
+                    address.street = dom_unit.address_street
+                if dom_unit.address_street_bis:
+                    address.streetbis = dom_unit.address_street_bis
+                if dom_unit.address_subdivision:
+                    address.subdivision = dom_unit.address_subdivision
+                addr_old = addr.find([('party', '=', party.id)])
                 if addr_old:
                     old_addr = addr_old[0]
                     old_addr.active = False
                     old_addr.save()
                 address.save()
-                domunit.save()
-                party_du.du = None
-                party_du.save()
+                party.du = None
+                party.save()
                 suceeded += 1
             else:
                 failed += 1
