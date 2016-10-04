@@ -525,6 +525,9 @@ class PartyRelative(ModelSQL, ModelView):
                 'readonly': Eval('id', 0) > 0})
     relationship = fields.Selection(RELATIONSHIP_LIST, 'Relationship',
                                     help='Relationship of contact to patient')
+    
+    relationship_display = fields.Function(fields.Char('Relationship'),
+                                           'get_relationship_display')
     relative_summary = fields.Function(fields.Text('Relative Summary',
                                        states={'invisible': Or(Eval('id', 0) <= 0,
                                                                ~Eval('is_party', False))}),
@@ -647,3 +650,6 @@ class PartyRelative(ModelSQL, ModelView):
         reversemap.update([(y, x) for x, y in RELATIONSHIP_REVERSE_MAP])
         rmapper = lambda i: (i.id, reversemap.get(i.relationship, None))
         return dict(map(rmapper, instances))
+
+    def get_relationship_display(self, name):
+        return make_selection_display()(self, 'relationship')

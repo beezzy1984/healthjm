@@ -38,8 +38,6 @@ class PartyAddress(ModelSQL, ModelView):
         help="Landmark or additional directions")
     simple_address = fields.Function(fields.Text('Simple Address'),
             'get_full_address')
-    relationship_display = fields.Function(fields.Char('Relationship'),
-                                           'get_relationship_display')
 
     @classmethod
     def __setup__(cls):
@@ -91,6 +89,3 @@ class PartyAddress(ModelSQL, ModelView):
             return (u'\r\n').join(addr)
         else:
             return super(PartyAddress, self).get_full_address(name)
-
-    def get_relationship_display(self, name):
-        return make_selection_display()(self, 'relationship')
