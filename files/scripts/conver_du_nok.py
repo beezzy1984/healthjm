@@ -33,13 +33,12 @@ def change_dom_to_party_address():
     """
     parties_with_du = get_parties_with_domunits()
     if parties_with_du:
-        parties_with_du = sorted(parties_with_du, key=getdu)
+        #parties_with_du = sorted(parties_with_du, key=getdu)
         failed = 0
         suceeded = 0
+        addr = Model.get('party.address')
         for party in parties_with_du:
-            address_model = Model.get('party.address')
-            addr = Model.get('party.address')
-            address = address_model()
+            address = addr()
             dom_unit = party.du
             if dom_unit:
                 address.party = party

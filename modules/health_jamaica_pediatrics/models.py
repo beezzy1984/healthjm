@@ -3,7 +3,9 @@ from datetime import datetime
 from trytond.pool import Pool
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.modules.health_jamaica.party import SEX_OPTIONS
-
+from sql import Table
+from trytond.transaction import Transaction
+from datetime import datetime
 
 
 class Newborn (ModelSQL, ModelView):
@@ -47,6 +49,7 @@ class Newborn (ModelSQL, ModelView):
 
     @classmethod
     def create(cls, vlist):
+<<<<<<< Updated upstream
         pool = Pool()
         newvlist = []
         patient_model = pool.get('gnuhealth.patient')
@@ -82,3 +85,25 @@ class Newborn (ModelSQL, ModelView):
         if party_update:
             party_model.write(*party_update)
         return retval
+=======
+        vlist = [x.copy() for x in vlist]
+        patient_table = Table('gnuhealth_patient')
+        cursor = Transaction().cursor
+
+        for values in vlist:
+            newborn_patient_id = values['patient']
+
+        cursor.execute (*patient_table.select(patient_table.name,
+            where=(patient_table.id == newborn_patient_id)))
+
+        newborn_party_id = cursor.fetchone()
+           
+        if values['birth_date']:
+            born_date = datetime.date(values['birth_date'])
+            party = Table('party_party')
+            cursor.execute(*party.update(columns=[party.dob],
+                values=[born_date], 
+                where=(party.id == newborn_party_id[0])))
+                   
+        return super(Newborn, cls).create(vlist)
+>>>>>>> Stashed changes

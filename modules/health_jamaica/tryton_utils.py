@@ -33,6 +33,7 @@ def negate_clause(clause):
 def make_selection_display():
     def _get_x_display(self, field_name):
         fieldlist = getattr(self, '_fields')
+        print dir(fieldlist[field_name])
         field_selections = fieldlist[field_name].selection
         field_obj = getattr(self, field_name)
         xdict = dict(filter(lambda x: x[0], field_selections))
