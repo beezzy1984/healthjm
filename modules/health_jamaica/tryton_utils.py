@@ -6,9 +6,12 @@ from trytond.transaction import Transaction
 from trytond.pool import Pool
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from proteus import config as pconfig
 
 _cached_timezone = None
 
+TRYTON_CONF = {'pwd':'123',
+               'host':'maia.local', 'port':'8015'}
 
 def negate(operator):
     '''returns the opposite operator of a domain operator.
@@ -248,7 +251,7 @@ def get_elapsed_time(timefrom, to_time):
     #days = timeamount.days % 7
     hours = ((timeamount.seconds / 60) / 60) % 24
     minutes = (timeamount.seconds / 60) % 60
-    seconds = timeamount.seconds % 60
+    #seconds = timeamount.seconds % 60
     def build_time_str(int_time=0, type_name=""):
         '''This function takes a an int called int_time
            and a string called type_name
@@ -269,3 +272,36 @@ def get_elapsed_time(timefrom, to_time):
     return build_time_str(timeamount.days, 'day') + build_time_str(hours, 'hour') + \
     build_time_str(minutes, 'minute')[:-1]
     # + build_time_str(seconds, 'second')[:-1]
+
+def test_database_config(config_file=None, institution_name=None, database_name=None):
+    """Defines database configuration for module testing"""
+    if config_file is None:
+        config_file = ''.join(
+            ['/home/randy/Projects/MOH/Cloned/healthjm',
+             '/modules/health_jamaica/files/test_trytond.conf'])
+
+    if institution_name is None:
+        institution_name = 'May Pen'
+
+    if database_name is None:
+        print 'Database name is needed'
+        return
+
+    if TRYTON_CONF is not None:
+        tryton_conf = TRYTON_CONF
+        tryton_conf['conffile'], tryton_conf['institution'] = config_file, institution_name
+        tryton_conf['dbname'] = database_name
+    else:
+        tryton_conf = {'pwd':'123',
+                       'conffile': config_file,
+                       'dbname':database_name, 'host':'maia.local', 'port':'8015',
+                       'institution': institution_name}
+
+    def get_pconfig():
+        """Returns a tryton configuration settings"""
+        return pconfig.set_trytond(tryton_conf['dbname'],
+                                   user='admin',
+                                   #database_type=test_database_type.lower(),
+                                   config_file=tryton_conf['conffile'])
+
+    return get_pconfig()
