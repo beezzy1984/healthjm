@@ -276,8 +276,8 @@ def get_elapsed_time(timefrom, to_time):
 def test_database_config(config_file=None, institution_name=None, database_name=None):
     """Defines database configuration for module testing"""
     if config_file is None:
-        config_file = ospath.abspath(ospath.normpath(ospath.join(__file__, 
-                                                                 '/files/test_trytond.conf')))
+        config_file = ospath.abspath(ospath.normpath(ospath.join(__file__, '..',
+                                                                 'files/test_trytond.conf')))
 
     if institution_name is None:
         institution_name = 'May Pen'
