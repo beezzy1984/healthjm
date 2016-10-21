@@ -1,3 +1,4 @@
 *.pyc
 *.pyo
-
+coverage_html_report
+.coverage
