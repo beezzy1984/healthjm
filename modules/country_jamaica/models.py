@@ -43,7 +43,7 @@ class PostOffice(ModelSQL, ModelView):
         super(PostOffice, cls).__setup__()
         cls._sql_constraints = [
             ('code_uniq', 'UNIQUE(code)',
-                'The Post Office code be unique.'),
+             'The Post Office code be unique.'),
         ]
 
     def __unicode__(self):
@@ -92,9 +92,9 @@ class DistrictCommunity(ModelSQL, ModelView):
         super(DistrictCommunity, cls).__setup__()
         cls._sql_constraints = [
             ('name_per_po_uniq', 'UNIQUE(name, post_office)',
-                'The District Community must be unique for each post office.'),
+             'The District Community must be unique for each post office.'),
             ('code_uniq', 'UNIQUE(code)',
-                'The Community code be unique.'),
+             'The Community code be unique.'),
         ]
 
     def get_parish(self, name):
