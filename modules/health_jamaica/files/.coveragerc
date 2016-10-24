@@ -7,7 +7,7 @@ cover_pylib = False
 
 # This option defines whether or not to measure brach coverage in 
 # to statement coverage
-branch = True
+branch = False
 
 # This option defines which file coverage should store data/reports in
 data_file = coverage_report
