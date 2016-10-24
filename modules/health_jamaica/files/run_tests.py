@@ -63,16 +63,15 @@ def tester():
     if not config.get('session', 'super_pwd'):
         config.set('session', 'super_pwd', '123')
 
-    if config.get('database', 'db_type') == 'sqlite':
-        database_name = ':memory:'
-    else:
-        database_name = 'test_' + str(int(time.time()))
+    database_name = 'shc_maypen'
 
     os.environ['DB_NAME'] = database_name
 
     from trytond.tests.test_tryton import all_suite, modules_suite
 
+    from trytond.tests.test_tryton import drop_create
 
+    # drop_create()
 
     if not opt.modules:
         suite = modules_suite(TEST_MODULES)
@@ -83,4 +82,5 @@ def tester():
     sys.exit(not result.wasSuccessful)
 
 if __name__ == '__main__':
+
     tester()
