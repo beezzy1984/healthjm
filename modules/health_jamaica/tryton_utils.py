@@ -300,7 +300,6 @@ def test_database_config(config_file=None, institution_name=None, database_name=
         """Returns a tryton configuration settings"""
         return pconfig.set_trytond(tryton_conf['dbname'],
                                    user='admin',
-                                   #database_type=test_database_type.lower(),
                                    config_file=tryton_conf['conffile'])
 
     return get_pconfig()
