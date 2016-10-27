@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<!-- 
+Author: Randy Burrell
+Created: 2016/10/26
+Purpos: Used by trytond to load test data templates in the database
+ -->
+<tryton>
+    <data>
+        <record id="person_template" model="party.party">
+            <field eval="True" name="is_person" />
+            <field eval="True" name="active" />
+            <field name="code">PERSON-TEST</field>
+            <field name="lang" ref="country_jamaica.lang_en_jm" />
+            <field name="name">Test Person</field>
+            <field name="sex">u</field>
+        </record>
+        <record id="health_prof_template" model="party.party">
+            <field eval="True" name="is_person" />
+            <field eval="True" name="is_healthprof" />
+            <field eval="True" name="active" />
+            <field name="code">HEALTH-PERSON-TEST</field>
+            <field name="lang" ref="country_jamaica.lang_en_jm" />
+            <field name="name">Test Health Professional</field>
+            <field name="sex">u</field>
+        </record>
+        <record id="patient_template" model="party.party">
+            <field eval="True" name="is_person" />
+            <field eval="True" name="is_patient" />
+            <field eval="True" name="active" />
+            <field name="code">PATIENT-TEST</field>
+            <field name="lang" ref="country_jamaica.lang_en_jm" />
+            <field name="name">Test Patient</field>
+            <field name="sex">u</field>
+        </record>
+    </data>
+</tryton>
