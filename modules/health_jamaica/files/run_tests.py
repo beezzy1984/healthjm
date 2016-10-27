@@ -48,6 +48,8 @@ def tester():
                         help="specify config file")
     parser.add_argument("-m", "--modules", action="store_true", dest="modules",
                         default=False, help="Run also modules tests")
+    parser.add_argument("-d", "--database", action="store_true", dest="database_name",
+                        default=False, help="Use this database")
     parser.add_argument("-v", action="count", default=0, dest="verbosity",
                         help="Increase verbosity")
     parser.add_argument('tests', metavar='test', nargs='*')
@@ -63,15 +65,14 @@ def tester():
     if not config.get('session', 'super_pwd'):
         config.set('session', 'super_pwd', '123')
 
-    database_name = 'shc_maypen'
+    if not opt.database_name:
+        database_name = 'test_memory'
+    else:
+        database_name = opt.database_name
 
     os.environ['DB_NAME'] = database_name
 
     from trytond.tests.test_tryton import all_suite, modules_suite
-
-    from trytond.tests.test_tryton import drop_create
-
-    # drop_create()
 
     if not opt.modules:
         suite = modules_suite(TEST_MODULES)
