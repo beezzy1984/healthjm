@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<!-- 
+Author: Randy Burrell
+Created: 2016/10/26
+Purpos: Used by trytond to load data templates in the database
+ -->
+<tryton>
+    <data>
+        <!--Creating a bed template and product for the bed management wizard-->
+        <record id="bed_template" model="product.template">
+            <field eval="True" name="active" />
+            <field name="list_price" eval="0" />
+            <field name="cost_price">0</field>
+            <field name="type">service</field>
+            <field name="cost_price_method">fixed</field>
+            <field name="name">bed template</field>
+            <field name="default_uom" ref="product.uom_unit" />
+        </record>
+        <record id="bed_product" model="product.product">
+            <field eval="True" name="is_bed" />
+            <field eval="True" name="active" />
+            <field name="code">BED-TEMPLATE-101</field>
+            <field name="type">service</field>
+            <field name="template" ref="bed_template" />
+            <field name="default_uom" ref="product.uom_unit" />
+        </record>
+
+    </data>
+</tryton>
