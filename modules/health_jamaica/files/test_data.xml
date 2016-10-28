@@ -23,6 +23,9 @@ Purpos: Used by trytond to load test data templates in the database
             <field name="name">Test Health Professional</field>
             <field name="sex">u</field>
         </record>
+        <record id="health_prof" model="gnuhealth.healthprofessional">
+            <field name="name" ref="health_prof_template" />
+        </record>
         <record id="patient_template" model="party.party">
             <field eval="True" name="is_person" />
             <field eval="True" name="is_patient" />
@@ -31,6 +34,9 @@ Purpos: Used by trytond to load test data templates in the database
             <field name="lang" ref="country_jamaica.lang_en_jm" />
             <field name="name">Test Patient</field>
             <field name="sex">u</field>
+        </record>
+        <record id="patient" model="gnuhealth.patient">
+            <field name="name" ref="patient_template" />
         </record>
     </data>
 </tryton>
