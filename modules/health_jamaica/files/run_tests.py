@@ -46,10 +46,10 @@ def tester():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", dest="config",
                         help="specify config file")
+    parser.add_argument("-d", "--database", action="store", dest="databasename",
+                        default=False, help="Use this flag to supply a database")
     parser.add_argument("-m", "--modules", action="store_true", dest="modules",
                         default=False, help="Run also modules tests")
-    parser.add_argument("-d", "--database", action="store_true", dest="database_name",
-                        default=False, help="Use this database")
     parser.add_argument("-v", action="count", default=0, dest="verbosity",
                         help="Increase verbosity")
     parser.add_argument('tests', metavar='test', nargs='*')
@@ -65,10 +65,10 @@ def tester():
     if not config.get('session', 'super_pwd'):
         config.set('session', 'super_pwd', '123')
 
-    if not opt.database_name:
+    if not opt.databasename:
         database_name = 'test_memory'
     else:
-        database_name = opt.database_name
+        database_name = opt.databasename
 
     os.environ['DB_NAME'] = database_name
 
