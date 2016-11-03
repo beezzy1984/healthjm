@@ -7,6 +7,7 @@ from trytond.pool import Pool
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from proteus import config as pconfig
+from random import randrange
 
 _cached_timezone = None
 
@@ -303,3 +304,13 @@ def test_database_config(config_file=None, institution_name=None, database_name=
                                    config_file=tryton_conf['conffile'])
 
     return get_pconfig()
+
+def random_bool():
+    """Returns a random boolean value"""
+    if randrange(0, 2) == 1:
+        return True
+    return False
+
+def random_id(number=None):
+    """Returns a random number between 1 and argument 'number'"""
+    return randrange(1, number)
