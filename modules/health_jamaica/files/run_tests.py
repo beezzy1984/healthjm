@@ -2,7 +2,6 @@
 import logging
 import argparse
 import os
-import time
 import unittest
 import sys
 
