@@ -1,5 +1,6 @@
 '''Utilities that make dealing with tryton idosynchrasies easier'''
 
+import string
 import pytz
 from os import path as ospath
 from trytond.transaction import Transaction
@@ -313,4 +314,37 @@ def random_bool():
 
 def random_id(number=None):
     """Returns a random number between 1 and argument 'number'"""
+    if number is None or number is 1:
+        return 1
     return randrange(1, number)
+
+def code_gen(code=None):
+    """Returns a code taht begins with the srting code"""
+
+    if code is None:
+        code_list = list(string.ascii_lowercase)
+        code = code_list[random_id(len(code_list))]
+
+    if len(code) > 2:
+        code = ''.join(code[0:2])
+
+    return code.join(['-', str(datetime.now())])
+
+def gen_age(years=None, months=None, days=None):
+    """Generates random age if no value is given"""
+    if not years:
+        years = str(random_id(100)) + ' y '
+    else:
+        years = str(years)
+
+    if not months:
+        months = str(random_id(11)) + ' m '
+    else:
+        months = str(months)
+
+    if not days:
+        days = str(random_id(29)) + ' d'
+    else:
+        days = str(days)
+
+    return ' '.join([years, months, days])
